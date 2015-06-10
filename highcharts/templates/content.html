@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block container %}
+	    {{ chart.container }}
+{%  endblock  container %}
+
+{% block body %}
+
+    var option = {{chart.option}};
+    var data = {{chart.data}};
+    option.series = data;
+    var chart = new Highcharts.Chart(option);
+
+{% endblock body %}
