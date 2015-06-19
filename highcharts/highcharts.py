@@ -11,19 +11,18 @@ from __future__ import unicode_literals
 from optparse import OptionParser
 from jinja2 import Environment, PackageLoader
 # from slugify import slugify
-import json
-
-import datetime, random, webbrowser, os, inspect, codecs
+import json, uuid
+import datetime, random, os, inspect
 from _abcoll import Iterable
-from options import ChartOptions, \
-    ColorsOptions, CreditsOptions, ExportingOptions, \
+from options import BaseOptions, ChartOptions, \
+    ColorsOptions, CreditsOptions, DrilldownOptions, ExportingOptions, \
     GlobalOptions, LabelsOptions, LangOptions, \
     LegendOptions, LoadingOptions, NavigationOptions, PaneOptions, \
     PlotOptions, SeriesData, SubtitleOptions, TitleOptions, \
     TooltipOptions, xAxisOptions, yAxisOptions
 
 from highchart_types import Series, SeriesOptions, HighchartsError, MultiAxis
-from common import Formatter
+from common import Formatter, CSSObject, JSfunction, RawJavaScriptText, CommonObject, ArrayObject
 
 CONTENT_FILENAME = "./content.html"
 PAGE_FILENAME = "./page.html"
@@ -44,12 +43,6 @@ FORMAT_SPECIAL_CASES = {
     "load": "skip_quotes",
     "multiaxis": "multiaxis"
 }
-
-bool_mapping = {
-    False: u'false',
-    True: u'true',
-}
-
 
 def stab(tab=1):
     """
@@ -83,16 +76,33 @@ class Highcharts(object):
         self.model = self.__class__.__name__  #: The chart model,
         self.div_name = kwargs.get("renderTo", "container")
 
-        #: an Instance of Jinja2 template
+        # an Instance of Jinja2 template
         self.template_page_highcharts = template_page
         self.template_content_highcharts = template_content
         
+        # set Javascript src
+
+        self.JSsource = [
+                'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js',
+                'https://code.highcharts.com/highcharts.js',
+                'https://code.highcharts.com/highcharts-more.js',
+                'https://code.highcharts.com/modules/exporting.js'
+            ]
+
+        # set CSS src
+
+        self.CSSsource = [
+                'https://www.highcharts.com/highslide/highslide.css',
+            ]
+
         # set data
         self.data = []
+        self.data_temp = []
         
         # accepted keywords
 
         self.div_style = kwargs.get('style', '')
+        self.drilldown_flag = kwargs.get('drilldown_flag', False)
         self.date_flag = kwargs.get('date_flag', False)
 
         # None keywords attribute that should be modified by methods
@@ -106,25 +116,6 @@ class Highcharts(object):
         #: Header for javascript code
         self.containerheader = u''
         
-        # Highcharts lib/ needs to make sure it's up to
-        # date
-        self.header_css = [
-            '<link href="%s" rel="stylesheet" />' % h for h in
-            (
-                'https://www.highcharts.com/highslide/highslide.css',
-            )
-        ]
-
-        self.header_js = [
-            '<script type="text/javascript" src="%s"></script>' % h for h in
-            (
-                'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js',
-                'https://code.highcharts.com/highcharts.js',
-                'https://code.highcharts.com/highcharts-more.js',
-                'https://code.highcharts.com/modules/exporting.js'
-            )
-        ]
-
         #: Javascript code as string
         self.jschart = None
         # self.custom_tooltip_flag = False
@@ -142,10 +133,10 @@ class Highcharts(object):
             "chart": ChartOptions(),
             "colors": ColorsOptions(),
             "credits": CreditsOptions(),
+            #"data": #NotImplemented
+            "drilldown": DrilldownOptions(),
             "exporting": ExportingOptions(),
-            "global": GlobalOptions(),
             "labels": LabelsOptions(),
-            "lang": LangOptions(),
             "legend": LegendOptions(),
             "loading": LoadingOptions(),
             "navigation": NavigationOptions(),
@@ -157,6 +148,11 @@ class Highcharts(object):
             "tooltip": TooltipOptions(),
             "xAxis": xAxisOptions(),
             "yAxis": yAxisOptions(),
+        }
+
+        self.setOptions = {
+            "global": GlobalOptions(),
+            "lang": LangOptions(),
         }
 
         self.__load_defaults__()
@@ -176,36 +172,14 @@ class Highcharts(object):
 
         for keyword in allowed_kwargs:
             if keyword in kwargs:
-                if keyword == 'events':
-                    self.options['chart'].update_dict(**{'events':{kwargs['events'].event_type:kwargs['events'].event_method}})
-                else:
-                    self.options['chart'].update_dict(**{keyword:kwargs[keyword]})
+                self.options['chart'].update_dict(**{keyword:kwargs[keyword]})
         # Some Extra Vals to store:
         self.data_set_count = 0
 
-    # def __render__(self, ret=False, template="base"):
-        # if template == "base":
-        #     TEMPLATE = BASE_TEMPLATE
-        # elif template == "gecko":
-        #     TEMPLATE = GECKO_TEMPLATE
-        # with open(TEMPLATE,"rb") as template_file:
-        #     tmp = unicode(template_file.read())
-        # rendered = tmp.format(**self.__export_options__())
-        # if ret:
-        #     return rendered
-
-
-    def __export_options__(self):
-        bind = self.options.items()
-        data = {k:chart_formatter(k, opClass) \
-        #data = {k: opClass.__dict__ \
-            for k, opClass in bind}
-        return data
 
     def __load_defaults__(self):
         self.options["chart"].update_dict(renderTo='container')
         self.options["title"].update_dict(text='A New Highchart')
-        #self.options["yAxis"].update_dict(title_text='units')
         self.options["credits"].update_dict(enabled=False)
 
 
@@ -232,11 +206,28 @@ class Highcharts(object):
         else:
             self.options["chart"].update_dict(backgroundColor=background)
 
+    def set_JSsource(self, new_src):
+        if isinstance(new_src, list):
+            for h in list:
+                self.JSsource.append(h)
+        else:
+            self.JSsource.append(new_src)
+
+    def set_CSSsource(self, new_src):
+        if isinstance(new_src, list):
+            for h in new_src:
+                self.CSSsource.append(h)
+        else:
+            self.CSSsource.append(new_src)
+
+
     def set_x_axis(self, **kwargs):
         self.options["xAxis"].update_dict(**kwargs)
 
+
     def set_y_axis(self, **kwargs):
         self.options["yAxis"].update_dict(**kwargs)
+
 
     def set_start_date(self, date):
         """ Set Plot Start Date """
@@ -307,9 +298,11 @@ class Highcharts(object):
             self.options["plotOptions"].update_dict(**to_update)
         series_data = Series(data, series_type=series_type, \
             supress_errors=True, **kwargs)
-        self.options["series"].data.append(series_data)
+        self.data_temp.append(series_data)
+        #self.options["series"].data.append(series_data)
 
-    def set_options(self, options, force_options=False):
+
+    def set_options2(self, options, force_options=False):
         """ Set Plot Options """
         if force_options:
             for k, v in options.items():
@@ -329,55 +322,24 @@ class Highcharts(object):
                 self.options[key].update_dict(**val)
 
 
-    # def show(self):
-        """ Show Function """
-        handle = webbrowser.get()
-        if not os.path.exists(TMP_DIR):
-            os.mkdir(TMP_DIR)
-        new_filename = "%x.html" % (random.randint(pow(16, 5), pow(16, 6)-1))
-        temp_dir = globals()['TMP_DIR']
-        if not temp_dir[-1] == "/":
-            temp_dir += "/"
-        new_fn = temp_dir + new_filename
-        with codecs.open(SHOW_TEMPLATE, 'rb', encoding='utf-8') as file_open:
-            tmp = file_open.read()
-        html = tmp.format(chart_data=self.__render__(ret=True))
-        with codecs.open(new_fn, 'w', encoding='utf-8') as file_open:
-            file_open.write(html)
-        handle.open("file://"+new_fn)
-
-    # def generate(self):
-        """ __render__ Wrapper """
-        return self.__render__(ret=True)
-
-    def set_yAxis(self, *axis):
-        if all(map(lambda a: isinstance(a, yAxisOptions), axis)):
-            self.options['yAxis'] = MultiAxis(axis)
+    def set_options(self, option_type, option_dict, force_options=False):
+        """ Set Plot Options """
+        if force_options:
+            self.options[option_type].update(option_dict)
         else:
-            raise HighchartsError("All Axis Must Be Of Type: yAxisOptions")    
-
-
-    # def _slugify_name(self, name):
-        """Slufigy name with underscore"""
-        self.name = slugify(name, separator='_')
+            self.options[option_type].update_dict(**option_dict)
 
 
     def set_containerheader(self, containerheader):
         """Set containerheader"""
         self.containerheader = containerheader
 
-    # def set_date_flag(self, date_flag=False):
-    #     """Set date flag"""
-    #     self.date_flag = date_flag
-
-    # def set_custom_tooltip_flag(self, custom_tooltip_flag):
-    #     """Set custom_tooltip_flag & date_flag"""
-    #     self.custom_tooltip_flag = custom_tooltip_flag
 
     def __str__(self):
         """return htmlcontent"""
         self.buildhtml()
         return self.htmlcontent
+
 
     def buildcontent(self):
         """Build HTML content only, no header or body tags. To be useful this
@@ -390,9 +352,14 @@ class Highcharts(object):
         # when this subclass method is entered it does call
         # the method buildjschart defined here
         self.buildjschart()
-        self.option = json.dumps(self.__export_options__())
-        self.data = json.dumps(data_formatter(self.options['series']))
+        #self.option = json.dumps(self.__export_options__())
+        self.option = json.dumps(self.options, cls = HighchartsEncoder)
+        self.setoption = json.dumps(self.setOptions, cls = HighchartsEncoder)
+
+        #self.data = json.dumps(data_formatter(self.options['series']))
+        self.data = json.dumps(self.data_temp, cls = HighchartsEncoder)
         self.htmlcontent = self.template_content_highcharts.render(chart=self)
+
 
     def buildhtml(self):
         """Build the HTML page
@@ -401,16 +368,29 @@ class Highcharts(object):
         Add Js code for highcharts
         """
         self.buildcontent()
+        self.buildhtmlheader()
         self.content = self.htmlcontent
         self.htmlcontent = self.template_page_highcharts.render(chart=self)
 
+
     def buildhtmlheader(self):
         """generate HTML header content"""
+        #Highcharts lib/ needs to make sure it's up to date
+        
+        self.header_css = [
+            '<link href="%s" rel="stylesheet" />' % h for h in self.CSSsource
+        ]
+
+        self.header_js = [
+            '<script type="text/javascript" src="%s"></script>' % h for h in self.JSsource
+        ]
+
         self.htmlheader = ''
         for css in self.header_css:
             self.htmlheader += css
         for js in self.header_js:
             self.htmlheader += js
+
 
     def buildcontainer(self):
         """generate HTML div"""
@@ -433,6 +413,7 @@ class Highcharts(object):
 
         self.container = self.containerheader + \
             '<div id="%s" style="%s"></div>\n' % (self.div_name, self.div_style)
+
 
     def buildjschart(self):
         """generate javascript code for the chart"""
@@ -467,6 +448,7 @@ class TemplateMixin(object):
         self.buildjschart()
         self.htmlcontent = self.template_chart_highcharts.render(chart=self)
 
+
 def set_temp_dir(temp_dir):
     globals()['TMP_DIR'] = temp_dir
 
@@ -476,168 +458,39 @@ class HighchartError(Exception):
         Exception.__init__(self, *args)
         self.args = args
 
-# def color_formatter2(data):
-#     """ Nothing to see here """
-#     return str(data['colors'])
 
-def color_formatter(data):
-    return data.colors
+class HighchartsEncoder(json.JSONEncoder):
+    def __init__(self, *args, **kwargs):
+        json.JSONEncoder.__init__(self, *args, **kwargs)
+        self._replacement_map = {}
 
-# def update_template(tmp, key, val, tab_depth=1):
-    # """ Generate Json Dicts """
-    # if key not in FORMAT_SPECIAL_CASES:
-    #     # Value Checking
-    #     if isinstance(val, dict):
-    #         tmp += u"\t%s: {\n" % key
-    #         for subkey, subval in val.items():
-    #             tmp = update_template(tmp, subkey, subval, tab_depth=3)
-    #         tmp += u"\t\t" + u"},\n"
-    #         return tmp
-    #     elif isinstance(val, Iterable) and not isinstance(val, basestring):
-    #         new_vals = []
-    #         for item in val:
-    #             if isinstance(item, dict):
-    #                 ntmp = u"{"
-    #                 for k,v in item.items():
-    #                     ntmp = update_template(ntmp, k, v, tab_depth=0)
-    #                 ntmp += u"}"
-    #                 new_vals.append(ntmp)
-    #             elif isinstance(item, Iterable) and not isinstance(item, basestring):
-    #                 new_items = []
-    #                 for subitem in item:
-    #                     if isinstance(subitem, datetime.datetime):
-    #                         utc = subitem.utctimetuple()
-    #                         new_items.append(u"Date.UTC({year},{month},{day},{hours},{minutes},{seconds},{millisec})"
-    #                                     .format(year=utc[0], month=utc[1]-1, day=utc[2], hours=utc[3],
-    #                                             minutes=utc[4], seconds=utc[5], millisec=subitem.microsecond/1000))
-    #                     elif isinstance(subitem, bool):
-    #                         # Convert Bool to js equiv.
-    #                         new_items.append(bool_mapping[subitem])
-    #                     elif isinstance(subitem, basestring):
-    #                         # Need to keep string quotes
-    #                         new_items.append(u"\'" + subitem + u"\'")
-    #                     else:
-    #                         new_items.append(unicode(subitem))
-    #                 new_vals.append(u"[{}]".format(u",".join(new_items)))
-    #             elif isinstance(item, datetime.datetime):
-    #                 utc = item.utctimetuple()
-    #                 new_vals.append(u"Date.UTC({year},{month},{day},{hours},{minutes},{seconds},{millisec})"
-    #                        .format(year=utc[0], month=utc[1], day=utc[2], hours=utc[3],
-    #                                minutes=utc[4], seconds=utc[5], millisec=item.microsecond/1000))
-    #             elif isinstance(item, bool):
-    #                 # Convert Bool to js equiv.
-    #                 new_vals.append(bool_mapping[item])
-    #             elif item == None:
-    #                 new_vals.append(u'null')
-    #             elif isinstance(item, basestring):
-    #                 # Need to keep string quotes
-    #                 new_vals.append(u"\'" + item + u"\'")
-    #             else:
-    #                 new_vals.append(unicode(item))
-    #         return tmp + u"{tabs}{key}:[{vals}],\n".format(tabs=u"\t"*tab_depth, key=key, vals=u",".join(new_vals))
-    #     elif isinstance(val, datetime.datetime):
-    #         utc = val.utctimetuple()
-    #         val = (u"Date.UTC({year},{month},{day},{hours},{minutes},{seconds},{millisec})"
-    #                 .format(year=utc[0], month=utc[1], day=utc[2], hours=utc[3],
-    #                         minutes=utc[4], seconds=utc[5], millisec=val.microsecond/1000))
-    #     elif isinstance(val, bool):
-    #         # Convert Bool to js equiv.
-    #         val = bool_mapping[val]
-    #     elif val == None:
-    #         val = u'null'
-    #     elif isinstance(val, basestring):
-    #         # Need to keep string quotes
-    #         val = u"\'" + val + u"\'"
-    #     tmp += u"\t"*tab_depth + u"%s: %s,\n" % (key, val)
-    # else:
-    #     if FORMAT_SPECIAL_CASES[key] == "skip_quotes":
-    #         tmp += u"\t"*tab_depth + u"%s: %s,\n" % (key, val)
-    #     elif FORMAT_SPECIAL_CASES[key] == "formatter":
-    #         tmp += u"\t"*tab_depth + u"%s: %s,\n" % (key, val.formatter)
-    #     elif FORMAT_SPECIAL_CASES[key] == "multiaxis":
-    #         st = u""
-    #         for k, v in val.__dict__.iteritems():
-    #             st = update_template(st, k, v, tab_depth=tab_depth+1)
-    #         return st
-    #     else:
-    #         raise NotImplementedError
-    # return tmp
+    def default(self, obj):
+        if isinstance(obj, RawJavaScriptText):
+            key = uuid.uuid4().hex
+            self._replacement_map[key] = obj.get_jstext()
+            return key
+        elif isinstance(obj, datetime.datetime):
+            utc = obj.utctimetuple()
+            obj = (u"Date.UTC({year},{month},{day},{hours},{minutes},{seconds},{millisec})"
+                    .format(year=utc[0], month=utc[1]-1, day=utc[2], hours=utc[3],
+                            minutes=utc[4], seconds=utc[5], millisec=obj.microsecond/1000))
+            return RawJavaScriptText(obj)
+        elif isinstance(obj, BaseOptions):
+            return obj.__jsonable__()
+        elif isinstance(obj, CSSObject) or isinstance(obj, Formatter) or isinstance(obj, JSfunction):
+            return obj.__options__()
+        elif isinstance(obj, SeriesOptions) or isinstance(obj, Series) or isinstance(obj, MultiAxis):
+            return obj.__options__()
+        elif isinstance(obj, CommonObject) or isinstance(obj, ArrayObject):
+            return obj.__options__()
+        else:
+            return json.JSONEncoder.default(self, obj)
 
-# def series_formatter2(data):
-    # """ Special Formatting For Series """
-    # temp = ""
-    # for data_set in data['data']:
-    #     temp += u"{\n"
-    #     for key, val in  data_set.__dict__.items():
-    #         temp = update_template(temp, key, val, tab_depth=1)
-    #     temp += u"\t},"
-    # return 
-
-def data_formatter(data):
-    """ Special Formatting For data """
-    return [ data_set.__dict__ for data_set in data.data ]
-
-def series_formatter(data):
-    """ create empty list for series, data will be input later """
-    #return [ data_set.__dict__ for data_set in data.data ]
-    return []
-
-def plotOptions_formatter(data):
-    """ Special Formatting For plotOptions """
-    return {key: data_set.__dict__ for key, data_set in data.__dict__.items()}
-
-# def chart_formatter2(option_type, data):
-    # """ Formatter Function """
-    # # Special Cases
-    # special_cases = {
-    #     "colors": color_formatter,
-    #     "series": series_formatter,
-    # }
-    # tmp = u""
-    # #print option_type, data
-    # if option_type in special_cases:
-    #     tmp += special_cases[option_type](data)
-    # elif option_type == "yAxis" and data.get('axis'):
-    #     tmp += u"[{\n"
-    #     for i, ax in enumerate(data['axis'], 1):
-    #         tmp += update_template(u"", u'multiaxis', ax, tab_depth=1)
-    #         if not i == len(data['axis']):
-    #             tmp += u"\t},{\n"
-    #     tmp += u"\t}]"
-    #     print tmp
-    # else:
-    #     tmp += u"{\n"
-    #     for key, val in data.items():
-    #         if isinstance(val, dict):
-    #             tmp += u"\t%s: {\n" % key
-    #             for subkey, subval in val.items():
-    #                 tmp = update_template(tmp, subkey, subval, tab_depth=3)
-    #             tmp += u"\t\t" + u"},\n"
-    #         elif isinstance(val, SeriesOptions):
-    #             tmp += u"\t%s: {\n" % key
-    #             for subkey, subval in val.__dict__.items():
-    #                 tmp = update_template(tmp, subkey, subval, tab_depth=3)
-    #             tmp += u"\t\t" + u"},\n"
-    #         else:
-    #             tmp = update_template(tmp, key, val, tab_depth=2)
-    #     tmp += u"\t}"
-    # return tmp
-
-def chart_formatter(option_type, data):
-    """ Formatter Function """
-    # Special Cases
-    special_cases = {
-        "colors": color_formatter,
-        "series": series_formatter,
-        "plotOptions": plotOptions_formatter
-    }
-    #print option_type, data
-    if option_type in special_cases:
-        tmp = special_cases[option_type](data)
-    else:
-        tmp = data.__dict__
-    return tmp
-
+    def encode(self, obj):
+        result = json.JSONEncoder.encode(self, obj)
+        for k, v in self._replacement_map.items():
+             result = result.replace('"%s"' % (k,), v)
+        return result
 
 def _main():
     """

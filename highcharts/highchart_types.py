@@ -1,14 +1,29 @@
 # -*- coding: UTF-8 -*-
-import json
+import json, datetime
+from common import Formatter, Events, CSSObject, ContextButton, JSfunction
+
 
 PLOT_OPTION_ALLOWED_ARGS = {
   "common": {
     "animation": bool,
     "color": basestring,
     "cursor": basestring,
-    "dataLabels": NotImplemented,
+    "dataLabels": {
+            "align": "basestring",
+            "enabled": bool,
+            "formatter": (Formatter, JSfunction),
+            "overflow": basestring,
+            "rotation": int,
+            "staggerLines": int,
+            "step": int,
+            "style": (CSSObject, dict),
+            "useHTML": bool,
+            "x": int,
+            "y": int,
+            "zIndex": int,
+        },
     "enableMouseTracking": bool,
-    "events": NotImplemented,
+    "events": (Events, dict),
     "id": basestring,
     "point": NotImplemented,
     "selected": bool,
@@ -52,7 +67,7 @@ PLOT_OPTION_ALLOWED_ARGS = {
     "lineWidth": int,
     "pointInterval": int,
     "pointPlacement": basestring,
-    "pointStart": (int,basestring),
+    "pointStart": (int,basestring,datetime.datetime),
     "shadow": bool,
     "turboThreshold": int,
     "trackByArea": bool,
@@ -70,7 +85,7 @@ PLOT_OPTION_ALLOWED_ARGS = {
     "marker": dict,
     "pointInterval": int,
     "pointPlacement": basestring,
-    "pointStart": (int,basestring),
+    "pointStart": (int,basestring,datetime.datetime),
     "shadow": bool,
     "stacking": basestring,
     "threshold": int,
@@ -88,7 +103,7 @@ PLOT_OPTION_ALLOWED_ARGS = {
     "lineWidth": int,
     "pointInterval": int,
     "pointPlacement": basestring,
-    "pointStart": (int,basestring),
+    "pointStart": (int,basestring,datetime.datetime),
     "shadow": bool,
     "turboThreshold": int,
     "trackByArea": bool,  
@@ -110,7 +125,7 @@ PLOT_OPTION_ALLOWED_ARGS = {
     "pointWidth": int,
     "pointInterval": int,
     "pointPlacement": basestring,
-    "pointStart": (int,basestring),
+    "pointStart": (int,basestring,datetime.datetime),
     "shadow": bool,
     "stacking": basestring,
     "turboThreshold": int,
@@ -132,7 +147,7 @@ PLOT_OPTION_ALLOWED_ARGS = {
     "pointWidth": (int, float),
     "pointInterval": int,
     "pointPlacement": basestring,
-    "pointStart": (int,basestring),
+    "pointStart": (int,basestring,datetime.datetime),
     "shadow": bool,
     "stacking": basestring,
     "turboThreshold": int,
@@ -154,7 +169,7 @@ PLOT_OPTION_ALLOWED_ARGS = {
     "pointWidth": int,
     "pointInterval": int,
     "pointPlacement": basestring,
-    "pointStart": (int,basestring),
+    "pointStart": (int,basestring,datetime.datetime),
     "shadow": bool,
     "stacking": basestring,
     "turboThreshold": int,
@@ -169,7 +184,7 @@ PLOT_OPTION_ALLOWED_ARGS = {
     "dataLabels": NotImplemented,
     "dial": NotImplemented,
     "enableMouseTracking": bool,
-    "events": NotImplemented,
+    "events": (Events, dict),
     "id": NotImplemented,
     "linkedTo": NotImplemented,
     "negativeColor": NotImplemented,
@@ -196,7 +211,7 @@ PLOT_OPTION_ALLOWED_ARGS = {
     "marker": dict,
     "pointInterval": int,
     "pointPlacement": basestring,
-    "pointStart": (int,basestring),
+    "pointStart": (int,basestring,datetime.datetime),
     "shadow": NotImplemented,
     "stacking": basestring,
     "step": basestring,
@@ -245,7 +260,7 @@ PLOT_OPTION_ALLOWED_ARGS = {
     "marker": dict,
     "pointInterval": int,
     "pointPlacement": basestring,
-    "pointStart": (int,basestring),
+    "pointStart": (int,basestring,datetime.datetime),
     "shadow": bool,
     "turboThreshold": int,
   },
@@ -259,7 +274,7 @@ PLOT_OPTION_ALLOWED_ARGS = {
     "marker": dict,
     "pointInterval": int,
     "pointPlacement": basestring,
-    "pointStart": (int,basestring),
+    "pointStart": (int,basestring,datetime.datetime),
     "shadow": bool,
     "stacking": basestring,
     "turboThreshold": int,
@@ -274,7 +289,7 @@ PLOT_OPTION_ALLOWED_ARGS = {
     "marker": dict,
     "pointInterval": int,
     "pointPlacement": basestring,
-    "pointStart": (int,basestring),
+    "pointStart": (int,basestring,datetime.datetime),
     "shadow": bool,
     "stacking": basestring,
     "turboThreshold": int,
@@ -282,18 +297,18 @@ PLOT_OPTION_ALLOWED_ARGS = {
 }
 
 DATA_SERIES_ALLOWED_OPTIONS = {
-    'color': basestring,
-  "dataParser": NotImplemented,
-  "dataURL": NotImplemented,
-  "index": int,
-  "legendIndex": int,
-  "name": basestring,
-  "stack": basestring,
-  "type": basestring,
-  "xAxis": int,
-  "yAxis": int,
-  "marker": dict,
-    'showInLegend': bool,
+    "color": basestring,
+    "dataParser": NotImplemented,
+    "dataURL": NotImplemented,
+    "index": int,
+    "legendIndex": int,
+    "name": basestring,
+    "stack": basestring,
+    "type": basestring,
+    "xAxis": int,
+    "yAxis": int,
+    "marker": dict,
+    "showInLegend": bool,
     "visible": bool,
 }
 
@@ -303,73 +318,80 @@ DEFAULT_OPTIONS = {
 
 class OptionTypeError(Exception):
 
-  def __init__(self,*args):
-    self.args = args
+    def __init__(self,*args):
+        self.args = args
 
 
 class SeriesOptions(object):
 
-  def __init__(self,series_type="line",supress_errors=False,**kwargs):
-    self.load_defaults(series_type)
-    self.process_kwargs(kwargs,series_type=series_type,supress_errors=supress_errors)
+    def __init__(self,series_type="line",supress_errors=False,**kwargs):
+        self.load_defaults(series_type)
+        self.process_kwargs(kwargs,series_type=series_type,supress_errors=supress_errors)
 
-  @staticmethod
-  def __validate_options__(k,v,ov):
-    if isinstance(ov,list):
-      for o in ov:
-        if isinstance(v,o): return True
-      else:
-        raise OptionTypeError("Option Type Currently Not Supported: %s" % k)
-    else:
-      if ov == NotImplemented: raise OptionTypeError("Option Type Currently Not Supported: %s" % k)
-      if isinstance(v,ov): return True
-      else: return False
+    @staticmethod
+    def __validate_options__(k,v,ov):
+        if isinstance(ov,list):
+          for o in ov:
+            if isinstance(v,o): return True
+          else:
+            raise OptionTypeError("Option Type Currently Not Supported: %s" % k)
+        else:
+          if ov == NotImplemented: raise OptionTypeError("Option Type Currently Not Supported: %s" % k)
+          if isinstance(v,ov): return True
+          else: return False
 
-  def __options__(self):
-    return self.__dict__
+    def __options__(self):
+        return self.__dict__
 
-  def __display_options__(self):
-    print json.dumps(self.__options__(),indent=4,sort_keys=True)
+    def __display_options__(self):
+        print json.dumps(self.__options__(),indent=4,sort_keys=True)
 
-  def process_kwargs(self,kwargs,series_type,supress_errors=False):
-    allowed_args = PLOT_OPTION_ALLOWED_ARGS[series_type]
-    for k, v in kwargs.items():
-      if k in allowed_args:
-        if SeriesOptions.__validate_options__(k,v,allowed_args[k]):
-          self.__dict__.update({k:v})
-        else: 
-          if not supress_errors: raise OptionTypeError("Option Type Mismatch: Expected: %s" % allowed_args[k])
-      else: 
-        if not supress_errors: raise OptionTypeError("Option: %s Not Allowed For Series Type: %s" % (k,series_type))
+    def process_kwargs(self,kwargs,series_type,supress_errors=False):
+        allowed_args = PLOT_OPTION_ALLOWED_ARGS[series_type]
+        allowed_args.update(PLOT_OPTION_ALLOWED_ARGS["common"])
+        for k, v in kwargs.items():
+            if k in allowed_args:
+                if SeriesOptions.__validate_options__(k,v,allowed_args[k]):
+                    self.__dict__.update({k:v})
+                else: 
+                    if not supress_errors: raise OptionTypeError("Option Type Mismatch: Expected: %s" % allowed_args[k])
+            else: 
+                if not supress_errors: raise OptionTypeError("Option: %s Not Allowed For Series Type: %s" % (k,series_type))
 
-  def load_defaults(self,series_type):
-    self.process_kwargs(DEFAULT_OPTIONS.get(series_type,{}),series_type)
+    def load_defaults(self,series_type):
+        self.process_kwargs(DEFAULT_OPTIONS.get(series_type,{}),series_type)
 
 
 class HighchartsError(Exception):
 
-  def __init__(self, *args):
-    self.args = args
+    def __init__(self, *args):
+        self.args = args
 
 
 class MultiAxis(object):
 
-  def __init__(self, axis):
-    self.axis = axis
+    def __init__(self, axis):
+        self.axis = axis
+
+    def __options__(self):
+        return self.__dict__
 
 
 class Series(object):
 
-  def __init__(self,data,series_type="line",supress_errors=False,**kwargs):
-    self.__dict__.update({
-      "data": data,
-      "type": series_type,
-      })
-    for k, v in kwargs.items():
-      if k in DATA_SERIES_ALLOWED_OPTIONS:
-        if SeriesOptions.__validate_options__(k,v,DATA_SERIES_ALLOWED_OPTIONS[k]):
-          self.__dict__.update({k:v})
-        else:
-          if not supress_errors: raise OptionTypeError("Option Type Mismatch: Expected: %s" % DATA_SERIES_ALLOWED_OPTIONS[k])
-      else:
-        if not supress_errors: raise OptionTypeError("Option: %s Not Allowed For Data Series: %s" % (k, series_type))
+    def __init__(self,data,series_type="line",supress_errors=False,**kwargs):
+        self.__dict__.update({
+          "data": data,
+          "type": series_type,
+          })
+        for k, v in kwargs.items():
+            if k in DATA_SERIES_ALLOWED_OPTIONS:
+                if SeriesOptions.__validate_options__(k,v,DATA_SERIES_ALLOWED_OPTIONS[k]):
+                    self.__dict__.update({k:v})
+                else:
+                    if not supress_errors: raise OptionTypeError("Option Type Mismatch: Expected: %s" % DATA_SERIES_ALLOWED_OPTIONS[k])
+            else:
+                if not supress_errors: raise OptionTypeError("Option: %s Not Allowed For Data Series: %s" % (k, series_type))
+
+    def __options__(self):
+        return self.__dict__

@@ -3,6 +3,7 @@
 """ Python-Highcharts common.py
 Common Functions For Highcharts
 """
+import datetime
 
 FORMATTER_TYPE_MAPPINGS = {
     "default": "function() { return this.value }",
@@ -114,12 +115,287 @@ function() {
 """,
 }
 
-
 class Formatter(object):
     """ Base Formatter Class """
 
-    def __init__(self, format_type=None, format_string=FORMATTER_TYPE_MAPPINGS['default_tooltip']):
-        self.__dict__.update({'formatter': FORMATTER_TYPE_MAPPINGS.get(format_type, format_string)})
+    def __init__(self, format):
+        ### Choose either from default functions in FORMATTER_TYPE_MAPPINGS using format_type 
+        ### or wriet a function in format_string
+        if format in FORMATTER_TYPE_MAPPINGS:
+            self.formatter = RawJavaScriptText(FORMATTER_TYPE_MAPPINGS[format])
+        elif isinstance(format, basestring):
+            self.formatter = RawJavaScriptText(format)
+        else:
+            raise OptionTypeError("Option Type Mismatch: Expected: %s" % basestring)
+
+    def __options__(self):
+        return self.formatter
+
+class CSSObject(object):
+    """ CSS style class """
+
+    def __init__(self, **kwargs):
+        self.css = kwargs
+    
+    def __options__(self):
+        return self.css
+
+
+class JSfunction(object):
+
+    def __init__(self, function):
+        if isinstance(function, basestring):
+            self.function = RawJavaScriptText(function)
+        elif isinstance(function, JSfunction):
+            self.function = function
+        else:
+            raise OptionTypeError("Option Type Mismatch: Expected: %s" % basestring)
+
+
+    def __options__(self):
+        return self.function
+
+
+class RawJavaScriptText:
+
+    def __init__(self, jstext):
+        self._jstext = jstext   
+    def get_jstext(self):
+        return self._jstext
+
+
+class CommonObject(object):
+
+    def __init__(self, **kwargs):
+        self.process_kwargs(kwargs)
+
+    def __validate_options__(self, k,v,ov):
+        if ov == NotImplemented: 
+            raise OptionTypeError("Option Type Currently Not Supported: %s" % k)
+        if isinstance(ov,list):
+            for o in ov:
+                if isinstance(v,o): return True
+                else:
+                    raise OptionTypeError("Option Type Currently Not Supported: %s" % k)
+        else:
+            if ov == NotImplemented: raise OptionTypeError("Option Type Currently Not Supported: %s" % k)
+            if isinstance(v,ov): return True
+            else: return False
+
+    def __options__(self):
+        return self.__dict__
+
+    def process_kwargs(self,kwargs):
+        IDV_OBJECT_LIST = [JSfunction, Formatter, CSSObject, Position]
+
+        for k, v in kwargs.items():
+            if k in self.ALLOWED_OPTIONS:
+                if self.__validate_options__(k,v,self.ALLOWED_OPTIONS[k]):
+                    if isinstance(self.ALLOWED_OPTIONS[k], tuple) and \
+                        self.ALLOWED_OPTIONS[k][0] in IDV_OBJECT_LIST:
+
+                        if isinstance(v, dict):
+                            self.__dict__.update({k:self.ALLOWED_OPTIONS[k][0](**v)})
+                        elif isinstance(v, CommonObject) or isinstance(v, ArrayObject):
+                            self.__dict__.update({k:self.ALLOWED_OPTIONS[k][0](**v.__options__())})
+                        elif isinstance(v, JSfunction) or isinstance(v, Formatter):
+                            self.__dict__.update({k:self.ALLOWED_OPTIONS[k][0](v.__options__().get_jstext())})
+                        elif isinstance(v, CSSObject):
+                            self.__dict__.update({k:self.ALLOWED_OPTIONS[k][0](**v.__options__())})
+                        else:
+                            self.__dict__.update({k:self.ALLOWED_OPTIONS[k][0](v)})
+                    else:
+                        self.__dict__.update({k:v})
+                else: 
+                    raise OptionTypeError("Option Type Mismatch: Expected: %s" % self.ALLOWED_OPTIONS[k])
+            else: 
+                raise OptionTypeError("Option: %s Not Allowed For Event Class:" % k)
+
+
+class Events(CommonObject):
+    """ Class for event listener """
+
+    ALLOWED_OPTIONS = {
+    "addSeries": (JSfunction, basestring),
+    "afterPrint": (JSfunction, basestring),
+    "beforePrint": (JSfunction, basestring),
+    "click": (JSfunction, basestring),
+    "drilldown": (JSfunction, basestring),
+    "drillup": (JSfunction, basestring),
+    "load": (JSfunction, basestring),
+    "redraw": (JSfunction, basestring),
+    "selection": (JSfunction, basestring),
+    "afterAnimate": (JSfunction, basestring),
+    "checkboxClick": (JSfunction, basestring),
+    "hide": (JSfunction, basestring),
+    "legendItemClick": (JSfunction, basestring),
+    "mouseOut": (JSfunction, basestring),
+    "mouseOver": (JSfunction, basestring),
+    "show": (JSfunction, basestring),
+    "remove": (JSfunction, basestring),
+    "select": (JSfunction, basestring),
+    "unselect": (JSfunction, basestring),
+    "update": (JSfunction, basestring),
+    "afterBreaks": (JSfunction, basestring),
+    "afterSetExtremes": (JSfunction, basestring),
+    "pointBreak": (JSfunction, basestring),
+    "setExtremes": (JSfunction, basestring)  
+    }
+
+    # def load_defaults(self,series_type):
+    #     self.process_kwargs(DEFAULT_OPTIONS.get(series_type,{}),series_type)
+
+
+class Position(CommonObject):
+    ALLOWED_OPTIONS = {
+    "align": basestring,
+    "verticalAlign": basestring,
+    "x": int,
+    "y": int, 
+    }
+
+
+class ContextButton(CommonObject):
+    """ Option class for the export button """
+    ALLOWED_OPTIONS = {
+    "align": basestring,
+    "enabled": bool,
+    "height": int,
+    "menuItems": NotImplemented,
+    "onclick": (JSfunction, basestring),
+    "symbol": basestring,
+    "symbolFill": basestring,
+    "symbolSize": int,
+    "symbolStroke": basestring,
+    "symbolStrokeWidth": int,
+    "symbolX": float,
+    "symbolY": float,
+    "text": basestring,
+    "theme": NotImplemented,#ThemeObject
+    "verticalAlign": basestring,
+    "width": int,
+    "x": int,
+    "y": int, 
+    }
+
+
+class Options3d(CommonObject): 
+    ALLOWED_OPTIONS = {
+    "alpha": float,
+    "beta": float,
+    "depth": int,
+    "enabled": bool,
+    "frame": NotImplemented, # FrameObject
+    "viewDistance": int
+    }
+
+
+class ResetZoomButton(CommonObject): 
+    ALLOWED_OPTIONS = {
+    "position": (Position, dict),
+    "relativeTo": basestring,
+    "theme": NotImplemented #ThemeObject
+    }
+
+class DrillUpButton(CommonObject): 
+    ALLOWED_OPTIONS = {
+    "position": (Position, dict),
+    "relativeTo": basestring,
+    "theme": NotImplemented #ThemeObject
+    },
+
+class Labels(CommonObject):   
+    ALLOWED_OPTIONS = {
+    "align": basestring,
+    "distance": int,
+    "enabled": bool,
+    "format": basestring,
+    "formatter": (Formatter, JSfunction, basestring),
+    "overflow": basestring,
+    "rotation": int,
+    "staggerLines": int,
+    "step": int,
+    "style": (CSSObject, dict),
+    "useHTML": bool,
+    "x": int,
+    "y": int,
+    "zIndex": int,
+    }
+
+class Title(CommonObject): 
+    ALLOWED_OPTIONS = {
+    "align": basestring,
+    "enabled": bool,
+    "margin": int,
+    "offset": int,
+    "rotation": int,
+    "style": (CSSObject, dict),
+    "text": basestring,
+    }
+
+class ArrayObject(object):
+
+    def __init__(self, **kwargs):
+        self.process_kwargs(kwargs)
+
+    def __validate_options__(self, k,v,ov):
+        if ov == NotImplemented: 
+            raise OptionTypeError("Option Type Currently Not Supported: %s" % k)
+        if isinstance(ov,list):
+            for o in ov:
+                if isinstance(v,o): return True
+                else:
+                    raise OptionTypeError("Option Type Currently Not Supported: %s" % k)
+        else:
+            if ov == NotImplemented: raise OptionTypeError("Option Type Currently Not Supported: %s" % k)
+            if isinstance(v,ov): return True
+            else: return False
+
+    def __options__(self):
+        return [self.__dict__]
+
+    def process_kwargs(self,kwargs):
+        IDV_OBJECT_LIST = [JSfunction, Formatter, CSSObject, Position]
+
+        for k, v in kwargs.items():
+            if k in self.ALLOWED_OPTIONS:
+                if self.__validate_options__(k,v,self.ALLOWED_OPTIONS[k]):
+                    if isinstance(self.ALLOWED_OPTIONS[k], tuple) and \
+                        self.ALLOWED_OPTIONS[k][0] in IDV_OBJECT_LIST:
+
+                        if isinstance(v, dict):
+                            self.__dict__.update({k:self.ALLOWED_OPTIONS[k][0](**v)})
+                        elif isinstance(v, CommonObject) or isinstance(v, ArrayObject):
+                            self.__dict__.update({k:self.ALLOWED_OPTIONS[k][0](**v.__options__())})
+                        elif isinstance(v, JSfunction) or isinstance(v, Formatter):
+                            self.__dict__.update({k:self.ALLOWED_OPTIONS[k][0](v.__options__().get_jstext())})
+                        elif isinstance(v, CSSObject):
+                            self.__dict__.update({k:self.ALLOWED_OPTIONS[k][0](**v.__options__())})
+                        else:
+                            self.__dict__.update({k:self.ALLOWED_OPTIONS[k][0](v)})
+                    else:
+                        self.__dict__.update({k:v})
+                else: 
+                    raise OptionTypeError("Option Type Mismatch: Expected: %s" % self.ALLOWED_OPTIONS[k])
+            else: 
+                raise OptionTypeError("Option: %s Not Allowed For Event Class:" % k)
+
+
+class PlotBands(ArrayObject):
+    ALLOWED_OPTIONS = {
+    "borderColor": basestring,
+    "borderWidth": int,
+    "color": basestring,
+    "events": (Events, dict),
+    "from": (int, float, datetime.datetime),
+    "id": basestring,
+    }
+
+
+class OptionTypeError(Exception):
+
+    def __init__(self,*args):
+        self.args = args
 
 
 def path_to_array(path):
@@ -133,13 +409,6 @@ def path_to_array(path):
         except:
             pass
     return path
-
-
-class Event(object):
-
-    def __init__(self, event_type, event_method):
-        self.event_type = event_type
-        self.event_method = event_method
 
 if __name__ == '__main__':
     print path_to_array("M 4687 2398 L 4679 2402 4679 2398 Z")

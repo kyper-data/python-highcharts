@@ -1,6 +1,6 @@
 # -*- coding: UTF-8 -*-
 
-from highchart_types import OptionTypeError, Series, SeriesOptions
+from highmap_types import OptionTypeError, Series, SeriesOptions
 from common import Formatter, Event
 
 import json
@@ -65,7 +65,6 @@ class BaseOptions(object):
 
 class ChartOptions(BaseOptions):
     ALLOWED_OPTIONS = {
-        "alignTicks": bool,
         "animation": bool,
         "backgroundColor": basestring,
         "borderColor": basestring,
