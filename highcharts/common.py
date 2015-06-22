@@ -316,7 +316,9 @@ class Labels(CommonObject):
     "staggerLines": int,
     "step": int,
     "style": (CSSObject, dict),
+    "textAlign": basestring,
     "useHTML": bool,
+    "verticalAlign": basestring,
     "x": int,
     "y": int,
     "zIndex": int,
@@ -333,9 +335,32 @@ class Title(CommonObject):
     "text": basestring,
     }
 
+class Navigation(CommonObject): 
+    ALLOWED_OPTIONS = {
+    "activeColor": basestring,
+    "animation": NotImplemented,
+    "arrowSize": int,
+    "inactiveColor": basestring,
+    "style": (CSSObject, dict),
+    }
+
+class DateTimeLabelFormats(CommonObject):
+    ALLOWED_OPTIONS = {
+    "millisecond": basestring,
+    "second": basestring,
+    "minute": basestring,
+    "hour": basestring,
+    "day": basestring,
+    "week": basestring,
+    "month": basestring,
+    "year": basestring,
+    }   
+
 class ArrayObject(object):
 
     def __init__(self, **kwargs):
+        #self.data = []
+        #self.temp_data = {}
         self.process_kwargs(kwargs)
 
     def __validate_options__(self, k,v,ov):
@@ -352,7 +377,7 @@ class ArrayObject(object):
             else: return False
 
     def __options__(self):
-        return [self.__dict__]
+        return self.__dict__
 
     def process_kwargs(self,kwargs):
         IDV_OBJECT_LIST = [JSfunction, Formatter, CSSObject, Position]
@@ -379,7 +404,7 @@ class ArrayObject(object):
                     raise OptionTypeError("Option Type Mismatch: Expected: %s" % self.ALLOWED_OPTIONS[k])
             else: 
                 raise OptionTypeError("Option: %s Not Allowed For Event Class:" % k)
-
+        #self.data.append(self.__dict__)
 
 class PlotBands(ArrayObject):
     ALLOWED_OPTIONS = {
@@ -389,7 +414,50 @@ class PlotBands(ArrayObject):
     "events": (Events, dict),
     "from": (int, float, datetime.datetime),
     "id": basestring,
+    "label": (Labels, dict),
+    "to": (int, float, datetime.datetime),
+    "zIndex": int
     }
+
+class PlotLines(ArrayObject):
+    ALLOWED_OPTIONS = {
+    "Color": basestring,
+    "dashStyle": int,
+    "events": (Events, dict),
+    "id": basestring,
+    "label": (Labels, dict),
+    "value": (int, float),
+    "width": int,
+    "zIndex": int
+    }
+        
+
+class Items(ArrayObject):
+    ALLOWED_OPTIONS = {
+    "html": basestring,
+    "style": (CSSObject, dict)
+    }
+
+class Background(ArrayObject):
+    ALLOWED_OPTIONS = {
+    "backgroundColor": (basestring, dict),
+    "shape": basestring,
+    "innerWidth": int,
+    "outerWidth": int,
+    "borderWidth": int,
+    "borderColor": basestring,
+    "outerRadius": basestring,
+    }
+
+
+class Breaks(ArrayObject):
+    ALLOWED_OPTIONS = {
+    "breakSize": int,
+    "from": (int, float),
+    "repeat": int,
+    "to": (int, float),
+    }
+
 
 
 class OptionTypeError(Exception):

@@ -1,27 +1,14 @@
 # -*- coding: UTF-8 -*-
 import json, datetime
-from common import Formatter, Events, CSSObject, ContextButton, JSfunction
-
+from common import Formatter, Events, Position, ContextButton, Options3d, ResetZoomButton, DrillUpButton, Labels, \
+    PlotBands, Title, JSfunction, CSSObject, CommonObject, ArrayObject
 
 PLOT_OPTION_ALLOWED_ARGS = {
   "common": {
     "animation": bool,
     "color": basestring,
     "cursor": basestring,
-    "dataLabels": {
-            "align": "basestring",
-            "enabled": bool,
-            "formatter": (Formatter, JSfunction),
-            "overflow": basestring,
-            "rotation": int,
-            "staggerLines": int,
-            "step": int,
-            "style": (CSSObject, dict),
-            "useHTML": bool,
-            "x": int,
-            "y": int,
-            "zIndex": int,
-        },
+    "dataLabels": Labels,
     "enableMouseTracking": bool,
     "events": (Events, dict),
     "id": basestring,
