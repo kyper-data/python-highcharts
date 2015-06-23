@@ -2,8 +2,8 @@
 
 from highchart_types import OptionTypeError, Series, SeriesOptions
 from common import Formatter, Events, Position, ContextButton, Options3d, ResetZoomButton, \
-    DrillUpButton, Labels, PlotBands, PlotLines, Title, Items, Navigation, Background, \
-    DateTimeLabelFormats, Breaks, JSfunction, CSSObject, CommonObject, ArrayObject
+    DrillUpButton, Labels, PlotBands, PlotLines, Title, Items, Navigation, Background, Breaks, \
+    DateTimeLabelFormats, Zones, JSfunction, CSSObject, SVGObject, CommonObject, ArrayObject
 
 import json, datetime
 
@@ -49,7 +49,12 @@ class BaseOptions(object):
         }
 
         ARRAYOBJECT_LIST = {
+            "background": Background,
+            "breaks": Breaks,
             "plotBands": PlotBands,
+            "plotLines": PlotLines,
+            "items": Items,
+            "zones": Zones
         }
 
         for k, v in kwargs.items(): 
@@ -61,8 +66,8 @@ class BaseOptions(object):
                             for key, value in v.items(): # check if v has object input 
                                 if key in DICTOBJECT_LIST:
                                     self.__dict__[k].__options__()[key].__options__().update(value)
-                                    new_v =  self.__dict__[k].__options__()[key].__options__()
-                                    self.__dict__[k].__options__().update({key:new_v})
+                                    #new_v =  self.__dict__[k].__options__()[key].__options__()
+                                    #self.__dict__[k].__options__().update({key:new_v})
                                 else:
                                     self.__dict__[k].__options__().update({key:value})
                         else:
@@ -79,13 +84,30 @@ class BaseOptions(object):
                     if self.__getattr__(k): # update array 
                         if isinstance(v, dict):
                             self.__dict__[k].append(ARRAYOBJECT_LIST[k](**v))
+                        elif isinstance(v, list):
+                            for item in v:
+                                self.__dict__[k].append(ARRAYOBJECT_LIST[k](**item))
                         else:
                             OptionTypeError("Not An Accepted Input Type: %s" % type(v))        
                     else: #first 
                         if isinstance(v, dict):
                             self.__dict__.update({k:[ARRAYOBJECT_LIST[k](**v)]})
+                        elif isinstance(v, list):
+                            if len(v) == 1:
+                                self.__dict__.update({k:[ARRAYOBJECT_LIST[k](**v[0])]})
+                            else:
+                                self.__dict__.update({k:[ARRAYOBJECT_LIST[k](**v[0])]})
+                                for item in v[1:]:
+                                    self.__dict__[k].append(ARRAYOBJECT_LIST[k](**item))
                         else:
-                            OptionTypeError("Not An Accepted Input Type: %s" % type(v))        
+                            OptionTypeError("Not An Accepted Input Type: %s" % type(v))
+
+                elif isinstance(v, SeriesOptions):
+                    if self.__getattr__(k):
+                        self.__dict__[k].__options__().update(v.__options__())
+                        v = SeriesOptions(series_type=k, supress_errors=True, 
+                            **self.__dict__[k].__options__())
+                    self.__dict__.update({k:v})      
 
                 else:
                     self.__dict__.update({k:v})
@@ -115,7 +137,7 @@ class ChartOptions(BaseOptions):
         "className": basestring,
         "defaultSeriesType": basestring,
         "events": Events,
-        "height": (int,basestring),
+        "height": [int,basestring],
         "ignoreHiddenSeries": bool,
         "inverted": bool,
         "margin": list,
@@ -142,7 +164,7 @@ class ChartOptions(BaseOptions):
         "spacingTop": int,
         "style": (CSSObject, dict),
         "type": basestring,
-        "width": (int,basestring),
+        "width": [int,basestring],
         "zoomType": basestring,
     }
 
@@ -151,18 +173,6 @@ class ColorsOptions(BaseOptions):
     """ Special Case, this is simply just an array of colours """
     def __init__(self):
         # Predefined Colors
-        # self.__dict__.update({"colors":[
-        #    '#2f7ed8', 
-        #    '#0d233a', 
-        #    '#8bbc21', 
-        #    '#910000', 
-        #    '#1aadce', 
-        #    '#492970',
-        #    '#f28f43', 
-        #    '#77a1e5', 
-        #    '#c42525', 
-        #    '#a6c96a'
-        # ]})
         self.colors = ['#2f7ed8', 
            '#0d233a', 
            '#8bbc21', 
@@ -173,6 +183,8 @@ class ColorsOptions(BaseOptions):
            '#77a1e5', 
            '#c42525', 
            '#a6c96a']
+
+        #self.colors = []
 
     def set_colors(self,colors):
         #self.__dict__.update({"colors":colors})
@@ -329,20 +341,20 @@ class PaneOptions(BaseOptions):
 class PlotOptions(BaseOptions):
     """ Another Special Case: Interface With all the different Highchart Plot Types Here """
     ALLOWED_OPTIONS = {
-        "area": SeriesOptions,
-        "arearange": SeriesOptions,
-        "areaspline": SeriesOptions,
-        "areasplinerange": SeriesOptions,
-        "bar": SeriesOptions,
-        "column": SeriesOptions,
-        "columnrange": SeriesOptions,
-        "gauge": SeriesOptions,
-        "line": SeriesOptions,
-        "pie": SeriesOptions,
-        "scatter": SeriesOptions,
-        "series": SeriesOptions,
-        "spline": SeriesOptions,
-        "boxplot": SeriesOptions,
+        "area": (SeriesOptions, dict),
+        "arearange": (SeriesOptions, dict),
+        "areaspline": (SeriesOptions, dict),
+        "areasplinerange": (SeriesOptions, dict),
+        "bar": (SeriesOptions, dict),
+        "column": (SeriesOptions, dict),
+        "columnrange": (SeriesOptions, dict),
+        "gauge": (SeriesOptions, dict),
+        "line": (SeriesOptions, dict),
+        "pie": (SeriesOptions, dict),
+        "scatter": (SeriesOptions, dict),
+        "series": (SeriesOptions, dict),
+        "spline": (SeriesOptions, dict) ,
+        "boxplot": (SeriesOptions, dict),
     }
 
 
@@ -387,13 +399,14 @@ class TooltipOptions(BaseOptions):
         "borderColor": basestring,
         "borderRadius": int,
         "borderWidth": int,
-        "crosshairs": (bool, list, dict),
+        "crosshairs": [bool, list, dict],
         "dateTimeLabelFormats": (DateTimeLabelFormats, dict),
         "enabled": bool,
         "followPointer": bool,
         "followTouchMove": bool,
         "footerFormat": basestring,
         "formatter": (Formatter, JSfunction),
+        "headerFormat": basestring,
         "pointFormat": basestring,
         "positioner": JSfunction,
         "shadow": bool,

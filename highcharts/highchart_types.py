@@ -1,63 +1,76 @@
 # -*- coding: UTF-8 -*-
 import json, datetime
 from common import Formatter, Events, Position, ContextButton, Options3d, ResetZoomButton, DrillUpButton, Labels, \
-    PlotBands, Title, JSfunction, CSSObject, CommonObject, ArrayObject
+    Marker, Point, PlotBands, States, Tooltip, Title, Zones, JSfunction, CSSObject, SVGObject, \
+    CommonObject, ArrayObject
+
+from types import NoneType
 
 PLOT_OPTION_ALLOWED_ARGS = {
   "common": {
     "animation": bool,
     "color": basestring,
     "cursor": basestring,
-    "dataLabels": Labels,
+    "dataLabels": (Labels, dict),
     "enableMouseTracking": bool,
     "events": (Events, dict),
     "id": basestring,
-    "point": NotImplemented,
+    "point": (Point, dict),
     "selected": bool,
     "showCheckbox": bool,
     "showInLegend": bool,
-    "states": NotImplemented,
+    "states": (States, dict),
     "stickyTracking": bool,
-    "tooltip": NotImplemented,
+    "tooltip": (Tooltip, dict),
     "visible": bool,
     "zIndex": int,
-    "marker": dict
-  },
+    "zoneAxis": basestring,
+    "zones": (Zones, dict),
+    },
   "area": {
     "allowPointSelect": bool,
     "connectEnds": bool,
     "connectNulls": bool,
     "cropThreshold": int,
     "dashStyle": basestring,
-    "fillColor": basestring,
+    "fillColor": [basestring, dict],
     "fillOpacity": float,
+    "getExtremesFromAll": bool,
+    "keys": list,
     "lineColor": basestring,
     "lineWidth": int,
-    "marker": dict,
+    "linkedTo": basestring,
+    "marker": (Marker, dict),
+    "negativeColor": basestring,
+    "negativeFillColor": basestring,
     "pointInterval": int,
     "pointPlacement": basestring,
-    "pointStart": (int,basestring),
+    "pointStart": (int,basestring, datetime.datetime),
     "shadow": bool,
     "stacking": basestring,
-    "threshold": int,
-    "turboThreshold": int,
+    "step": bool,
+    "threshold": [int, NoneType],
     "trackByArea": bool,
+    "turboThreshold": int,
+    
   },
   "arearange": {
     "allowPointSelect": bool,
     "connectNulls": bool,
     "cropThreshold": int,
     "dashStyle": basestring,
-    "fillColor": basestring,
+    "fillColor": [basestring, dict],
     "fillOpacity": float,
+    "getExtremesFromAll": bool,
     "lineColor": basestring,
     "lineWidth": int,
     "pointInterval": int,
     "pointPlacement": basestring,
-    "pointStart": (int,basestring,datetime.datetime),
+    "pointStart": [int,basestring,datetime.datetime],
     "shadow": bool,
-    "turboThreshold": int,
     "trackByArea": bool,
+    "turboThreshold": int,
+    
   },
   "areaspline": {
     "allowPointSelect": bool,
@@ -65,17 +78,17 @@ PLOT_OPTION_ALLOWED_ARGS = {
     "connectEnds": bool,
     "connectNulls": bool,
     "dashStyle": basestring,
-    "fillColor": basestring,
+    "fillColor": [basestring, dict],
     "fillOpacity": float,   
     "lineColor": basestring,
     "lineWidth": int,
-    "marker": dict,
+    "marker": (Marker, dict),
     "pointInterval": int,
     "pointPlacement": basestring,
-    "pointStart": (int,basestring,datetime.datetime),
+    "pointStart": [int,basestring,datetime.datetime],
     "shadow": bool,
     "stacking": basestring,
-    "threshold": int,
+    "threshold": [int, NoneType],
     "turboThreshold": int,
     "trackByArea": bool,
   },
@@ -84,13 +97,13 @@ PLOT_OPTION_ALLOWED_ARGS = {
     "connectNulls": bool,
     "cropThreshold": int,
     "dashStyle": basestring,
-    "fillColor": basestring,
+    "fillColor": [basestring, dict],
     "fillOpacity": float,
     "lineColor": basestring,
     "lineWidth": int,
     "pointInterval": int,
     "pointPlacement": basestring,
-    "pointStart": (int,basestring,datetime.datetime),
+    "pointStart": [int,basestring,datetime.datetime],
     "shadow": bool,
     "turboThreshold": int,
     "trackByArea": bool,  
@@ -112,7 +125,7 @@ PLOT_OPTION_ALLOWED_ARGS = {
     "pointWidth": int,
     "pointInterval": int,
     "pointPlacement": basestring,
-    "pointStart": (int,basestring,datetime.datetime),
+    "pointStart": [int,basestring,datetime.datetime],
     "shadow": bool,
     "stacking": basestring,
     "turboThreshold": int,
@@ -124,17 +137,17 @@ PLOT_OPTION_ALLOWED_ARGS = {
     "borderWidth": int,
     "colorByPoint": bool,
     "cropThreshold": int,
-    "groupPadding": (float, int),
+    "groupPadding": [float, int],
     "grouping": bool,
     "lineColor": basestring,
     "lineWidth": int,
     "minPointLength": int,
     "pointPadding": float,
     "pointRange": int,
-    "pointWidth": (int, float),
+    "pointWidth": [int, float],
     "pointInterval": int,
     "pointPlacement": basestring,
-    "pointStart": (int,basestring,datetime.datetime),
+    "pointStart": [int,basestring,datetime.datetime],
     "shadow": bool,
     "stacking": basestring,
     "turboThreshold": int,
@@ -156,7 +169,7 @@ PLOT_OPTION_ALLOWED_ARGS = {
     "pointWidth": int,
     "pointInterval": int,
     "pointPlacement": basestring,
-    "pointStart": (int,basestring,datetime.datetime),
+    "pointStart": [int,basestring,datetime.datetime],
     "shadow": bool,
     "stacking": basestring,
     "turboThreshold": int,
@@ -182,7 +195,7 @@ PLOT_OPTION_ALLOWED_ARGS = {
     "showInLegend": NotImplemented,
     "states": NotImplemented,
     "stickyTracking": bool,
-    "threshold": int,
+    "threshold": [int, NoneType],
     "tooltip": NotImplemented,
     "visible": bool,
     "wrap": bool,
@@ -195,10 +208,10 @@ PLOT_OPTION_ALLOWED_ARGS = {
     "cropThreshold": int,
     "dashStyle": basestring,
     "lineWidth": int,
-    "marker": dict,
+    "marker": (Marker, dict),
     "pointInterval": int,
     "pointPlacement": basestring,
-    "pointStart": (int,basestring,datetime.datetime),
+    "pointStart": [int,basestring,datetime.datetime],
     "shadow": NotImplemented,
     "stacking": basestring,
     "step": basestring,
@@ -212,10 +225,10 @@ PLOT_OPTION_ALLOWED_ARGS = {
     "ignoreHiddenPoint": bool,
     "innerSize": int,
     "lineWidth": int,
-    "marker": dict,
+    "marker": (Marker, dict),
     "pointPlacement": basestring,
     "shadow": bool,
-    "size": (int,basestring),
+    "size": [int,basestring],
     "slicedOffset": int,
     "startAngle": int,
     "dataLabels": dict,
@@ -229,10 +242,10 @@ PLOT_OPTION_ALLOWED_ARGS = {
     "ignoreHiddenPoint": bool,
     "innerSize": int,
     "lineWidth": int,
-    "marker": dict,
+    "marker": (Marker, dict),
     "pointPlacement": basestring,
     "shadow": bool,
-    "size": (int,basestring),
+    "size": [int,basestring],
     "slicedOffset": int,
     "startAngle": int,
     "dataLabels": dict,
@@ -244,10 +257,10 @@ PLOT_OPTION_ALLOWED_ARGS = {
     "cropThreshold": int,
     "dashStyle": basestring,
     "lineWidth": int,
-    "marker": dict,
+    "marker": (Marker, dict),
     "pointInterval": int,
     "pointPlacement": basestring,
-    "pointStart": (int,basestring,datetime.datetime),
+    "pointStart": [int,basestring,datetime.datetime],
     "shadow": bool,
     "turboThreshold": int,
   },
@@ -258,10 +271,10 @@ PLOT_OPTION_ALLOWED_ARGS = {
     "cropThreshold": int,
     "dashStyle": basestring,
     "lineWidth": int,
-    "marker": dict,
+    "marker": (Marker, dict),
     "pointInterval": int,
     "pointPlacement": basestring,
-    "pointStart": (int,basestring,datetime.datetime),
+    "pointStart": [int,basestring,datetime.datetime],
     "shadow": bool,
     "stacking": basestring,
     "turboThreshold": int,
@@ -273,10 +286,10 @@ PLOT_OPTION_ALLOWED_ARGS = {
     "cropThreshold": int,
     "dashStyle": basestring,
     "lineWidth": int,
-    "marker": dict,
+    "marker": (Marker, dict),
     "pointInterval": int,
     "pointPlacement": basestring,
-    "pointStart": (int,basestring,datetime.datetime),
+    "pointStart": [int,basestring,datetime.datetime],
     "shadow": bool,
     "stacking": basestring,
     "turboThreshold": int,
@@ -318,10 +331,9 @@ class SeriesOptions(object):
     @staticmethod
     def __validate_options__(k,v,ov):
         if isinstance(ov,list):
-          for o in ov:
-            if isinstance(v,o): return True
-          else:
-            raise OptionTypeError("Option Type Currently Not Supported: %s" % k)
+            if isinstance(v,tuple(ov)): return True
+            else:
+                raise OptionTypeError("Option Type Currently Not Supported: %s" % k)
         else:
           if ov == NotImplemented: raise OptionTypeError("Option Type Currently Not Supported: %s" % k)
           if isinstance(v,ov): return True
@@ -331,15 +343,31 @@ class SeriesOptions(object):
         return self.__dict__
 
     def __display_options__(self):
-        print json.dumps(self.__options__(),indent=4,sort_keys=True)
+        print(json.dumps(self.__options__(),indent=4,sort_keys=True))
 
     def process_kwargs(self,kwargs,series_type,supress_errors=False):
+        #IDV_OBJECT_LIST = [JSfunction, Formatter, CSSObject, SVGObject, Position]
         allowed_args = PLOT_OPTION_ALLOWED_ARGS[series_type]
         allowed_args.update(PLOT_OPTION_ALLOWED_ARGS["common"])
+
         for k, v in kwargs.items():
             if k in allowed_args:
                 if SeriesOptions.__validate_options__(k,v,allowed_args[k]):
-                    self.__dict__.update({k:v})
+                    if isinstance(allowed_args[k], tuple):
+                        if isinstance(v, dict):
+                            self.__dict__.update({k:allowed_args[k][0](**v)})
+                        elif isinstance(v, CommonObject) or isinstance(v, ArrayObject):
+                            self.__dict__.update({k:allowed_args[k][0](**v.__options__())})
+                        elif isinstance(v, JSfunction) or isinstance(v, Formatter):
+                            self.__dict__.update({k:allowed_args[k][0](v.__options__().get_jstext())})
+                        elif isinstance(v, CSSObject) or isinstance(v, SVGObject):
+                            self.__dict__.update({k:allowed_args[k][0](**v.__options__())})
+                        elif isinstance(v, datetime.datetime):
+                            self.__dict__.update({k:v})                            
+                        else:
+                            self.__dict__.update({k:allowed_args[k][0](v)})
+                    else:
+                        self.__dict__.update({k:v})
                 else: 
                     if not supress_errors: raise OptionTypeError("Option Type Mismatch: Expected: %s" % allowed_args[k])
             else: 

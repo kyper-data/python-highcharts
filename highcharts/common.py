@@ -141,6 +141,17 @@ class CSSObject(object):
         return self.css
 
 
+class SVGObject(object):
+    """ SVG style class """
+
+    def __init__(self, **kwargs):
+        self.svg = kwargs
+    
+    def __options__(self):
+        return self.svg
+
+
+
 class JSfunction(object):
 
     def __init__(self, function):
@@ -173,10 +184,9 @@ class CommonObject(object):
         if ov == NotImplemented: 
             raise OptionTypeError("Option Type Currently Not Supported: %s" % k)
         if isinstance(ov,list):
-            for o in ov:
-                if isinstance(v,o): return True
-                else:
-                    raise OptionTypeError("Option Type Currently Not Supported: %s" % k)
+            if isinstance(v,tuple(o)): return True
+            else:
+                raise OptionTypeError("Option Type Currently Not Supported: %s" % k)
         else:
             if ov == NotImplemented: raise OptionTypeError("Option Type Currently Not Supported: %s" % k)
             if isinstance(v,ov): return True
@@ -186,8 +196,8 @@ class CommonObject(object):
         return self.__dict__
 
     def process_kwargs(self,kwargs):
-        IDV_OBJECT_LIST = [JSfunction, Formatter, CSSObject, Position]
-
+        IDV_OBJECT_LIST = [JSfunction, Formatter, Halo, Marker, CSSObject, SVGObject, \
+         Position, Hover, Select, Events, DateTimeLabelFormats]
         for k, v in kwargs.items():
             if k in self.ALLOWED_OPTIONS:
                 if self.__validate_options__(k,v,self.ALLOWED_OPTIONS[k]):
@@ -200,7 +210,7 @@ class CommonObject(object):
                             self.__dict__.update({k:self.ALLOWED_OPTIONS[k][0](**v.__options__())})
                         elif isinstance(v, JSfunction) or isinstance(v, Formatter):
                             self.__dict__.update({k:self.ALLOWED_OPTIONS[k][0](v.__options__().get_jstext())})
-                        elif isinstance(v, CSSObject):
+                        elif isinstance(v, CSSObject) or isinstance(v, SVGObject):
                             self.__dict__.update({k:self.ALLOWED_OPTIONS[k][0](**v.__options__())})
                         else:
                             self.__dict__.update({k:self.ALLOWED_OPTIONS[k][0](v)})
@@ -208,7 +218,7 @@ class CommonObject(object):
                         self.__dict__.update({k:v})
                 else: 
                     raise OptionTypeError("Option Type Mismatch: Expected: %s" % self.ALLOWED_OPTIONS[k])
-            else: 
+            else:
                 raise OptionTypeError("Option: %s Not Allowed For Event Class:" % k)
 
 
@@ -245,6 +255,10 @@ class Events(CommonObject):
     # def load_defaults(self,series_type):
     #     self.process_kwargs(DEFAULT_OPTIONS.get(series_type,{}),series_type)
 
+class Point(CommonObject):
+    ALLOWED_OPTIONS = {
+    "events": Events
+    }
 
 class Position(CommonObject):
     ALLOWED_OPTIONS = {
@@ -316,6 +330,7 @@ class Labels(CommonObject):
     "staggerLines": int,
     "step": int,
     "style": (CSSObject, dict),
+    "text": basestring,
     "textAlign": basestring,
     "useHTML": bool,
     "verticalAlign": basestring,
@@ -354,7 +369,79 @@ class DateTimeLabelFormats(CommonObject):
     "week": basestring,
     "month": basestring,
     "year": basestring,
-    }   
+    }
+
+class Select(CommonObject):
+    ALLOWED_OPTIONS = {
+    "enabled": bool,
+    "fillColor": basestring,
+    "lineColor": basestring,
+    "lineWidth": int,
+    "radius": int,
+    }
+
+class States(CommonObject):
+    ALLOWED_OPTIONS = {
+    "hover": dict,
+    "select": dict,
+    }
+
+class Marker(CommonObject):
+    ALLOWED_OPTIONS = {
+    "enabled": bool,
+    "fillColor": basestring,
+    "height": int,
+    "lineWidth": int,
+    "lineColor": basestring,
+    "radius": int,
+    "states": (States, dict),
+    "symbol": basestring,
+    "width": int
+    }
+
+class Halo(CommonObject):
+    ALLOWED_OPTIONS = {
+    "attributes": (SVGObject, dict),
+    "opacity": float,
+    "size": int
+    }
+
+class Hover(CommonObject):
+    ALLOWED_OPTIONS = {
+    "enabled": bool,
+    "fillColor": basestring,
+    "halo": (Halo, dict),
+    "lineColor": basestring,
+    "lineWidth": int,
+    "lineWidthPlus": int,
+    "marker": (Marker, dict),
+    "radius": int,
+    "radiusPlus": int,
+    }
+
+class States(CommonObject):
+    ALLOWED_OPTIONS = {
+    "hover": (Hover, dict),
+    "select": (Select, dict)
+    }
+
+class Tooltip(CommonObject):
+    ALLOWED_OPTIONS = {
+    "dateTimeLabelFormats": (DateTimeLabelFormats, dict),
+    "followPointer": bool,
+    "followTouchMove": bool,
+    "footerFormat": basestring,
+    "headerFormat": basestring,
+    "hideDelay": int,
+    "pointFormat": basestring,
+    "pointFormatter": (Formatter, JSfunction, basestring),
+    "shape": basestring,
+    "valueDecimals": int,
+    "valuePrefix": basestring,
+    "valueSuffix": basestring,
+    "xDateFormat": basestring
+    }
+
 
 class ArrayObject(object):
 
@@ -367,10 +454,9 @@ class ArrayObject(object):
         if ov == NotImplemented: 
             raise OptionTypeError("Option Type Currently Not Supported: %s" % k)
         if isinstance(ov,list):
-            for o in ov:
-                if isinstance(v,o): return True
-                else:
-                    raise OptionTypeError("Option Type Currently Not Supported: %s" % k)
+            if isinstance(v,tuple(ov)): return True
+            else:
+                raise OptionTypeError("Option Type Currently Not Supported: %s" % k)
         else:
             if ov == NotImplemented: raise OptionTypeError("Option Type Currently Not Supported: %s" % k)
             if isinstance(v,ov): return True
@@ -380,7 +466,8 @@ class ArrayObject(object):
         return self.__dict__
 
     def process_kwargs(self,kwargs):
-        IDV_OBJECT_LIST = [JSfunction, Formatter, CSSObject, Position]
+        IDV_OBJECT_LIST = [JSfunction, Formatter, SVGObject, CSSObject, Position, Events,\
+        Labels]
 
         for k, v in kwargs.items():
             if k in self.ALLOWED_OPTIONS:
@@ -394,7 +481,7 @@ class ArrayObject(object):
                             self.__dict__.update({k:self.ALLOWED_OPTIONS[k][0](**v.__options__())})
                         elif isinstance(v, JSfunction) or isinstance(v, Formatter):
                             self.__dict__.update({k:self.ALLOWED_OPTIONS[k][0](v.__options__().get_jstext())})
-                        elif isinstance(v, CSSObject):
+                        elif isinstance(v, CSSObject) or isinstance(v, SVGObject):
                             self.__dict__.update({k:self.ALLOWED_OPTIONS[k][0](**v.__options__())})
                         else:
                             self.__dict__.update({k:self.ALLOWED_OPTIONS[k][0](v)})
@@ -412,21 +499,21 @@ class PlotBands(ArrayObject):
     "borderWidth": int,
     "color": basestring,
     "events": (Events, dict),
-    "from": (int, float, datetime.datetime),
+    "from": [int, float, datetime.datetime],
     "id": basestring,
     "label": (Labels, dict),
-    "to": (int, float, datetime.datetime),
+    "to": [int, float, datetime.datetime],
     "zIndex": int
     }
 
 class PlotLines(ArrayObject):
     ALLOWED_OPTIONS = {
-    "Color": basestring,
+    "color": basestring,
     "dashStyle": int,
     "events": (Events, dict),
     "id": basestring,
     "label": (Labels, dict),
-    "value": (int, float),
+    "value": [int, float],
     "width": int,
     "zIndex": int
     }
@@ -440,7 +527,7 @@ class Items(ArrayObject):
 
 class Background(ArrayObject):
     ALLOWED_OPTIONS = {
-    "backgroundColor": (basestring, dict),
+    "backgroundColor": [basestring, dict],
     "shape": basestring,
     "innerWidth": int,
     "outerWidth": int,
@@ -453,11 +540,18 @@ class Background(ArrayObject):
 class Breaks(ArrayObject):
     ALLOWED_OPTIONS = {
     "breakSize": int,
-    "from": (int, float),
+    "from": [int, float],
     "repeat": int,
-    "to": (int, float),
+    "to": [int, float],
     }
 
+class Zones(ArrayObject):
+    ALLOWED_OPTIONS = {
+    "color": basestring,
+    "dashStyle": basestring,
+    "fillColor": basestring,
+    "value": [int, float],
+    }
 
 
 class OptionTypeError(Exception):

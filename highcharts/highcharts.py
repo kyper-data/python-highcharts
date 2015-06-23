@@ -1,5 +1,5 @@
 #!/usr/bin/python
-
+# -*- coding: utf-8 -*-
 """
 Python-Highcharts is a Python wrapper for Highcharts graph library.
 For Highcharts Licencing Visit:
@@ -10,6 +10,10 @@ Project location : xxxxx
 from __future__ import unicode_literals
 from optparse import OptionParser
 from jinja2 import Environment, PackageLoader
+# import sys
+# reload(sys)
+# sys.setdefaultencoding("utf-8")
+
 # from slugify import slugify
 import json, uuid
 import datetime, random, os, inspect
@@ -22,7 +26,7 @@ from options import BaseOptions, ChartOptions, \
     TooltipOptions, xAxisOptions, yAxisOptions
 
 from highchart_types import Series, SeriesOptions, HighchartsError, MultiAxis
-from common import Formatter, CSSObject, JSfunction, RawJavaScriptText, CommonObject, ArrayObject
+from common import Formatter, CSSObject, SVGObject, JSfunction, RawJavaScriptText, CommonObject, ArrayObject
 
 CONTENT_FILENAME = "./content.html"
 PAGE_FILENAME = "./page.html"
@@ -35,7 +39,7 @@ template_page = jinja2_env.get_template(PAGE_FILENAME)
     
 DEFAULT_POINT_INTERVAL = 86400000
 
-FORMAT_SPECIAL_CASES = {
+FORMAT_SPECIAL_CASES = {    
     "formatter": "formatter",
     "labelFormatter": "formatter",
     "pointStart": "skip_quotes",
@@ -183,28 +187,28 @@ class Highcharts(object):
         self.options["credits"].update_dict(enabled=False)
 
 
-    def title(self, title=None):
-        """ Bind Title """
-        if not title:
-            return self.options["title"].text
-        else:
-            self.options["title"].update_dict(text=title)
+    # def title(self, title=None):
+    #     """ Bind Title """
+    #     if not title:
+    #         return self.options["title"].text
+    #     else:
+    #         self.options["title"].update_dict(text=title)
 
 
-    def colors(self, colors=None):
-        """ Bind Color Array """
-        if not colors:
-            return self.options["colors"].__dict__.values() if self.options['colors'] is not None else []
-        else:
-            self.options["colors"].set_colors(colors)
+    # def colors(self, colors=None):
+    #     """ Bind Color Array """
+    #     if not colors:
+    #         return self.options["colors"].__dict__.values() if self.options['colors'] is not None else []
+    #     else:
+    #         self.options["colors"].set_colors(colors)
 
 
-    def chart_background(self, background=None):
-        """ Apply Chart Background """
-        if not background:
-            return self.options["chart"].backgroundColor
-        else:
-            self.options["chart"].update_dict(backgroundColor=background)
+    # def chart_background(self, background=None):
+    #     """ Apply Chart Background """
+    #     if not background:
+    #         return self.options["chart"].backgroundColor
+    #     else:
+    #         self.options["chart"].update_dict(backgroundColor=background)
 
     def set_JSsource(self, new_src):
         if isinstance(new_src, list):
@@ -221,12 +225,12 @@ class Highcharts(object):
             self.CSSsource.append(new_src)
 
 
-    def set_x_axis(self, **kwargs):
-        self.options["xAxis"].update_dict(**kwargs)
+    # def set_x_axis(self, **kwargs):
+    #     self.options["xAxis"].update_dict(**kwargs)
 
 
-    def set_y_axis(self, **kwargs):
-        self.options["yAxis"].update_dict(**kwargs)
+    # def set_y_axis(self, **kwargs):
+    #     self.options["yAxis"].update_dict(**kwargs)
 
 
     def set_start_date(self, date):
@@ -292,43 +296,51 @@ class Highcharts(object):
         if self.hold_point_interval:
             kwargs.update({"pointInterval":self.hold_point_interval})
             self.hold_point_interval = None
-        if series_type not in self.options["plotOptions"].__dict__:
-            to_update = {series_type:SeriesOptions(series_type=series_type,
-                supress_errors=True, **kwargs)}
-            self.options["plotOptions"].update_dict(**to_update)
+        #if series_type not in self.options["plotOptions"].__dict__:
+        to_update = {series_type:SeriesOptions(series_type=series_type,
+            supress_errors=True, **kwargs)}
+        self.options["plotOptions"].update_dict(**to_update)
+
         series_data = Series(data, series_type=series_type, \
             supress_errors=True, **kwargs)
         self.data_temp.append(series_data)
         #self.options["series"].data.append(series_data)
 
 
-    def set_options2(self, options, force_options=False):
-        """ Set Plot Options """
-        if force_options:
-            for k, v in options.items():
-                self.options.update({k:v})
-        else:
-            new_options = {}
-            for key, option_data in options.items():
-                data = {}
-                for key2, val in option_data.items():
-                    if isinstance(val, dict):
-                        for key3, val2 in val.items():
-                            data.update({key2+"_"+key3:val2})
-                    else:
-                        data.update({key2:val})
-                new_options.update({key:data})
-            for key, val in new_options.items():
-                self.options[key].update_dict(**val)
+    # def set_options2(self, options, force_options=False):
+        # """ Set Plot Options """
+        # if force_options:
+        #     for k, v in options.items():
+        #         self.options.update({k:v})
+        # else:
+        #     new_options = {}
+        #     for key, option_data in options.items():
+        #         data = {}
+        #         for key2, val in option_data.items():
+        #             if isinstance(val, dict):
+        #                 for key3, val2 in val.items():
+        #                     data.update({key2+"_"+key3:val2})
+        #             else:
+        #                 data.update({key2:val})
+        #         new_options.update({key:data})
+        #     for key, val in new_options.items():
+        #         self.options[key].update_dict(**val)
 
 
     def set_options(self, option_type, option_dict, force_options=False):
         """ Set Plot Options """
         if force_options:
             self.options[option_type].update(option_dict)
+        elif option_type == 'plotOptions':
+            for key in option_dict.keys():
+                self.options[option_type].update_dict(**{key:SeriesOptions(key,**option_dict[key])})
         else:
             self.options[option_type].update_dict(**option_dict)
 
+
+    def set_dict_optoins(self, options):
+        for key, option_data in options.items():
+            self.set_options(key, option_data)
 
     def set_containerheader(self, containerheader):
         """Set containerheader"""
@@ -353,12 +365,12 @@ class Highcharts(object):
         # the method buildjschart defined here
         self.buildjschart()
         #self.option = json.dumps(self.__export_options__())
-        self.option = json.dumps(self.options, cls = HighchartsEncoder)
+        self.option = json.dumps(self.options, encoding='utf8', cls = HighchartsEncoder)
         self.setoption = json.dumps(self.setOptions, cls = HighchartsEncoder)
 
         #self.data = json.dumps(data_formatter(self.options['series']))
-        self.data = json.dumps(self.data_temp, cls = HighchartsEncoder)
-        self.htmlcontent = self.template_content_highcharts.render(chart=self)
+        self.data = json.dumps(self.data_temp, encoding='utf8', cls = HighchartsEncoder)
+        self.htmlcontent = self.template_content_highcharts.render(chart=self).encode('utf-8')
 
 
     def buildhtml(self):
@@ -369,8 +381,8 @@ class Highcharts(object):
         """
         self.buildcontent()
         self.buildhtmlheader()
-        self.content = self.htmlcontent
-        self.htmlcontent = self.template_page_highcharts.render(chart=self)
+        self.content = self.htmlcontent.decode('utf-8')
+        self.htmlcontent = self.template_page_highcharts.render(chart=self).encode('utf-8')
 
 
     def buildhtmlheader(self):
@@ -446,7 +458,7 @@ class TemplateMixin(object):
         # when this subclass method is entered it does call
         # the method buildjschart defined here
         self.buildjschart()
-        self.htmlcontent = self.template_chart_highcharts.render(chart=self)
+        self.htmlcontent = self.template_chart_highcharts.render(chart=self).encode('utf-8')
 
 
 def set_temp_dir(temp_dir):
@@ -487,9 +499,9 @@ class HighchartsEncoder(json.JSONEncoder):
             return json.JSONEncoder.default(self, obj)
 
     def encode(self, obj):
-        result = json.JSONEncoder.encode(self, obj)
+        result = json.JSONEncoder.encode(self, obj).decode('utf-8')
         for k, v in self._replacement_map.items():
-             result = result.replace('"%s"' % (k,), v)
+            result = result.replace('"%s"' % (k,), v.decode('utf-8'))
         return result
 
 def _main():
