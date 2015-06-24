@@ -3,7 +3,10 @@
 
 {% block start_script %}
     <script>
-        $(function(){ 
+        $(function(){
+        {% if chart.jsonp %}
+        	$.getJSON({{chart.url_for_jsonp}}, function ({{chart.dataname_jsonp}}){
+        {% endif %} 
 {% endblock start_script %}
 
 {% block body %}    
@@ -11,5 +14,9 @@
 
 {% block endscript %}        
 	});
+        {% if chart.jsonp %}
+        	});
+        {% endif %} 
     </script>
+
 {% endblock endscript %}

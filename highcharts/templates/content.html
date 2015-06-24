@@ -7,8 +7,9 @@
 	Highcharts.setOptions({{chart.setoption}});
     
     var option = {{chart.option}};
-    
+    {% if not chart.jsonp %}
     var data = {{chart.data}};
+    {% endif %} 
     option.series = data;
     var chart = new Highcharts.Chart(option);
 {% endblock body %}

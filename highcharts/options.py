@@ -3,9 +3,11 @@
 from highchart_types import OptionTypeError, Series, SeriesOptions
 from common import Formatter, Events, Position, ContextButton, Options3d, ResetZoomButton, \
     DrillUpButton, Labels, PlotBands, PlotLines, Title, Items, Navigation, Background, Breaks, \
-    DateTimeLabelFormats, Zones, JSfunction, CSSObject, SVGObject, CommonObject, ArrayObject
+    DateTimeLabelFormats, Zones, JSfunction, ColorObject, CSSObject, SVGObject, CommonObject, ArrayObject
 
 import json, datetime
+from types import NoneType
+
 
 # Base Option Class
 class BaseOptions(object):
@@ -29,9 +31,11 @@ class BaseOptions(object):
             return isinstance(v[keys[0]],ov[keys[0]])
         return isinstance(v, ov) 
 
-    def update_dict(self,**kwargs):
+    def update_dict2(self,**kwargs):
 
         DICTOBJECT_LIST = {
+            "backgroundColor": ColorObject,
+            "borderColor": ColorObject,
             "events": Events,
             "options3d": Options3d,
             "resetZoomButton": ResetZoomButton,
@@ -59,7 +63,7 @@ class BaseOptions(object):
 
         for k, v in kwargs.items(): 
             if k in self.ALLOWED_OPTIONS:
-                if k in DICTOBJECT_LIST: 
+                if k in DICTOBJECT_LIST:
                     # re-construct input dict with existing options in objects
                     if self.__getattr__(k): 
                         if isinstance(v, dict): 
@@ -119,6 +123,78 @@ class BaseOptions(object):
                 raise OptionTypeError("Not An Accepted Option Type: %s" % k)
 
 
+    def update_dict(self,**kwargs):
+
+        for k, v in kwargs.items(): 
+            if k in self.ALLOWED_OPTIONS:
+                if isinstance(v, SeriesOptions):
+                    if self.__getattr__(k):
+                        self.__dict__[k].__options__().update(v.__options__())
+                        v = SeriesOptions(series_type=k, supress_errors=True, 
+                            **self.__dict__[k].__options__())
+                    self.__dict__.update({k:v})
+
+                elif isinstance(self.ALLOWED_OPTIONS[k], tuple) and (isinstance(self.ALLOWED_OPTIONS[k][0](), CommonObject) or \
+                    isinstance(self.ALLOWED_OPTIONS[k][0](), CSSObject) or isinstance(self.ALLOWED_OPTIONS[k][0](), SVGObject)):
+                    # re-construct input dict with existing options in objects
+                    if self.__getattr__(k): 
+                        if isinstance(v, dict): 
+                            for key, value in v.items(): # check if v has object input 
+                                if isinstance(self.ALLOWED_OPTIONS[key], tuple):
+                                    self.__dict__[k].__options__()[key].__options__().update(value)
+                                    #new_v =  self.__dict__[k].__options__()[key].__options__()
+                                    #self.__dict__[k].__options__().update({key:new_v})
+                                else:
+                                    self.__dict__[k].__options__().update({key:value})
+                        else:
+                            self.__dict__[k].__options__().update(v)
+                            v = self.__dict__[k].__options__()
+                    # upating object
+                    if isinstance(v, dict):
+                        self.__dict__.update({k:self.ALLOWED_OPTIONS[k][0](**v)})
+                    else:
+                        print k, v
+                        self.__dict__.update({k:self.ALLOWED_OPTIONS[k][0](v)})
+
+                elif isinstance(self.ALLOWED_OPTIONS[k], tuple) and isinstance(self.ALLOWED_OPTIONS[k][0](), ArrayObject):
+                    if self.__getattr__(k): # update array 
+                        if isinstance(v, dict):
+                            self.__dict__[k].append(ALLOWED_OPTIONS[k][0](**v))
+                        elif isinstance(v, list):
+                            for item in v:
+                                self.__dict__[k].append(ALLOWED_OPTIONS[k][0](**item))
+                        else:
+                            OptionTypeError("Not An Accepted Input Type: %s" % type(v))        
+                    else: #first 
+                        if isinstance(v, dict):
+                            self.__dict__.update({k:[ALLOWED_OPTIONS[k][0](**v)]})
+                        elif isinstance(v, list):
+                            if len(v) == 1:
+                                self.__dict__.update({k:[ALLOWED_OPTIONS[k][0](**v[0])]})
+                            else:
+                                self.__dict__.update({k:[ALLOWED_OPTIONS[k][0](**v[0])]})
+                                for item in v[1:]:
+                                    self.__dict__[k].append(ALLOWED_OPTIONS[k][0](**item))
+                        else:
+                            OptionTypeError("Not An Accepted Input Type: %s" % type(v)) 
+
+                elif isinstance(self.ALLOWED_OPTIONS[k], tuple) and (isinstance(self.ALLOWED_OPTIONS[k][0](), JSfunction) or \
+                        isinstance(self.ALLOWED_OPTIONS[k][0](), Formatter)):
+                    if isinstance(v, dict):
+                        self.__dict__.update({k:self.ALLOWED_OPTIONS[k][0](**v)})
+                    else:
+                        self.__dict__.update({k:self.ALLOWED_OPTIONS[k][0](v)})
+
+                else:
+                    self.__dict__.update({k:v})
+
+            else:
+                print(self.ALLOWED_OPTIONS)
+                print(self.__name__)
+                print(k, v)
+                raise OptionTypeError("Not An Accepted Option Type: %s" % k)
+
+
     def __getattr__(self,item):
         if not item in self.__dict__:
             return None # Attribute Not Set
@@ -130,8 +206,8 @@ class ChartOptions(BaseOptions):
     ALLOWED_OPTIONS = {
         "alignTicks": bool,
         "animation": bool,
-        "backgroundColor": basestring,
-        "borderColor": basestring,
+        "backgroundColor": (ColorObject, basestring, dict),
+        "borderColor": (ColorObject, basestring, dict),
         "borderRadius": int,
         "borderWidth": int,
         "className": basestring,
@@ -146,9 +222,9 @@ class ChartOptions(BaseOptions):
         "marginRight": int,
         "marginTop": int,
         "options3d": (Options3d, dict), 
-        "plotBackgroundColor": basestring,
+        "plotBackgroundColor": (ColorObject, basestring, dict),
         "plotBackgroundImage": basestring,
-        "plotBorderColor": basestring,
+        "plotBorderColor": (ColorObject, basestring, dict),
         "plotBorderWidth": int,
         "plotShadow": bool,
         "polar": bool,
@@ -172,23 +248,34 @@ class ChartOptions(BaseOptions):
 class ColorsOptions(BaseOptions):
     """ Special Case, this is simply just an array of colours """
     def __init__(self):
-        # Predefined Colors
-        self.colors = ['#2f7ed8', 
-           '#0d233a', 
-           '#8bbc21', 
-           '#910000', 
-           '#1aadce', 
-           '#492970',
-           '#f28f43', 
-           '#77a1e5', 
-           '#c42525', 
-           '#a6c96a']
+        self.colors = {}
+        # self.colors = ['#2f7ed8', 
+        #    '#0d233a', 
+        #    '#8bbc21', 
+        #    '#910000', 
+        #    '#1aadce', 
+        #    '#492970',
+        #    '#f28f43', 
+        #    '#77a1e5', 
+        #    '#c42525', 
+        #    '#a6c96a']
 
-        #self.colors = []
 
     def set_colors(self,colors):
         #self.__dict__.update({"colors":colors})
-        self.colors.append(colors)
+        if isinstance(colors, basestring) or isinstance(colors, list):
+            if not self.colors:
+                self.colors = []
+                if isinstance(colors, list):
+                    for color in colors:
+                        self.colors.append(colors)
+                else:
+                    self.colors.append(colors)
+            else:
+                self.colors.append(colors)
+        else:
+            OptionTypeError("Not An Accepted Input Type: %s" % type(colors))
+
 
     def __jsonable__(self):
         return self.colors
@@ -258,6 +345,7 @@ class LangOptions(BaseOptions):
         "exportButtonTitle": basestring,
         "loading": basestring,
         "months": list,
+        "noData": basestring,
         "numericSymbols": list,
         "printButtonTitle": basestring,
         "resetZoom": basestring,
@@ -271,8 +359,8 @@ class LangOptions(BaseOptions):
 class LegendOptions(BaseOptions):
     ALLOWED_OPTIONS = {
         "align": basestring,
-        "backgroundColor": basestring,
-        "borderColor": basestring,
+        "backgroundColor": (ColorObject, basestring, dict),
+        "borderColor": (ColorObject, basestring, dict),
         "borderRadius": int,
         "borderWidth": int,
         "enabled": bool,
@@ -395,8 +483,8 @@ class TitleOptions(BaseOptions):
 class TooltipOptions(BaseOptions):
     ALLOWED_OPTIONS = {
         "animation": bool,
-        "backgroundColor": basestring,
-        "borderColor": basestring,
+        "backgroundColor": (ColorObject, basestring, dict),
+        "borderColor": (ColorObject, basestring, dict),
         "borderRadius": int,
         "borderWidth": int,
         "crosshairs": [bool, list, dict],
@@ -424,17 +512,17 @@ class TooltipOptions(BaseOptions):
 class xAxisOptions(BaseOptions):
     ALLOWED_OPTIONS = {
         "allowDecimals": bool,
-        "alternateGridColor": basestring,
+        "alternateGridColor": (ColorObject, basestring, dict),
         "categories": list,
         "dateTimeLabelFormats": (DateTimeLabelFormats, dict),
         "endOnTick": bool, 
         "events": Events,
-        "gridLineColor": basestring,
+        "gridLineColor": (ColorObject, basestring, dict),
         "gridLineDashStyle": basestring,
         "gridLineWidth": int,
         "id": basestring,
         "labels": (Labels, dict),
-        "lineColor": basestring,
+        "lineColor": (ColorObject, basestring, dict),
         "lineWidth": int,
         "linkedTo": int,
         "max": float,
@@ -444,10 +532,10 @@ class xAxisOptions(BaseOptions):
         "minPadding": float,
         "minRange": int,
         "minTickInterval": int,
-        "minorGridLineColor": basestring,
+        "minorGridLineColor": (ColorObject, basestring, dict),
         "minorGridLineDashStyle": basestring,
         "minorGridLineWidth": int,
-        "minorTickColor": basestring,
+        "minorTickColor": (ColorObject, basestring, dict),
         "minorTickInterval": int,
         "minorTickLength": int,
         "minorTickPosition": basestring,
@@ -462,7 +550,7 @@ class xAxisOptions(BaseOptions):
         "showLastLabel": bool,
         "startOfWeek": int,
         "startOnTick": bool,
-        "tickColor": basestring,
+        "tickColor": (ColorObject, basestring, dict),
         "tickInterval": int,
         "tickLength": int,
         "tickPixelInterval": int,
@@ -480,7 +568,7 @@ class xAxisOptions(BaseOptions):
 class yAxisOptions(BaseOptions):
     ALLOWED_OPTIONS = {
         "allowDecimals": bool,
-        "alternateGridColor": basestring,
+        "alternateGridColor": (ColorObject, basestring, dict),
         "breaks": Breaks,
         "categories": list,
         "ceiling": (int, float),
@@ -488,29 +576,29 @@ class yAxisOptions(BaseOptions):
         "endOnTick": bool,
         "events": Events,
         "floor": (int, float),
-        "gridLineColor": basestring,
+        "gridLineColor": (ColorObject, basestring, dict),
         "gridLineDashStyle": basestring,
         "gridLineInterpolation": basestring,
         "gridLineWidth": int,
         "gridZIndex": int,
         "id": basestring,
         "labels": (Labels, dict),
-        "lineColor": basestring,
+        "lineColor": (ColorObject, basestring, dict),
         "lineWidth": int,
         "linkedTo": int,
         "max": float,
-        "maxColor": basestring,
+        "maxColor": (ColorObject, basestring, dict),
         "maxPadding": float,
         "maxZoom": NotImplemented,
         "min": float,
-        "minColor": basestring,
+        "minColor": (ColorObject, basestring, dict),
         "minPadding": float,
         "minRange": int,
         "minTickInterval": int,
-        "minorGridLineColor": basestring,
+        "minorGridLineColor": (ColorObject, basestring, dict),
         "minorGridLineDashStyle": basestring,
         "minorGridLineWidth": int,
-        "minorTickColor": basestring,
+        "minorTickColor": (ColorObject, basestring, dict),
         "minorTickInterval": int,
         "minorTickLength": int,
         "minorTickPosition": basestring,
@@ -529,7 +617,7 @@ class yAxisOptions(BaseOptions):
         "startOnTick": bool,
         "stops": list,
         "tickAmount": int,
-        "tickColor": basestring,
+        "tickColor": (ColorObject, basestring, dict),
         "tickInterval": int,
         "tickLength": int,
         "tickPixelInterval": int,

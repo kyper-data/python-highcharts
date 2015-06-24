@@ -1,7 +1,7 @@
 # -*- coding: UTF-8 -*-
 import json, datetime
 from common import Formatter, Events, Position, ContextButton, Options3d, ResetZoomButton, DrillUpButton, Labels, \
-    Marker, Point, PlotBands, States, Tooltip, Title, Zones, JSfunction, CSSObject, SVGObject, \
+    Marker, Point, PlotBands, States, Tooltip, Title, Zones, JSfunction, ColorObject, CSSObject, SVGObject, \
     CommonObject, ArrayObject
 
 from types import NoneType
@@ -9,7 +9,7 @@ from types import NoneType
 PLOT_OPTION_ALLOWED_ARGS = {
   "common": {
     "animation": bool,
-    "color": basestring,
+    "color": (ColorObject, basestring, dict),
     "cursor": basestring,
     "dataLabels": (Labels, dict),
     "enableMouseTracking": bool,
@@ -33,16 +33,16 @@ PLOT_OPTION_ALLOWED_ARGS = {
     "connectNulls": bool,
     "cropThreshold": int,
     "dashStyle": basestring,
-    "fillColor": [basestring, dict],
+    "fillColor": (ColorObject, basestring, dict),
     "fillOpacity": float,
     "getExtremesFromAll": bool,
     "keys": list,
-    "lineColor": basestring,
+    "lineColor": (ColorObject, basestring, dict),
     "lineWidth": int,
     "linkedTo": basestring,
     "marker": (Marker, dict),
-    "negativeColor": basestring,
-    "negativeFillColor": basestring,
+    "negativeColor": (ColorObject, basestring, dict),
+    "negativeFillColor": (ColorObject, basestring, dict),
     "pointInterval": int,
     "pointPlacement": basestring,
     "pointStart": (int,basestring, datetime.datetime),
@@ -59,10 +59,10 @@ PLOT_OPTION_ALLOWED_ARGS = {
     "connectNulls": bool,
     "cropThreshold": int,
     "dashStyle": basestring,
-    "fillColor": [basestring, dict],
+    "fillColor": (ColorObject, basestring, dict),
     "fillOpacity": float,
     "getExtremesFromAll": bool,
-    "lineColor": basestring,
+    "lineColor": (ColorObject, basestring, dict),
     "lineWidth": int,
     "pointInterval": int,
     "pointPlacement": basestring,
@@ -78,9 +78,9 @@ PLOT_OPTION_ALLOWED_ARGS = {
     "connectEnds": bool,
     "connectNulls": bool,
     "dashStyle": basestring,
-    "fillColor": [basestring, dict],
+    "fillColor": (ColorObject, basestring, dict),
     "fillOpacity": float,   
-    "lineColor": basestring,
+    "lineColor": (ColorObject, basestring, dict),
     "lineWidth": int,
     "marker": (Marker, dict),
     "pointInterval": int,
@@ -97,9 +97,9 @@ PLOT_OPTION_ALLOWED_ARGS = {
     "connectNulls": bool,
     "cropThreshold": int,
     "dashStyle": basestring,
-    "fillColor": [basestring, dict],
+    "fillColor": (ColorObject, basestring, dict),
     "fillOpacity": float,
-    "lineColor": basestring,
+    "lineColor": (ColorObject, basestring, dict),
     "lineWidth": int,
     "pointInterval": int,
     "pointPlacement": basestring,
@@ -110,14 +110,14 @@ PLOT_OPTION_ALLOWED_ARGS = {
   },
   "bar": {
     "allowPointSelect": bool,
-    "borderColor": basestring,
+    "borderColor": (ColorObject, basestring, dict),
     "borderRadius": int,
     "borderWidth": int,
     "colorByPoint": bool,
     "cropThreshold": int,
     "groupPadding": float,
     "grouping": bool,
-    "lineColor": basestring,
+    "lineColor": (ColorObject, basestring, dict),
     "lineWidth": int,
     "minPointLength": int,
     "pointPadding": float,
@@ -132,14 +132,14 @@ PLOT_OPTION_ALLOWED_ARGS = {
   },
   "column": {
     "allowPointSelect": bool,
-    "borderColor": basestring,
+    "borderColor": (ColorObject, basestring, dict),
     "borderRadius": int,
     "borderWidth": int,
     "colorByPoint": bool,
     "cropThreshold": int,
     "groupPadding": [float, int],
     "grouping": bool,
-    "lineColor": basestring,
+    "lineColor": (ColorObject, basestring, dict),
     "lineWidth": int,
     "minPointLength": int,
     "pointPadding": float,
@@ -154,14 +154,14 @@ PLOT_OPTION_ALLOWED_ARGS = {
   },
   "columnrange": {
     "allowPointSelect": bool,
-    "borderColor": basestring,
+    "borderColor": (ColorObject, basestring, dict),
     "borderRadius": int,
     "borderWidth": int,
     "colorByPoint": bool,
     "cropThreshold": int,
     "groupPadding": float,
     "grouping": bool,
-    "lineColor": basestring,
+    "lineColor": (ColorObject, basestring, dict),
     "lineWidth": int,
     "minPointLength": int,
     "pointPadding": float,
@@ -179,7 +179,7 @@ PLOT_OPTION_ALLOWED_ARGS = {
   "gauge": {
     "dial": NotImplemented,
     "animation": bool,
-    "color": NotImplemented,
+    "color": (ColorObject, basestring, dict),
     "cursor": NotImplemented,
     "dataLabels": NotImplemented,
     "dial": NotImplemented,
@@ -219,7 +219,7 @@ PLOT_OPTION_ALLOWED_ARGS = {
   },
   "pie": {
     "allowPointSelect": bool,
-    "borderColor": basestring,
+    "borderColor": (ColorObject, basestring, dict),
     "borderWidth": int,
     "center": list,
     "ignoreHiddenPoint": bool,
@@ -236,7 +236,7 @@ PLOT_OPTION_ALLOWED_ARGS = {
   },
   "boxplot": {
     "allowPointSelect": bool,
-    "borderColor": basestring,
+    "borderColor": (ColorObject, basestring, dict),
     "borderWidth": int,
     "center": list,
     "ignoreHiddenPoint": bool,
@@ -297,7 +297,7 @@ PLOT_OPTION_ALLOWED_ARGS = {
 }
 
 DATA_SERIES_ALLOWED_OPTIONS = {
-    "color": basestring,
+    "color": (ColorObject, basestring, dict),
     "dataParser": NotImplemented,
     "dataURL": NotImplemented,
     "index": int,
@@ -307,7 +307,7 @@ DATA_SERIES_ALLOWED_OPTIONS = {
     "type": basestring,
     "xAxis": int,
     "yAxis": int,
-    "marker": dict,
+    "marker": (Marker, dict),
     "showInLegend": bool,
     "visible": bool,
 }
@@ -346,7 +346,6 @@ class SeriesOptions(object):
         print(json.dumps(self.__options__(),indent=4,sort_keys=True))
 
     def process_kwargs(self,kwargs,series_type,supress_errors=False):
-        #IDV_OBJECT_LIST = [JSfunction, Formatter, CSSObject, SVGObject, Position]
         allowed_args = PLOT_OPTION_ALLOWED_ARGS[series_type]
         allowed_args.update(PLOT_OPTION_ALLOWED_ARGS["common"])
 
@@ -362,6 +361,11 @@ class SeriesOptions(object):
                             self.__dict__.update({k:allowed_args[k][0](v.__options__().get_jstext())})
                         elif isinstance(v, CSSObject) or isinstance(v, SVGObject):
                             self.__dict__.update({k:allowed_args[k][0](**v.__options__())})
+                        elif isinstance(v, ColorObject):
+                            if isinstance(v.__options__(), basestring):
+                                self.__dict__.update({k:allowed_args[k][0](v.__options__())})
+                            else:
+                                self.__dict__.update({k:allowed_args[k][0](**v.__options__())})
                         elif isinstance(v, datetime.datetime):
                             self.__dict__.update({k:v})                            
                         else:
@@ -399,14 +403,35 @@ class Series(object):
           "data": data,
           "type": series_type,
           })
+
         for k, v in kwargs.items():
             if k in DATA_SERIES_ALLOWED_OPTIONS:
                 if SeriesOptions.__validate_options__(k,v,DATA_SERIES_ALLOWED_OPTIONS[k]):
-                    self.__dict__.update({k:v})
-                else:
+                    if isinstance(DATA_SERIES_ALLOWED_OPTIONS[k], tuple):
+                        if isinstance(v, dict):
+                            self.__dict__.update({k:DATA_SERIES_ALLOWED_OPTIONS[k][0](**v)})
+                        elif isinstance(v, CommonObject) or isinstance(v, ArrayObject):
+                            self.__dict__.update({k:DATA_SERIES_ALLOWED_OPTIONS[k][0](**v.__options__())})
+                        elif isinstance(v, JSfunction) or isinstance(v, Formatter):
+                            self.__dict__.update({k:DATA_SERIES_ALLOWED_OPTIONS[k][0](v.__options__().get_jstext())})
+                        elif isinstance(v, CSSObject) or isinstance(v, SVGObject):
+                            self.__dict__.update({k:DATA_SERIES_ALLOWED_OPTIONS[k][0](**v.__options__())})
+                        elif isinstance(v, ColorObject):
+                            if isinstance(v.__options__(), basestring):
+                                self.__dict__.update({k:allowed_args[k][0](v.__options__())})
+                            else:
+                                self.__dict__.update({k:allowed_args[k][0](**v.__options__())})
+                        elif isinstance(v, datetime.datetime):
+                            self.__dict__.update({k:v})                            
+                        else:
+                            self.__dict__.update({k:DATA_SERIES_ALLOWED_OPTIONS[k][0](v)})
+                    else:
+                        self.__dict__.update({k:v})
+                else: 
                     if not supress_errors: raise OptionTypeError("Option Type Mismatch: Expected: %s" % DATA_SERIES_ALLOWED_OPTIONS[k])
-            else:
-                if not supress_errors: raise OptionTypeError("Option: %s Not Allowed For Data Series: %s" % (k, series_type))
+            else: 
+                if not supress_errors: raise OptionTypeError("Option: %s Not Allowed For Series Type: %s" % (k,series_type))
+
 
     def __options__(self):
         return self.__dict__

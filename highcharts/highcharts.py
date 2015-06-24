@@ -26,7 +26,8 @@ from options import BaseOptions, ChartOptions, \
     TooltipOptions, xAxisOptions, yAxisOptions
 
 from highchart_types import Series, SeriesOptions, HighchartsError, MultiAxis
-from common import Formatter, CSSObject, SVGObject, JSfunction, RawJavaScriptText, CommonObject, ArrayObject
+from common import Formatter, CSSObject, SVGObject, JSfunction, RawJavaScriptText, \
+    CommonObject, ArrayObject, ColorObject
 
 CONTENT_FILENAME = "./content.html"
 PAGE_FILENAME = "./page.html"
@@ -97,11 +98,16 @@ class Highcharts(object):
 
         self.CSSsource = [
                 'https://www.highcharts.com/highslide/highslide.css',
-            ]
 
+            ]
         # set data
         self.data = []
         self.data_temp = []
+
+        # if JSONP
+        self.jsonp = kwargs.get('jsonp', False)
+        self.url_for_jsonp = kwargs.get('url_jsonp', None)
+        self.dataname_jsonp = kwargs.get('name_jsonp', None)
         
         # accepted keywords
 
@@ -121,7 +127,7 @@ class Highcharts(object):
         self.containerheader = u''
         
         #: Javascript code as string
-        self.jschart = None
+        #self.jschart = None
         # self.custom_tooltip_flag = False
         # self.tooltip_condition_string = ''
         # self.charttooltip = ''
@@ -187,20 +193,20 @@ class Highcharts(object):
         self.options["credits"].update_dict(enabled=False)
 
 
-    # def title(self, title=None):
-    #     """ Bind Title """
-    #     if not title:
-    #         return self.options["title"].text
-    #     else:
-    #         self.options["title"].update_dict(text=title)
+    def title(self, title=None):
+        """ Bind Title """
+        if not title:
+            return self.options["title"].text
+        else:
+            self.set_options("title", {'text':title})
 
 
-    # def colors(self, colors=None):
-    #     """ Bind Color Array """
-    #     if not colors:
-    #         return self.options["colors"].__dict__.values() if self.options['colors'] is not None else []
-    #     else:
-    #         self.options["colors"].set_colors(colors)
+    def colors(self, colors=None):
+        """ Bind Color Array """
+        if not colors:
+            return self.options["colors"].__jsonable__() if self.options['colors'].__jsonable__() else None
+        else:
+            self.options["colors"].set_colors(colors)
 
 
     # def chart_background(self, background=None):
@@ -233,37 +239,37 @@ class Highcharts(object):
     #     self.options["yAxis"].update_dict(**kwargs)
 
 
-    def set_start_date(self, date):
+    def set_start(self, start, is_date = False):
         """ Set Plot Start Date """
-        if isinstance(date, (int, float)):
-            date = datetime.datetime.fromtimestamp(date)
-        elif not isinstance(date, datetime.datetime):
-            error = "Start Date Format Currently Not Supported: %s" % date
-            raise HighchartError(error)
-        date_dict = {
-            "year": date.year,
-            "month": date.month - 1,
-            "day": date.day,
-            "hour": date.hour,
-            "minute": date.minute,
-            "second": date.second,
-        }
-        formatted_date = "Date.UTC({year}, {month}, {day}, {hour}, {minute}, {second})"
-        formatted_date = formatted_date.format(**date_dict)
+        if is_date:
+            if isinstance(start, (int, float)):
+                start = datetime.datetime.fromtimestamp(start)                
+            elif not isinstance(start, datetime.datetime):
+                error = "Start Date Format Currently Not Supported: %s" % date
+                raise HighchartError(error)
+            self.options['tooltip'].update_dict(formatter='date')
+            self.options['xAxis'].update_dict(type='datetime')
+
+        # date_dict = {
+        #     "year": date.year,
+        #     "month": date.month - 1,
+        #     "day": date.day,
+        #     "hour": date.hour,
+        #     "minute": date.minute,
+        #     "second": date.second,
+        # }
+        # formatted_date = "Date.UTC({year}, {month}, {day}, {hour}, {minute}, {second})"
+        # formatted_date = formatted_date.format(**date_dict)
         if not self.options['plotOptions'].__dict__:
-            self.hold_point_start = formatted_date
-            self.hold_point_interval = DEFAULT_POINT_INTERVAL
-        hold_iterable = self.options['plotOptions'].__dict__.items()
-        for series_type, series_options in hold_iterable:
-            series_options.process_kwargs({'pointStart':formatted_date},
-                series_type=series_type)
-            if not 'pointInterval' in series_options.__dict__:
-                series_options.process_kwargs({
-                    'pointInterval':DEFAULT_POINT_INTERVAL},
-                    series_type=series_type,
-                    supress_errors=True)
-        self.options['tooltip'].update_dict(formatter=Formatter('date'))
-        self.options['xAxis'].update_dict(type='datetime')
+            self.hold_point_start = start
+            if is_date:
+                self.hold_point_interval = DEFAULT_POINT_INTERVAL
+        else:
+            hold_iterable = self.options['plotOptions'].__dict__.items()
+            for series_type, series_options in hold_iterable:
+                self.set_options('plotOptions',{series_type:{'pointStart':start}})
+
+
         self.start_date_set = True
 
 
@@ -274,12 +280,18 @@ class Highcharts(object):
         # Unset Any Held Values To Avoid Them Overwriting This Value
         if self.hold_point_interval:
             self.hold_point_interval = None
+        
         if not self.options['plotOptions'].__dict__:
             self.hold_point_interval = interval
-        for hold_item in self.options['plotOptions'].__dict__.items():
-            series_type, series_options = hold_item
-            series_options.process_kwargs({'pointInterval':interval},
-                series_type=series_type)
+        else:
+            hold_iterable = self.options['plotOptions'].__dict__.items()
+            for series_type, series_options in hold_iterable:
+                self.set_options('plotOptions',{series_type:{'pointInterval':interval}})
+
+        # for hold_item in self.options['plotOptions'].__dict__.items():
+        #     series_type, series_options = hold_item
+        #     series_options.process_kwargs({'pointInterval':interval},
+        #         series_type=series_type)
         if not self.start_date_set:
             print "Set The Start Date With .set_start_date(date)"
 
@@ -307,26 +319,6 @@ class Highcharts(object):
         #self.options["series"].data.append(series_data)
 
 
-    # def set_options2(self, options, force_options=False):
-        # """ Set Plot Options """
-        # if force_options:
-        #     for k, v in options.items():
-        #         self.options.update({k:v})
-        # else:
-        #     new_options = {}
-        #     for key, option_data in options.items():
-        #         data = {}
-        #         for key2, val in option_data.items():
-        #             if isinstance(val, dict):
-        #                 for key3, val2 in val.items():
-        #                     data.update({key2+"_"+key3:val2})
-        #             else:
-        #                 data.update({key2:val})
-        #         new_options.update({key:data})
-        #     for key, val in new_options.items():
-        #         self.options[key].update_dict(**val)
-
-
     def set_options(self, option_type, option_dict, force_options=False):
         """ Set Plot Options """
         if force_options:
@@ -342,6 +334,8 @@ class Highcharts(object):
         for key, option_data in options.items():
             self.set_options(key, option_data)
 
+
+
     def set_containerheader(self, containerheader):
         """Set containerheader"""
         self.containerheader = containerheader
@@ -353,22 +347,26 @@ class Highcharts(object):
         return self.htmlcontent
 
 
+    def file(self, filename = 'highcharts'):
+        """ save htmlcontent as .html file """
+        filename = filename + '.html'
+        
+        with open(filename, 'w') as f:
+            self.buildhtml()
+            f.write(self.htmlcontent)
+        
+        f.closed
+
     def buildcontent(self):
         """Build HTML content only, no header or body tags. To be useful this
-        will usually require the attribute `juqery_on_ready` to be set which
+        will require the attribute `juqery_on_ready` to be set which
         will wrap the js in $(function(){<regular_js>};)
         """
         self.buildcontainer()
-        # if the subclass has a method buildjs this method will be
-        # called instead of the method defined here
-        # when this subclass method is entered it does call
-        # the method buildjschart defined here
-        self.buildjschart()
-        #self.option = json.dumps(self.__export_options__())
+        #self.buildjschart()
         self.option = json.dumps(self.options, encoding='utf8', cls = HighchartsEncoder)
-        self.setoption = json.dumps(self.setOptions, cls = HighchartsEncoder)
+        self.setoption = json.dumps(self.setOptions, cls = HighchartsEncoder) 
 
-        #self.data = json.dumps(data_formatter(self.options['series']))
         self.data = json.dumps(self.data_temp, encoding='utf8', cls = HighchartsEncoder)
         self.htmlcontent = self.template_content_highcharts.render(chart=self).encode('utf-8')
 
@@ -381,7 +379,7 @@ class Highcharts(object):
         """
         self.buildcontent()
         self.buildhtmlheader()
-        self.content = self.htmlcontent.decode('utf-8')
+        self.content = self.htmlcontent.decode('utf-8') # need to ensure unicode
         self.htmlcontent = self.template_page_highcharts.render(chart=self).encode('utf-8')
 
 
@@ -427,18 +425,9 @@ class Highcharts(object):
             '<div id="%s" style="%s"></div>\n' % (self.div_name, self.div_style)
 
 
-    def buildjschart(self):
-        """generate javascript code for the chart"""
-        self.jschart = ''
-
-        # add custom tooltip string in jschart
-        # default condition (if build_custom_tooltip is not called explicitly with date_flag=True)
-
-        # if self.tooltip_condition_string == '':
-        #     self.tooltip_condition_string = 'var y = String(graph.point.y);\n'
-
-        # Include data
-        # self.series_js = json.dumps(self.series)
+    # def buildjschart(self):
+    #     """generate javascript code for the chart"""
+    #     self.jschart = ''
 
 
 class TemplateMixin(object):
@@ -456,7 +445,6 @@ class TemplateMixin(object):
         # if the subclass has a method buildjs this method will be
         # called instead of the method defined here
         # when this subclass method is entered it does call
-        # the method buildjschart defined here
         self.buildjschart()
         self.htmlcontent = self.template_chart_highcharts.render(chart=self).encode('utf-8')
 
@@ -489,11 +477,11 @@ class HighchartsEncoder(json.JSONEncoder):
             return RawJavaScriptText(obj)
         elif isinstance(obj, BaseOptions):
             return obj.__jsonable__()
-        elif isinstance(obj, CSSObject) or isinstance(obj, Formatter) or isinstance(obj, JSfunction):
+        elif isinstance(obj, CSSObject) or isinstance(obj, Formatter) or isinstance(obj, JSfunction): 
             return obj.__options__()
         elif isinstance(obj, SeriesOptions) or isinstance(obj, Series) or isinstance(obj, MultiAxis):
             return obj.__options__()
-        elif isinstance(obj, CommonObject) or isinstance(obj, ArrayObject):
+        elif isinstance(obj, CommonObject) or isinstance(obj, ArrayObject) or isinstance(obj, ColorObject):
             return obj.__options__()
         else:
             return json.JSONEncoder.default(self, obj)
