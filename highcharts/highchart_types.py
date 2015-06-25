@@ -46,7 +46,7 @@ PLOT_OPTION_ALLOWED_ARGS = {
     "pointInterval": int,
     "pointPlacement": basestring,
     "pointStart": (int,basestring, datetime.datetime),
-    "shadow": bool,
+    "shadow": [bool, dict], #shadow object
     "stacking": basestring,
     "step": bool,
     "threshold": [int, NoneType],
@@ -67,7 +67,7 @@ PLOT_OPTION_ALLOWED_ARGS = {
     "pointInterval": int,
     "pointPlacement": basestring,
     "pointStart": [int,basestring,datetime.datetime],
-    "shadow": bool,
+    "shadow": [bool, dict],
     "trackByArea": bool,
     "turboThreshold": int,
     
@@ -86,7 +86,7 @@ PLOT_OPTION_ALLOWED_ARGS = {
     "pointInterval": int,
     "pointPlacement": basestring,
     "pointStart": [int,basestring,datetime.datetime],
-    "shadow": bool,
+    "shadow": [bool, dict],
     "stacking": basestring,
     "threshold": [int, NoneType],
     "turboThreshold": int,
@@ -104,7 +104,7 @@ PLOT_OPTION_ALLOWED_ARGS = {
     "pointInterval": int,
     "pointPlacement": basestring,
     "pointStart": [int,basestring,datetime.datetime],
-    "shadow": bool,
+    "shadow": [bool, dict],
     "turboThreshold": int,
     "trackByArea": bool,  
   },
@@ -113,21 +113,31 @@ PLOT_OPTION_ALLOWED_ARGS = {
     "borderColor": (ColorObject, basestring, dict),
     "borderRadius": int,
     "borderWidth": int,
+    "colors": list,
     "colorByPoint": bool,
     "cropThreshold": int,
-    "groupPadding": float,
+    "depth": [int, float],
+    "edgeColor": (ColorObject, basestring, dict),
+    "edgeWidth": int,
+    "enableMouseTracking": bool,
+    "getExtremesFromAll": bool,
+    "groupPadding": [float, int],
+    "groupZPadding": [float, int],
     "grouping": bool,
-    "lineColor": (ColorObject, basestring, dict),
-    "lineWidth": int,
+    "keys": list,
+    "linkedTo": basestring,
     "minPointLength": int,
-    "pointPadding": float,
-    "pointRange": int,
-    "pointWidth": int,
+    "negativeColor": (ColorObject, basestring, dict),
     "pointInterval": int,
+    "pointIntervalUnit": basestring,
+    "pointPadding": [float, int],
     "pointPlacement": basestring,
+    "pointRange": int,
     "pointStart": [int,basestring,datetime.datetime],
-    "shadow": bool,
+    "pointWidth": int,
+    "shadow": [bool, dict],
     "stacking": basestring,
+    "threshold": [int, NoneType],
     "turboThreshold": int,
   },
   "column": {
@@ -135,21 +145,33 @@ PLOT_OPTION_ALLOWED_ARGS = {
     "borderColor": (ColorObject, basestring, dict),
     "borderRadius": int,
     "borderWidth": int,
+    "colors": list,
     "colorByPoint": bool,
     "cropThreshold": int,
+    "depth": [int, float],
+    "edgeColor": (ColorObject, basestring, dict),
+    "edgeWidth": int,
+    "enableMouseTracking": bool,
+    "getExtremesFromAll": bool,
     "groupPadding": [float, int],
+    "groupZPadding": [float, int],
     "grouping": bool,
+    "keys": list,
+    "linkedTo": basestring,
     "lineColor": (ColorObject, basestring, dict),
     "lineWidth": int,
     "minPointLength": int,
-    "pointPadding": float,
+    "negativeColor": (ColorObject, basestring, dict),
+    "pointPadding": [float, int],
     "pointRange": int,
     "pointWidth": [int, float],
     "pointInterval": int,
+    "pointIntervalUnit": basestring,
     "pointPlacement": basestring,
     "pointStart": [int,basestring,datetime.datetime],
-    "shadow": bool,
+    "shadow": [bool, dict],
     "stacking": basestring,
+    "threshold": [int, NoneType],
     "turboThreshold": int,
   },
   "columnrange": {
@@ -157,24 +179,66 @@ PLOT_OPTION_ALLOWED_ARGS = {
     "borderColor": (ColorObject, basestring, dict),
     "borderRadius": int,
     "borderWidth": int,
+    "colors": list,
     "colorByPoint": bool,
+    "depth": [int, float],
+    "edgeColor": (ColorObject, basestring, dict),
+    "edgeWidth": int,
+    "enableMouseTracking": bool,
+    "getExtremesFromAll": bool,
     "cropThreshold": int,
-    "groupPadding": float,
+    "groupPadding": [float, int],
+    "groupZPadding": [float, int],
     "grouping": bool,
+    "keys": list,
+    "linkedTo": basestring,
     "lineColor": (ColorObject, basestring, dict),
     "lineWidth": int,
     "minPointLength": int,
-    "pointPadding": float,
+    "negativeColor": (ColorObject, basestring, dict),
+    "pointPadding": [float, int],
     "pointRange": int,
     "pointWidth": int,
     "pointInterval": int,
+    "pointIntervalUnit": basestring,
     "pointPlacement": basestring,
     "pointStart": [int,basestring,datetime.datetime],
-    "shadow": bool,
+    "shadow": [bool, dict],
     "stacking": basestring,
+    "threshold": [int, NoneType],
     "turboThreshold": int,
-    "showInLegend": bool,
-
+  },
+  "errorbar": {
+    "allowPointSelect": bool,
+    "colors": list,
+    "colorByPoint": bool,
+    "cursor": basestring,
+    "depth": [int, float],
+    "edgeColor": (ColorObject, basestring, dict),
+    "edgeWidth": int,
+    "enableMouseTracking": bool,
+    "getExtremesFromAll": bool,
+    "cropThreshold": int,
+    "groupZPadding": [float, int],
+    "keys": list,
+    "linkedTo": basestring,
+    "lineWidth": int,
+    "negativeColor": (ColorObject, basestring, dict),
+    "pointPadding": [float, int],
+    "pointRange": int,
+    "pointWidth": int,
+    "pointInterval": int,
+    "pointIntervalUnit": basestring,
+    "pointPlacement": basestring,
+    "pointStart": [int,basestring,datetime.datetime],
+    "stemColor": (ColorObject, basestring, dict),
+    "stemDashStyle": basestring,
+    "stemWidth": [float, int],
+    "stickyTracking": bool,
+    "turboThreshold": int,
+    "whiskerColor": (ColorObject, basestring, dict),
+    "whiskerLength": [float, int, basestring],
+    "whiskerWidth": [float, int]
   },
   "gauge": {
     "dial": NotImplemented,
@@ -212,7 +276,7 @@ PLOT_OPTION_ALLOWED_ARGS = {
     "pointInterval": int,
     "pointPlacement": basestring,
     "pointStart": [int,basestring,datetime.datetime],
-    "shadow": NotImplemented,
+    "shadow": [bool, dict],
     "stacking": basestring,
     "step": basestring,
     "turboThreshold": int,
@@ -222,16 +286,16 @@ PLOT_OPTION_ALLOWED_ARGS = {
     "borderColor": (ColorObject, basestring, dict),
     "borderWidth": int,
     "center": list,
+    "colors": list,
     "ignoreHiddenPoint": bool,
-    "innerSize": int,
+    "innerSize": [int, basestring],
     "lineWidth": int,
     "marker": (Marker, dict),
     "pointPlacement": basestring,
-    "shadow": bool,
+    "shadow": [bool, dict],
     "size": [int,basestring],
     "slicedOffset": int,
     "startAngle": int,
-    "dataLabels": dict,
     "showInLegend": bool
   },
   "boxplot": {
@@ -244,7 +308,7 @@ PLOT_OPTION_ALLOWED_ARGS = {
     "lineWidth": int,
     "marker": (Marker, dict),
     "pointPlacement": basestring,
-    "shadow": bool,
+    "shadow": [bool, dict],
     "size": [int,basestring],
     "slicedOffset": int,
     "startAngle": int,
@@ -261,7 +325,7 @@ PLOT_OPTION_ALLOWED_ARGS = {
     "pointInterval": int,
     "pointPlacement": basestring,
     "pointStart": [int,basestring,datetime.datetime],
-    "shadow": bool,
+    "shadow": [bool, dict],
     "turboThreshold": int,
   },
   "series": {
@@ -275,7 +339,7 @@ PLOT_OPTION_ALLOWED_ARGS = {
     "pointInterval": int,
     "pointPlacement": basestring,
     "pointStart": [int,basestring,datetime.datetime],
-    "shadow": bool,
+    "shadow": [bool, dict],
     "stacking": basestring,
     "turboThreshold": int,
   },
@@ -290,7 +354,7 @@ PLOT_OPTION_ALLOWED_ARGS = {
     "pointInterval": int,
     "pointPlacement": basestring,
     "pointStart": [int,basestring,datetime.datetime],
-    "shadow": bool,
+    "shadow": [bool, dict],
     "stacking": basestring,
     "turboThreshold": int,
   },
@@ -298,18 +362,25 @@ PLOT_OPTION_ALLOWED_ARGS = {
 
 DATA_SERIES_ALLOWED_OPTIONS = {
     "color": (ColorObject, basestring, dict),
+    "connectEnds": bool,
+    "connectNulls": bool,
+    "dataLabels": (Labels, dict),
     "dataParser": NotImplemented,
     "dataURL": NotImplemented,
+    "drilldown": basestring,
+    "events": (Events, dict),
+    "id": basestring,
     "index": int,
     "legendIndex": int,
     "name": basestring,
-    "stack": basestring,
+    "marker": (Marker, dict),
+    "selected": bool,
+    "sliced": bool,
+    "showInLegend": bool,
     "type": basestring,
+    "visible": bool,
     "xAxis": int,
     "yAxis": int,
-    "marker": (Marker, dict),
-    "showInLegend": bool,
-    "visible": bool,
 }
 
 DEFAULT_OPTIONS = {
@@ -323,6 +394,7 @@ class OptionTypeError(Exception):
 
 
 class SeriesOptions(object):
+    """Class for plotOptions"""
 
     def __init__(self,series_type="line",supress_errors=False,**kwargs):
         self.load_defaults(series_type)
@@ -397,13 +469,47 @@ class MultiAxis(object):
 
 
 class Series(object):
+    """Series class for input data """
 
     def __init__(self,data,series_type="line",supress_errors=False,**kwargs):
+
+        # List of dictionaries. Each dict contains data and properties, which need to handle before construct the object for series 
+        for item in data:
+            if isinstance(item, dict):
+                for k, v in item.items():
+                    if k in DATA_SERIES_ALLOWED_OPTIONS:
+                        if SeriesOptions.__validate_options__(k,v,DATA_SERIES_ALLOWED_OPTIONS[k]):
+                            if isinstance(DATA_SERIES_ALLOWED_OPTIONS[k], tuple):
+                                if isinstance(v, dict):
+                                    item.update({k:DATA_SERIES_ALLOWED_OPTIONS[k][0](**v)})
+                                elif isinstance(v, CommonObject) or isinstance(v, ArrayObject):
+                                    item.update({k:DATA_SERIES_ALLOWED_OPTIONS[k][0](**v.__options__())})
+                                elif isinstance(v, JSfunction) or isinstance(v, Formatter):
+                                    item.update({k:DATA_SERIES_ALLOWED_OPTIONS[k][0](v.__options__().get_jstext())})
+                                elif isinstance(v, CSSObject) or isinstance(v, SVGObject):
+                                    item.update({k:DATA_SERIES_ALLOWED_OPTIONS[k][0](**v.__options__())})
+                                elif isinstance(v, ColorObject):
+                                    if isinstance(v.__options__(), basestring):
+                                        item.update({k:allowed_args[k][0](v.__options__())})
+                                    else:
+                                        item.update({k:allowed_args[k][0](**v.__options__())})
+                                elif isinstance(v, datetime.datetime):
+                                    item.update({k:v})                            
+                                else:
+                                    item.update({k:DATA_SERIES_ALLOWED_OPTIONS[k][0](v)})
+                            else:
+                                item.update({k:v})
+                        else: 
+                            if not supress_errors: raise OptionTypeError("Option Type Mismatch: Expected: %s" % DATA_SERIES_ALLOWED_OPTIONS[k])
+                    else: 
+                        if not supress_errors: raise OptionTypeError("Option: %s Not Allowed For Series Type: %s" % (k,series_type))
+
         self.__dict__.update({
           "data": data,
           "type": series_type,
           })
 
+        # Series propertie can be input as kwargs, which is handled here 
         for k, v in kwargs.items():
             if k in DATA_SERIES_ALLOWED_OPTIONS:
                 if SeriesOptions.__validate_options__(k,v,DATA_SERIES_ALLOWED_OPTIONS[k]):

@@ -116,18 +116,25 @@ function() {
 """,
 }
 
+REGEX_LIST = {
+    "re_funct" : re.compile(r'.*function\(.*\)\{.*\}', re.I), #for inputs such as function(xxx){xxx}
+    "re_hcharts" : re.compile(r'.*Highcharts.*', re.I), #for inputs such as highcharts.xxxxx
+}
+
+
 class Formatter(object):
     """ Base Formatter Class """
 
-    def __init__(self, format):
+    def __init__(self, format=None):
         ### Choose either from default functions in FORMATTER_TYPE_MAPPINGS using format_type 
         ### or wriet a function in format_string
-        if format in FORMATTER_TYPE_MAPPINGS:
-            self.formatter = RawJavaScriptText(FORMATTER_TYPE_MAPPINGS[format])
-        elif isinstance(format, basestring):
-            self.formatter = RawJavaScriptText(format)
-        else:
-            raise OptionTypeError("Option Type Mismatch: Expected: %s" % basestring)
+        if format:
+            if format in FORMATTER_TYPE_MAPPINGS:
+                self.formatter = RawJavaScriptText(FORMATTER_TYPE_MAPPINGS[format])
+            elif isinstance(format, basestring):
+                self.formatter = RawJavaScriptText(format)
+            else:
+                raise OptionTypeError("Option Type Mismatch: Expected: %s" % basestring)
 
     def __options__(self):
         return self.formatter
@@ -138,21 +145,23 @@ class ColorObject(object):
     def __init__(self, color = None, **kwargs):
         if not color:
             color = kwargs
-        chk1 = re.compile(r'.*function\(.*\)\{.*\}', re.I+re.S) #for inputs such as function(xxx){xxx}
-        chk2 = re.compile(r'.*Highcharts.*', re.I+re.S) #for inputs such as highcharts.xxxxx
-             
-        if isinstance(color, dict):
-            tmp = []            
-            for i, item in enumerate(color['stops']):
-                tmp.append([RawJavaScriptText(x) if isinstance(x, basestring) and (chk1.match(x) or chk2.match(x)) else x for x in item ])
-            color['stops'] = tmp
-            self.color = color
-        elif chk1.match(color) or chk2.match(color):
-            self.color = RawJavaScriptText(color)
-        elif isinstance(color, basestring):
-            self.color = color
+        
+        if color:
+            if isinstance(color, dict):
+                tmp = []            
+                for i, item in enumerate(color['stops']):
+                    tmp.append([RawJavaScriptText(x) if isinstance(x, basestring) and any([REGEX_LIST[key].search(x) for key in REGEX_LIST.keys()]) 
+                                else x for x in item ])
+                color['stops'] = tmp
+                self.color = color
+            elif any([REGEX_LIST[key].search(color) for key in REGEX_LIST.keys()]):
+                self.color = RawJavaScriptText(color)
+            elif isinstance(color, basestring):
+                self.color = color
+            else:
+                raise OptionTypeError("Option Type Mismatch: Expected: %s" % (basestring or dict))
         else:
-            raise OptionTypeError("Option Type Mismatch: Expected: %s" % (basestring or dict))
+            self.color = None
 
     def __options__(self):
         return self.color
@@ -160,10 +169,15 @@ class ColorObject(object):
 
 class CSSObject(object):
     """ CSS style class """
-
-    def __init__(self, kwargs):
+    ALLOWED_OPTIONS = {}
+    def __init__(self, **kwargs):
         self.css = kwargs
-    
+
+        for k, v in self.css.items():
+            if isinstance(v, basestring) and any([REGEX_LIST[key].search(v) for key in REGEX_LIST.keys()]):
+                v = RawJavaScriptText(v)
+                self.css.update({k:v})
+
     def __options__(self):
         return self.css
 
@@ -171,23 +185,28 @@ class CSSObject(object):
 class SVGObject(object):
     """ SVG style class """
 
-    def __init__(self, kwargs):
+    def __init__(self, **kwargs):
         self.svg = kwargs
+
+        for k, v in self.svg.items():
+            if isinstance(v, basestring) and any([REGEX_LIST[key].search(v) for key in REGEX_LIST.keys()]):
+                v = RawJavaScriptText(v)
+                self.svg.update({k:v})
     
     def __options__(self):
         return self.svg
 
 
-
 class JSfunction(object):
 
-    def __init__(self, function):
-        if isinstance(function, basestring):
-            self.function = RawJavaScriptText(function)
-        elif isinstance(function, JSfunction):
-            self.function = function
-        else:
-            raise OptionTypeError("Option Type Mismatch: Expected: %s" % basestring)
+    def __init__(self, function = None):
+        if function:
+            if isinstance(function, basestring):
+                self.function = RawJavaScriptText(function)
+            elif isinstance(function, JSfunction):
+                self.function = function
+            else:
+                raise OptionTypeError("Option Type Mismatch: Expected: %s" % basestring)
 
 
     def __options__(self):
@@ -312,8 +331,8 @@ class ContextButton(CommonObject):
     "symbolSize": int,
     "symbolStroke": basestring,
     "symbolStrokeWidth": int,
-    "symbolX": float,
-    "symbolY": float,
+    "symbolX": [float, int],
+    "symbolY": [float, int],
     "text": basestring,
     "theme": NotImplemented,#ThemeObject
     "verticalAlign": basestring,
@@ -325,8 +344,8 @@ class ContextButton(CommonObject):
 
 class Options3d(CommonObject): 
     ALLOWED_OPTIONS = {
-    "alpha": float,
-    "beta": float,
+    "alpha": [float, int],
+    "beta": [float, int],
     "depth": int,
     "enabled": bool,
     "frame": NotImplemented, # FrameObject
@@ -351,12 +370,27 @@ class DrillUpButton(CommonObject):
 class Labels(CommonObject):   
     ALLOWED_OPTIONS = {
     "align": basestring,
+    "backgroundColor": (ColorObject, basestring, dict),
+    "borderColor": (ColorObject, basestring, dict),
+    "borderRadius": [float, int],
+    "borderWidth": int,
+    "color": (ColorObject, basestring, dict),
+    "connectorColor": (ColorObject, basestring, dict),
+    "connectorPadding": [float, int],
+    "connectorWidth": [float, int],
+    "crop": bool,
+    "defer": bool,
     "distance": int,
     "enabled": bool,
     "format": basestring,
     "formatter": (Formatter, JSfunction, basestring),
+    "inside": bool,
     "overflow": basestring,
-    "rotation": int,
+    "padding": [float, int],
+    "rotation": int, 
+    "shadow": [bool, dict], #shadow object
+    "shape": basestring,
+    "softConnector": bool,
     "staggerLines": int,
     "step": int,
     "style": (CSSObject, dict),
@@ -503,7 +537,6 @@ class ArrayObject(object):
                 if self.__validate_options__(k,v,self.ALLOWED_OPTIONS[k]):
                     if isinstance(self.ALLOWED_OPTIONS[k], tuple) and \
                         self.ALLOWED_OPTIONS[k][0] in IDV_OBJECT_LIST:
-
                         if isinstance(v, dict):
                             self.__dict__.update({k:self.ALLOWED_OPTIONS[k][0](**v)})
                         elif isinstance(v, CommonObject) or isinstance(v, ArrayObject):

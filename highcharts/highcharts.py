@@ -23,9 +23,9 @@ from options import BaseOptions, ChartOptions, \
     GlobalOptions, LabelsOptions, LangOptions, \
     LegendOptions, LoadingOptions, NavigationOptions, PaneOptions, \
     PlotOptions, SeriesData, SubtitleOptions, TitleOptions, \
-    TooltipOptions, xAxisOptions, yAxisOptions
+    TooltipOptions, xAxisOptions, yAxisOptions, MultiAxis
 
-from highchart_types import Series, SeriesOptions, HighchartsError, MultiAxis
+from highchart_types import Series, SeriesOptions, HighchartsError
 from common import Formatter, CSSObject, SVGObject, JSfunction, RawJavaScriptText, \
     CommonObject, ArrayObject, ColorObject
 
@@ -231,14 +231,6 @@ class Highcharts(object):
             self.CSSsource.append(new_src)
 
 
-    # def set_x_axis(self, **kwargs):
-    #     self.options["xAxis"].update_dict(**kwargs)
-
-
-    # def set_y_axis(self, **kwargs):
-    #     self.options["yAxis"].update_dict(**kwargs)
-
-
     def set_start(self, start, is_date = False):
         """ Set Plot Start Date """
         if is_date:
@@ -308,13 +300,12 @@ class Highcharts(object):
         if self.hold_point_interval:
             kwargs.update({"pointInterval":self.hold_point_interval})
             self.hold_point_interval = None
-        #if series_type not in self.options["plotOptions"].__dict__:
-        to_update = {series_type:SeriesOptions(series_type=series_type,
-            supress_errors=True, **kwargs)}
-        self.options["plotOptions"].update_dict(**to_update)
 
         series_data = Series(data, series_type=series_type, \
             supress_errors=True, **kwargs)
+       
+        series_data.__options__().update(SeriesOptions(series_type=series_type,
+            supress_errors=True, **kwargs).__options__())
         self.data_temp.append(series_data)
         #self.options["series"].data.append(series_data)
 
@@ -326,6 +317,10 @@ class Highcharts(object):
         elif option_type == 'plotOptions':
             for key in option_dict.keys():
                 self.options[option_type].update_dict(**{key:SeriesOptions(key,**option_dict[key])})
+        elif (option_type == 'yAxis' or option_type == 'xAxis') and isinstance(option_dict, list):
+            self.options[option_type] = MultiAxis(option_type)
+            for each_dict in option_dict:
+                self.options[option_type].update(**each_dict)
         else:
             self.options[option_type].update_dict(**option_dict)
 
@@ -333,7 +328,6 @@ class Highcharts(object):
     def set_dict_optoins(self, options):
         for key, option_data in options.items():
             self.set_options(key, option_data)
-
 
 
     def set_containerheader(self, containerheader):
@@ -475,11 +469,11 @@ class HighchartsEncoder(json.JSONEncoder):
                     .format(year=utc[0], month=utc[1]-1, day=utc[2], hours=utc[3],
                             minutes=utc[4], seconds=utc[5], millisec=obj.microsecond/1000))
             return RawJavaScriptText(obj)
-        elif isinstance(obj, BaseOptions):
+        elif isinstance(obj, BaseOptions) or isinstance(obj, MultiAxis):
             return obj.__jsonable__()
         elif isinstance(obj, CSSObject) or isinstance(obj, Formatter) or isinstance(obj, JSfunction): 
             return obj.__options__()
-        elif isinstance(obj, SeriesOptions) or isinstance(obj, Series) or isinstance(obj, MultiAxis):
+        elif isinstance(obj, SeriesOptions) or isinstance(obj, Series):
             return obj.__options__()
         elif isinstance(obj, CommonObject) or isinstance(obj, ArrayObject) or isinstance(obj, ColorObject):
             return obj.__options__()

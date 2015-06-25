@@ -134,57 +134,69 @@ class BaseOptions(object):
                             **self.__dict__[k].__options__())
                     self.__dict__.update({k:v})
 
-                elif isinstance(self.ALLOWED_OPTIONS[k], tuple) and (isinstance(self.ALLOWED_OPTIONS[k][0](), CommonObject) or \
-                    isinstance(self.ALLOWED_OPTIONS[k][0](), CSSObject) or isinstance(self.ALLOWED_OPTIONS[k][0](), SVGObject)):
+                elif isinstance(self.ALLOWED_OPTIONS[k], tuple) and isinstance(self.ALLOWED_OPTIONS[k][0](), CommonObject):
                     # re-construct input dict with existing options in objects
-                    if self.__getattr__(k): 
+                    if self.__getattr__(k):
                         if isinstance(v, dict): 
                             for key, value in v.items(): # check if v has object input 
-                                if isinstance(self.ALLOWED_OPTIONS[key], tuple):
-                                    self.__dict__[k].__options__()[key].__options__().update(value)
-                                    #new_v =  self.__dict__[k].__options__()[key].__options__()
-                                    #self.__dict__[k].__options__().update({key:new_v})
+                                if isinstance(value, dict):
+                                    for key2, value2 in value.items():
+                                        self.__dict__[k].__options__()[key].__options__().update({key2:value2})
+                                elif isinstance(self.__dict__[k].ALLOWED_OPTIONS[key], tuple):
+                                    self.__dict__[k].__options__().update({key:self.__dict__[k].ALLOWED_OPTIONS[key][0](value)})
                                 else:
                                     self.__dict__[k].__options__().update({key:value})
                         else:
                             self.__dict__[k].__options__().update(v)
-                            v = self.__dict__[k].__options__()
+                        v = self.__dict__[k].__options__()
                     # upating object
                     if isinstance(v, dict):
                         self.__dict__.update({k:self.ALLOWED_OPTIONS[k][0](**v)})
                     else:
-                        print k, v
                         self.__dict__.update({k:self.ALLOWED_OPTIONS[k][0](v)})
 
                 elif isinstance(self.ALLOWED_OPTIONS[k], tuple) and isinstance(self.ALLOWED_OPTIONS[k][0](), ArrayObject):
                     if self.__getattr__(k): # update array 
                         if isinstance(v, dict):
-                            self.__dict__[k].append(ALLOWED_OPTIONS[k][0](**v))
+                            self.__dict__[k].append(self.ALLOWED_OPTIONS[k][0](**v))
                         elif isinstance(v, list):
                             for item in v:
-                                self.__dict__[k].append(ALLOWED_OPTIONS[k][0](**item))
+                                self.__dict__[k].append(self.ALLOWED_OPTIONS[k][0](**item))
                         else:
                             OptionTypeError("Not An Accepted Input Type: %s" % type(v))        
                     else: #first 
                         if isinstance(v, dict):
-                            self.__dict__.update({k:[ALLOWED_OPTIONS[k][0](**v)]})
+                            self.__dict__.update({k:[self.ALLOWED_OPTIONS[k][0](**v)]})
                         elif isinstance(v, list):
                             if len(v) == 1:
-                                self.__dict__.update({k:[ALLOWED_OPTIONS[k][0](**v[0])]})
+                                self.__dict__.update({k:[self.ALLOWED_OPTIONS[k][0](**v[0])]})
                             else:
-                                self.__dict__.update({k:[ALLOWED_OPTIONS[k][0](**v[0])]})
+                                self.__dict__.update({k:[self.ALLOWED_OPTIONS[k][0](**v[0])]})
                                 for item in v[1:]:
-                                    self.__dict__[k].append(ALLOWED_OPTIONS[k][0](**item))
+                                    self.__dict__[k].append(self.ALLOWED_OPTIONS[k][0](**item))
                         else:
                             OptionTypeError("Not An Accepted Input Type: %s" % type(v)) 
 
-                elif isinstance(self.ALLOWED_OPTIONS[k], tuple) and (isinstance(self.ALLOWED_OPTIONS[k][0](), JSfunction) or \
-                        isinstance(self.ALLOWED_OPTIONS[k][0](), Formatter)):
+                elif isinstance(self.ALLOWED_OPTIONS[k], tuple) and \
+                    (isinstance(self.ALLOWED_OPTIONS[k][0](), CSSObject) or isinstance(self.ALLOWED_OPTIONS[k][0](), SVGObject)):
+
+                    if self.__getattr__(k): 
+                        for key, value in v.items(): # check if v has object input 
+                            self.__dict__[k].__options__().update({key:value})
+                        
+                        v = self.__dict__[k].__options__()
+                    # upating object
                     if isinstance(v, dict):
                         self.__dict__.update({k:self.ALLOWED_OPTIONS[k][0](**v)})
                     else:
                         self.__dict__.update({k:self.ALLOWED_OPTIONS[k][0](v)})
 
+                elif isinstance(self.ALLOWED_OPTIONS[k], tuple) and (isinstance(self.ALLOWED_OPTIONS[k][0](), JSfunction) or \
+                    isinstance(self.ALLOWED_OPTIONS[k][0](), Formatter) or isinstance(self.ALLOWED_OPTIONS[k][0](), ColorObject)):
+                    if isinstance(v, dict):
+                        self.__dict__.update({k:self.ALLOWED_OPTIONS[k][0](**v)})
+                    else:
+                        self.__dict__.update({k:self.ALLOWED_OPTIONS[k][0](v)})
                 else:
                     self.__dict__.update({k:v})
 
@@ -297,7 +309,7 @@ class DrilldownOptions(BaseOptions): #not implement yet, need work in jinjia
         "activeDataLabelStyle": (CSSObject, dict),
         "animation": NotImplemented, #(bool, dict), #not sure how to implement 
         "drillUpButton": (DrillUpButton, dict),
-        "series": SeriesOptions,
+        "series": (SeriesOptions, dict),
     }
 
 
@@ -322,7 +334,7 @@ class GlobalOptions(BaseOptions):
         "Date": NotImplemented,
         "VMLRadialGradientURL": basestring,
         "canvasToolsURL": basestring,
-        "getTimezoneOffset": JSfunction,
+        "getTimezoneOffset": (JSfunction, basestring),
         "timezoneOffset": int,
         "useUTC": bool,
     }
@@ -330,7 +342,7 @@ class GlobalOptions(BaseOptions):
 
 class LabelsOptions(BaseOptions):
     ALLOWED_OPTIONS = {
-        "items": Items, 
+        "items": (Items, dict),
         "style": (CSSObject, dict),
     }
 
@@ -496,7 +508,7 @@ class TooltipOptions(BaseOptions):
         "formatter": (Formatter, JSfunction),
         "headerFormat": basestring,
         "pointFormat": basestring,
-        "positioner": JSfunction,
+        "positioner": (JSfunction, basestring),
         "shadow": bool,
         "shared": bool,
         "snap": int,
@@ -514,9 +526,10 @@ class xAxisOptions(BaseOptions):
         "allowDecimals": bool,
         "alternateGridColor": (ColorObject, basestring, dict),
         "categories": list,
+        'crosshair': bool,
         "dateTimeLabelFormats": (DateTimeLabelFormats, dict),
         "endOnTick": bool, 
-        "events": Events,
+        "events": (Events, dict),
         "gridLineColor": (ColorObject, basestring, dict),
         "gridLineDashStyle": basestring,
         "gridLineWidth": int,
@@ -525,11 +538,11 @@ class xAxisOptions(BaseOptions):
         "lineColor": (ColorObject, basestring, dict),
         "lineWidth": int,
         "linkedTo": int,
-        "max": float,
-        "maxPadding": float,
+        "max": [float, int],
+        "maxPadding": [float, int],
         "maxZoom": NotImplemented,
-        "min": float,
-        "minPadding": float,
+        "min": [float, int],
+        "minPadding": [float, int],
         "minRange": int,
         "minTickInterval": int,
         "minorGridLineColor": (ColorObject, basestring, dict),
@@ -569,12 +582,12 @@ class yAxisOptions(BaseOptions):
     ALLOWED_OPTIONS = {
         "allowDecimals": bool,
         "alternateGridColor": (ColorObject, basestring, dict),
-        "breaks": Breaks,
+        "breaks": (Breaks, dict),
         "categories": list,
         "ceiling": (int, float),
         "dateTimeLabelFormats": (DateTimeLabelFormats, dict),
         "endOnTick": bool,
-        "events": Events,
+        "events": (Events, dict),
         "floor": (int, float),
         "gridLineColor": (ColorObject, basestring, dict),
         "gridLineDashStyle": basestring,
@@ -586,13 +599,13 @@ class yAxisOptions(BaseOptions):
         "lineColor": (ColorObject, basestring, dict),
         "lineWidth": int,
         "linkedTo": int,
-        "max": float,
+        "max": [float, int],
         "maxColor": (ColorObject, basestring, dict),
-        "maxPadding": float,
+        "maxPadding": [float, int],
         "maxZoom": NotImplemented,
-        "min": float,
+        "min": [float, int],
         "minColor": (ColorObject, basestring, dict),
-        "minPadding": float,
+        "minPadding": [float, int],
         "minRange": int,
         "minTickInterval": int,
         "minorGridLineColor": (ColorObject, basestring, dict),
@@ -622,7 +635,7 @@ class yAxisOptions(BaseOptions):
         "tickLength": int,
         "tickPixelInterval": int,
         "tickPosition": basestring,
-        "tickPositioner": JSfunction,
+        "tickPositioner": (JSfunction, basestring),
         "tickPositions": list,
         "tickWidth": int,
         "tickmarkPlacement": basestring,
@@ -631,7 +644,20 @@ class yAxisOptions(BaseOptions):
         "units": list    
     }
 
+class MultiAxis(object):
 
+    def __init__(self, axis):
+        AXIS_LIST = {
+            "xAxis": xAxisOptions,
+            "yAxis": yAxisOptions
+            }
+        self.axis = []
+        self.AxisObj = AXIS_LIST[axis]
+
+    def update(self, **kwargs):
+        self.axis.append(self.AxisObj(**kwargs))
+    def __jsonable__(self):
+        return self.axis
 
 
 if __name__ == '__main__':
