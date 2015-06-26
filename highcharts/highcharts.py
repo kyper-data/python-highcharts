@@ -252,16 +252,6 @@ class Highcharts(object):
             self.options['tooltip'].update_dict(formatter='date')
             self.options['xAxis'].update_dict(type='datetime')
 
-        # date_dict = {
-        #     "year": date.year,
-        #     "month": date.month - 1,
-        #     "day": date.day,
-        #     "hour": date.hour,
-        #     "minute": date.minute,
-        #     "second": date.second,
-        # }
-        # formatted_date = "Date.UTC({year}, {month}, {day}, {hour}, {minute}, {second})"
-        # formatted_date = formatted_date.format(**date_dict)
         if not self.options['plotOptions'].__dict__:
             self.hold_point_start = start
             if is_date:
@@ -290,10 +280,6 @@ class Highcharts(object):
             for series_type, series_options in hold_iterable:
                 self.set_options('plotOptions',{series_type:{'pointInterval':interval}})
 
-        # for hold_item in self.options['plotOptions'].__dict__.items():
-        #     series_type, series_options = hold_item
-        #     series_options.process_kwargs({'pointInterval':interval},
-        #         series_type=series_type)
         if not self.start_date_set:
             print "Set The Start Date With .set_start_date(date)"
 
@@ -315,7 +301,7 @@ class Highcharts(object):
        
         series_data.__options__().update(SeriesOptions(series_type=series_type, **kwargs).__options__())
         self.data_temp.append(series_data)
-        #self.options["series"].data.append(series_data)
+
 
     def add_drilldown_data_set(self, data, series_type, id, **kwargs):
         """ Set data for drilldown option in highcharts """
@@ -328,6 +314,7 @@ class Highcharts(object):
        
         series_data.__options__().update(SeriesOptions(series_type=series_type, **kwargs).__options__())
         self.drilldown_data_temp.append(series_data)
+
 
     def set_options(self, option_type, option_dict, force_options=False):
         """ Set Plot Options """
@@ -342,6 +329,10 @@ class Highcharts(object):
                 self.options[option_type].update(**each_dict)
         else:
             self.options[option_type].update_dict(**option_dict)
+
+        if option_type == 'chart' and 'options3d' in option_dict:
+            # Add 3d.js into Javascript source header
+            self.set_JSsource("http://code.highcharts.com/highcharts-3d.js")
 
 
     def set_dict_optoins(self, options):
@@ -428,7 +419,6 @@ class Highcharts(object):
         """generate HTML div"""
         if self.container:
             return
-
         # Create HTML div with style
         if self.options['chart'].width:
             if str(self.options['chart'].width)[-1] != '%':
@@ -440,9 +430,8 @@ class Highcharts(object):
                 self.div_style += 'height:%spx;' % self.options['chart'].height
             else:
                 self.div_style += 'height:%s;' % self.options['chart'].height
-        # if self.div_style:
-        #     self.div_style = 'style="%s"' % self.div_style
 
+        self.div_name = self.options['chart'].__dict__['renderTo'] # recheck div name
         self.container = self.containerheader + \
             '<div id="%s" style="%s"></div>\n' % (self.div_name, self.div_style)
 

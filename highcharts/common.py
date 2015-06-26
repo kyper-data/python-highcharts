@@ -266,7 +266,8 @@ class CommonObject(object):
                             self.__dict__.update({k:self.ALLOWED_OPTIONS[k][0](v)})
                     else:
                         self.__dict__.update({k:v})
-                else: 
+                else:
+                    print(k, v) 
                     raise OptionTypeError("Option Type Mismatch: Expected: %s" % self.ALLOWED_OPTIONS[k])
             else:
                 raise OptionTypeError("Option: %s Not Allowed For Event Class:" % k)

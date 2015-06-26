@@ -217,7 +217,7 @@ class BaseOptions(object):
 class ChartOptions(BaseOptions):
     ALLOWED_OPTIONS = {
         "alignTicks": bool,
-        "animation": bool,
+        "animation": [bool, dict, basestring],
         "backgroundColor": (ColorObject, basestring, dict),
         "borderColor": (ColorObject, basestring, dict),
         "borderRadius": int,
