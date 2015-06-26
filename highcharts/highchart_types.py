@@ -446,8 +446,8 @@ class SeriesOptions(object):
                         self.__dict__.update({k:v})
                 else: 
                     if not supress_errors: raise OptionTypeError("Option Type Mismatch: Expected: %s" % allowed_args[k])
-            else: 
-                if not supress_errors: raise OptionTypeError("Option: %s Not Allowed For Series Type: %s" % (k,series_type))
+            # else: 
+            #     if not supress_errors: raise OptionTypeError("Option: %s Not Allowed For Series Type: %s" % (k,series_type))
 
     def load_defaults(self,series_type):
         self.process_kwargs(DEFAULT_OPTIONS.get(series_type,{}),series_type)
@@ -499,11 +499,7 @@ class Series(object):
                                     item.update({k:DATA_SERIES_ALLOWED_OPTIONS[k][0](v)})
                             else:
                                 item.update({k:v})
-                        else: 
-                            if not supress_errors: raise OptionTypeError("Option Type Mismatch: Expected: %s" % DATA_SERIES_ALLOWED_OPTIONS[k])
-                    else: 
-                        if not supress_errors: raise OptionTypeError("Option: %s Not Allowed For Series Type: %s" % (k,series_type))
-
+                        
         self.__dict__.update({
           "data": data,
           "type": series_type,
@@ -535,8 +531,8 @@ class Series(object):
                         self.__dict__.update({k:v})
                 else: 
                     if not supress_errors: raise OptionTypeError("Option Type Mismatch: Expected: %s" % DATA_SERIES_ALLOWED_OPTIONS[k])
-            else: 
-                if not supress_errors: raise OptionTypeError("Option: %s Not Allowed For Series Type: %s" % (k,series_type))
+            # else: 
+            #     if not supress_errors: raise OptionTypeError("Option: %s Not Allowed For Series Type: %s" % (k,series_type))
 
 
     def __options__(self):

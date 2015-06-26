@@ -104,6 +104,10 @@ class Highcharts(object):
         self.data = []
         self.data_temp = []
 
+        # set drilldown data
+        self.drilldown_data = []
+        self.drilldown_data_temp = []
+
         # if JSONP
         self.jsonp = kwargs.get('jsonp', False)
         self.url_for_jsonp = kwargs.get('url_jsonp', None)
@@ -185,6 +189,7 @@ class Highcharts(object):
                 self.options['chart'].update_dict(**{keyword:kwargs[keyword]})
         # Some Extra Vals to store:
         self.data_set_count = 0
+        self.drilldown_data_set_count = 0
 
 
     def __load_defaults__(self):
@@ -220,15 +225,20 @@ class Highcharts(object):
         if isinstance(new_src, list):
             for h in list:
                 self.JSsource.append(h)
-        else:
+        elif isinstance(new_src, basestring):
             self.JSsource.append(new_src)
+        else:
+            raise OptionTypeError("Option: %s Not Allowed For Series Type: %s" % type(new_src))
+
 
     def set_CSSsource(self, new_src):
         if isinstance(new_src, list):
             for h in new_src:
                 self.CSSsource.append(h)
-        else:
+        elif isinstance(new_src, basestring):
             self.CSSsource.append(new_src)
+        else:
+            raise OptionTypeError("Option: %s Not Allowed For Series Type: %s" % type(new_src))
 
 
     def set_start(self, start, is_date = False):
@@ -289,7 +299,7 @@ class Highcharts(object):
 
 
     def add_data_set(self, data, series_type="line", name=None, **kwargs):
-        """ Update Plot Options With Defaults If None Exist """
+        """ Set data for series option in highcharts """
         self.data_set_count += 1
         if not name:
             name = "Series %d" % self.data_set_count
@@ -301,14 +311,23 @@ class Highcharts(object):
             kwargs.update({"pointInterval":self.hold_point_interval})
             self.hold_point_interval = None
 
-        series_data = Series(data, series_type=series_type, \
-            supress_errors=True, **kwargs)
+        series_data = Series(data, series_type=series_type, **kwargs)
        
-        series_data.__options__().update(SeriesOptions(series_type=series_type,
-            supress_errors=True, **kwargs).__options__())
+        series_data.__options__().update(SeriesOptions(series_type=series_type, **kwargs).__options__())
         self.data_temp.append(series_data)
         #self.options["series"].data.append(series_data)
 
+    def add_drilldown_data_set(self, data, series_type, id, **kwargs):
+        """ Set data for drilldown option in highcharts """
+        self.drilldown_data_set_count += 1
+        if self.drilldown_flag == False:
+            self.drilldown_flag = True
+        
+        kwargs.update({'id':id})
+        series_data = Series(data, series_type=series_type, **kwargs)
+       
+        series_data.__options__().update(SeriesOptions(series_type=series_type, **kwargs).__options__())
+        self.drilldown_data_temp.append(series_data)
 
     def set_options(self, option_type, option_dict, force_options=False):
         """ Set Plot Options """
@@ -360,8 +379,14 @@ class Highcharts(object):
         #self.buildjschart()
         self.option = json.dumps(self.options, encoding='utf8', cls = HighchartsEncoder)
         self.setoption = json.dumps(self.setOptions, cls = HighchartsEncoder) 
-
         self.data = json.dumps(self.data_temp, encoding='utf8', cls = HighchartsEncoder)
+        
+        if self.drilldown_flag: 
+            tmp_dict = {} # put drilldown data set into a dict
+            tmp_dict.update({'series': self.drilldown_data_temp})
+            self.drilldown_data_temp = tmp_dict
+            self.drilldown_data = json.dumps(self.drilldown_data_temp, encoding='utf8', \
+                                            cls = HighchartsEncoder)
         self.htmlcontent = self.template_content_highcharts.render(chart=self).encode('utf-8')
 
 
@@ -381,6 +406,9 @@ class Highcharts(object):
         """generate HTML header content"""
         #Highcharts lib/ needs to make sure it's up to date
         
+        if self.drilldown_flag:
+            self.set_JSsource('http://code.highcharts.com/modules/drilldown.js')
+
         self.header_css = [
             '<link href="%s" rel="stylesheet" />' % h for h in self.CSSsource
         ]
@@ -485,6 +513,13 @@ class HighchartsEncoder(json.JSONEncoder):
         for k, v in self._replacement_map.items():
             result = result.replace('"%s"' % (k,), v.decode('utf-8'))
         return result
+
+
+class OptionTypeError(Exception):
+
+    def __init__(self,*args):
+        self.args = args
+
 
 def _main():
     """
