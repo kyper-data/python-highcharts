@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <link href="https://www.highcharts.com/highslide/highslide.css" rel="stylesheet" />
+        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+        <script type="text/javascript" src="https://code.highcharts.com/highcharts.js"></script>
+        <script type="text/javascript" src="https://code.highcharts.com/highcharts-more.js"></script>
+        <script type="text/javascript" src="https://code.highcharts.com/modules/exporting.js"></script>
+    </head>
+    <body>
+        	    <div id="test" style="width:550px;height:400px;"></div>
+
+
+    <script>
+        $(function(){
+ 
+
+	Highcharts.setOptions({"lang": {}, "global": {}});
+    
+    var option = {"loading": {}, "subtitle": {}, "xAxis": {"lineWidth": 0, "tickmarkPlacement": "on", "categories": ["Sales", "Marketing", "Development", "Customer Support", "Information Technology", "Administration"]}, "title": {"text": "Budget vs spending", "x": -80}, "series": {}, "labels": {}, "yAxis": {"lineWidth": 0, "gridLineInterpolation": "polygon", "min": 0}, "chart": {"width": 550, "polar": true, "renderTo": "test", "type": "line", "height": 400}, "tooltip": {"shared": true, "pointFormat": "<span style=\"color:{series.color}\">{series.name}: <b>${point.y:,.0f}</b><br/>"}, "plotOptions": {}, "credits": {"enabled": false}, "colors": {}, "pane": {"size": "80%"}, "exporting": {}, "drilldown": {}, "navigation": {}, "legend": {"y": 70, "layout": "vertical", "align": "right", "verticalAlign": "top"}};
+    
+    	var data = [{"data": [43000, 19000, 60000, 35000, 17000, 10000], "type": "line", "name": "Allocated Budget", "pointPlacement": "on"}, {"data": [50000, 39000, 42000, 31000, 26000, 14000], "type": "line", "name": "Actual Spending", "pointPlacement": "on"}];
+ 
+	
+	    option.series = data;
+
+ 
+
+    var chart = new Highcharts.Chart(option);
+
+        
+	});
+ 
+    </script>
+
+
+    </body>
+</html>
