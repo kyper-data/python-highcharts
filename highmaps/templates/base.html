@@ -4,15 +4,25 @@
 {% block start_script %}
     <script>
         $(function(){
+        {% if chart.jsonp_flag %}
+        	$.getJSON({{chart.jsonp_url}}, function (
+            {% if chart.jsonp_map %}
+                {{chart.jsonp_map}}
+            {% elif chart.jsonp_data %}
+                {{chart.jsonp_data}}
+            {% endif %} 
+                ){
+        {% endif %} 
 {% endblock start_script %}
 
-{% block body %}
-    
-     <!-- end of body from base-->
-    
+{% block body %}    
 {% endblock body%}
 
-{% block endscript %}
-        });
+{% block endscript %}        
+	});
+        {% if chart.jsonp_flag %}
+        	});
+        {% endif %} 
     </script>
+
 {% endblock endscript %}

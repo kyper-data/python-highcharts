@@ -1,9 +1,9 @@
 # -*- coding: UTF-8 -*-
 
-from highchart_types import OptionTypeError, Series, SeriesOptions
-from common import Formatter, Events, Position, ContextButton, Options3d, ResetZoomButton, \
-    DrillUpButton, Labels, PlotBands, PlotLines, Title, Items, Navigation, Background, Breaks, \
-    DateTimeLabelFormats, Zones, JSfunction, ColorObject, CSSObject, SVGObject, CommonObject, ArrayObject
+from highmap_types import OptionTypeError, Series, SeriesOptions
+from common import Formatter, Events, Position, ContextButton, Button, Options3d, ResetZoomButton, \
+    DrillUpButton, Labels, DataClasses, Title, Items, Navigation, Background, Breaks, Marker, \
+    DateTimeLabelFormats, JSfunction, ColorObject, CSSObject, SVGObject, CommonObject, ArrayObject
 
 import json, datetime
 from types import NoneType
@@ -30,97 +30,6 @@ class BaseOptions(object):
                 raise NotImplementedError
             return isinstance(v[keys[0]],ov[keys[0]])
         return isinstance(v, ov) 
-
-    def update_dict2(self,**kwargs):
-
-        DICTOBJECT_LIST = {
-            "backgroundColor": ColorObject,
-            "borderColor": ColorObject,
-            "events": Events,
-            "options3d": Options3d,
-            "resetZoomButton": ResetZoomButton,
-            "drillUpButton": DrillUpButton,
-            "position": Position,
-            "buttons": ContextButton,
-            "labels": Labels,
-            "title": Title,
-            "formatter": Formatter,
-            "labelFormatter": Formatter,
-            "chartOptions": ChartOptions,
-            "getTimezoneOffset": JSfunction,
-            "positioner": JSfunction,
-            "style": CSSObject,
-        }
-
-        ARRAYOBJECT_LIST = {
-            "background": Background,
-            "breaks": Breaks,
-            "plotBands": PlotBands,
-            "plotLines": PlotLines,
-            "items": Items,
-            "zones": Zones
-        }
-
-        for k, v in kwargs.items(): 
-            if k in self.ALLOWED_OPTIONS:
-                if k in DICTOBJECT_LIST:
-                    # re-construct input dict with existing options in objects
-                    if self.__getattr__(k): 
-                        if isinstance(v, dict): 
-                            for key, value in v.items(): # check if v has object input 
-                                if key in DICTOBJECT_LIST:
-                                    self.__dict__[k].__options__()[key].__options__().update(value)
-                                    #new_v =  self.__dict__[k].__options__()[key].__options__()
-                                    #self.__dict__[k].__options__().update({key:new_v})
-                                else:
-                                    self.__dict__[k].__options__().update({key:value})
-                        else:
-                            self.__dict__[k].__options__().update(v)
-
-                        v = self.__dict__[k].__options__()
-                    # upating object
-                    if isinstance(v, dict):
-                        self.__dict__.update({k:DICTOBJECT_LIST[k](**v)})
-                    else:
-                        self.__dict__.update({k:DICTOBJECT_LIST[k](v)})
-
-                elif k in ARRAYOBJECT_LIST:
-                    if self.__getattr__(k): # update array 
-                        if isinstance(v, dict):
-                            self.__dict__[k].append(ARRAYOBJECT_LIST[k](**v))
-                        elif isinstance(v, list):
-                            for item in v:
-                                self.__dict__[k].append(ARRAYOBJECT_LIST[k](**item))
-                        else:
-                            OptionTypeError("Not An Accepted Input Type: %s" % type(v))        
-                    else: #first 
-                        if isinstance(v, dict):
-                            self.__dict__.update({k:[ARRAYOBJECT_LIST[k](**v)]})
-                        elif isinstance(v, list):
-                            if len(v) == 1:
-                                self.__dict__.update({k:[ARRAYOBJECT_LIST[k](**v[0])]})
-                            else:
-                                self.__dict__.update({k:[ARRAYOBJECT_LIST[k](**v[0])]})
-                                for item in v[1:]:
-                                    self.__dict__[k].append(ARRAYOBJECT_LIST[k](**item))
-                        else:
-                            OptionTypeError("Not An Accepted Input Type: %s" % type(v))
-
-                elif isinstance(v, SeriesOptions):
-                    if self.__getattr__(k):
-                        self.__dict__[k].__options__().update(v.__options__())
-                        v = SeriesOptions(series_type=k, supress_errors=True, 
-                            **self.__dict__[k].__options__())
-                    self.__dict__.update({k:v})      
-
-                else:
-                    self.__dict__.update({k:v})
-
-            else:
-                print(self.ALLOWED_OPTIONS)
-                print(self.__name__)
-                print(k, v)
-                raise OptionTypeError("Not An Accepted Option Type: %s" % k)
 
 
     def update_dict(self,**kwargs):
@@ -216,36 +125,30 @@ class BaseOptions(object):
 
 class ChartOptions(BaseOptions):
     ALLOWED_OPTIONS = {
-        "alignTicks": bool,
         "animation": [bool, dict, basestring],
         "backgroundColor": (ColorObject, basestring, dict),
         "borderColor": (ColorObject, basestring, dict),
         "borderRadius": int,
         "borderWidth": int,
         "className": basestring,
-        "defaultSeriesType": basestring,
-        "events": Events,
+        "events": (Events, dict),
         "height": [int,basestring],
-        "ignoreHiddenSeries": bool,
-        "inverted": bool,
         "margin": list,
         "marginBottom": int,
         "marginLeft": int,
         "marginRight": int,
         "marginTop": int,
-        "options3d": (Options3d, dict), 
         "plotBackgroundColor": (ColorObject, basestring, dict),
         "plotBackgroundImage": basestring,
         "plotBorderColor": (ColorObject, basestring, dict),
         "plotBorderWidth": int,
         "plotShadow": bool,
-        "polar": bool,
         "reflow": bool,
         "renderTo": basestring,
         "resetZoomButton": (ResetZoomButton, dict),
         "selectionMarkerFill": basestring,
         "shadow": bool,
-        "showAxes": bool,
+        "spacing": list,
         "spacingBottom": int,
         "spacingLeft": int,
         "spacingRight": int,
@@ -253,8 +156,52 @@ class ChartOptions(BaseOptions):
         "style": (CSSObject, dict),
         "type": basestring,
         "width": [int,basestring],
-        "zoomType": basestring,
     }
+
+class ColorAxisOptions(BaseOptions):
+    ALLOWED_OPTIONS = {
+        "dataClassColor": basestring,
+        "dataClasses": (DataClasses, dict),
+        "endOnTick": bool,
+        "events": (Events, dict),
+        "gridLineColor": (ColorObject, basestring, dict),
+        "gridLineDashStyle": basestring,
+        "gridLineWidth": [float, int],
+        "id": basestring,
+        "labels": (Labels, dict),
+        "lineColor": (ColorObject, basestring, dict),
+        "lineWidth": [float, int],
+        "marker": (Marker, dict),
+        "max": [float, int],
+        "maxColor": (ColorObject, basestring, dict),
+        "maxPadding": [float, int],
+        "min": [float, int],
+        "minColor": (ColorObject, basestring, dict),
+        "minPadding": [float, int],
+        "minorGridLineColor": (ColorObject, basestring, dict),
+        "minorGridLineDashStyle": basestring,
+        "minorGridLineWidth": int,
+        "minorTickColor": (ColorObject, basestring, dict),
+        "minorTickInterval": int,
+        "minorTickLength": int,
+        "minorTickPosition": basestring,
+        "minorTickWidth": int,
+        "reversed": bool,
+        "showFirstLabel": bool,
+        "showLastLabel": bool,
+        "startOfWeek": int,
+        "startOnTick": bool,
+        "stops": list,
+        "tickColor": (ColorObject, basestring, dict),
+        "tickInterval": int,
+        "tickLength": int,
+        "tickPixelInterval": int,
+        "tickPosition": basestring,
+        "tickPositioner": JSfunction,
+        "tickPositions": list,
+        "tickWidth": int,
+        "type": basestring,
+}
 
 
 class ColorsOptions(BaseOptions):
@@ -309,7 +256,7 @@ class DrilldownOptions(BaseOptions): #not implement yet, need work in jinjia
         "activeDataLabelStyle": (CSSObject, dict),
         "animation": NotImplemented, #(bool, dict), #not sure how to implement 
         "drillUpButton": (DrillUpButton, dict),
-        "series": (SeriesOptions, dict),
+        "series": (Series, dict),
     }
 
 
@@ -398,7 +345,6 @@ class LegendOptions(BaseOptions):
         "style": (CSSObject, dict),
         "symbolHeight": int,
         "symbolPadding": int,
-        "symbolRadius": int,
         "symbolWidth": int,
         "title": (Title, dict),
         "useHTML": bool,
@@ -418,6 +364,18 @@ class LoadingOptions(BaseOptions):
         "style": (CSSObject, dict),
     }
 
+
+class MapNavigationOptions(BaseOptions):
+    ALLOWED_OPTIONS = {
+        "buttonOptions": (ContextButton, dict),
+        "buttons": (Button, dict),
+        "enableButtons": bool,
+        "enableDoubleClickZoom": bool,
+        "enableDoubleClickZoomTo": bool,
+        "enableMouseWheelZoom": bool,
+        "enableTouchZoom": bool,
+        "enabled": bool,
+    }
 
 class NavigationOptions(BaseOptions):
     ALLOWED_OPTIONS = {
@@ -500,7 +458,6 @@ class TooltipOptions(BaseOptions):
         "borderRadius": int,
         "borderWidth": int,
         "crosshairs": [bool, list, dict],
-        "dateTimeLabelFormats": (DateTimeLabelFormats, dict),
         "enabled": bool,
         "followPointer": bool,
         "followTouchMove": bool,
@@ -510,14 +467,11 @@ class TooltipOptions(BaseOptions):
         "pointFormat": basestring,
         "positioner": (JSfunction, basestring),
         "shadow": bool,
-        "shared": bool,
-        "snap": int,
         "style": (CSSObject, dict),
         "useHTML": bool,
         "valueDecimals": int,
         "valuePrefix": basestring,
         "valueSuffix": basestring,
-        "xDateFormat": basestring,
     }
 
 
@@ -525,9 +479,6 @@ class xAxisOptions(BaseOptions):
     ALLOWED_OPTIONS = {
         "allowDecimals": bool,
         "alternateGridColor": (ColorObject, basestring, dict),
-        "categories": list,
-        'crosshair': bool,
-        "dateTimeLabelFormats": (DateTimeLabelFormats, dict),
         "endOnTick": bool, 
         "events": (Events, dict),
         "gridLineColor": (ColorObject, basestring, dict),
@@ -540,7 +491,6 @@ class xAxisOptions(BaseOptions):
         "linkedTo": int,
         "max": [float, int],
         "maxPadding": [float, int],
-        "maxZoom": NotImplemented,
         "min": [float, int],
         "minPadding": [float, int],
         "minRange": int,
@@ -555,13 +505,10 @@ class xAxisOptions(BaseOptions):
         "minorTickWidth": int,
         "offset": bool,
         "opposite": bool,
-        "plotBands": (PlotBands, list),
-        "plotLines": (PlotLines, list),
         "reversed": bool,
         "showEmpty": bool,
         "showFirstLabel": bool,
         "showLastLabel": bool,
-        "startOfWeek": int,
         "startOnTick": bool,
         "tickColor": (ColorObject, basestring, dict),
         "tickInterval": int,
@@ -571,10 +518,7 @@ class xAxisOptions(BaseOptions):
         "tickPositioner": JSfunction,
         "tickPositions": list,
         "tickWidth": int,
-        "tickmarkPlacement": basestring,
         "title": (Title, dict),
-        "type": basestring,
-        "units": list
     }
 
 
@@ -582,27 +526,19 @@ class yAxisOptions(BaseOptions):
     ALLOWED_OPTIONS = {
         "allowDecimals": bool,
         "alternateGridColor": (ColorObject, basestring, dict),
-        "breaks": (Breaks, dict),
-        "categories": list,
-        "ceiling": (int, float),
-        "dateTimeLabelFormats": (DateTimeLabelFormats, dict),
         "endOnTick": bool,
         "events": (Events, dict),
         "floor": (int, float),
         "gridLineColor": (ColorObject, basestring, dict),
         "gridLineDashStyle": basestring,
-        "gridLineInterpolation": basestring,
         "gridLineWidth": int,
-        "gridZIndex": int,
         "id": basestring,
         "labels": (Labels, dict),
         "lineColor": (ColorObject, basestring, dict),
         "lineWidth": int,
-        "linkedTo": int,
         "max": [float, int],
         "maxColor": (ColorObject, basestring, dict),
         "maxPadding": [float, int],
-        "maxZoom": NotImplemented,
         "min": [float, int],
         "minColor": (ColorObject, basestring, dict),
         "minPadding": [float, int],
@@ -618,18 +554,11 @@ class yAxisOptions(BaseOptions):
         "minorTickWidth": int,
         "offset": bool,
         "opposite": bool,
-        "plotBands": (PlotBands, list),
-        "plotLines": (PlotLines, list),
         "reversed": bool,
-        "reversedStacks": bool,
         "showEmpty": bool,
         "showFirstLabel": bool,
         "showLastLabel": bool,
-        "stackLabels": (Labels, dict),
-        "startOfWeek": int,
         "startOnTick": bool,
-        "stops": list,
-        "tickAmount": int,
         "tickColor": (ColorObject, basestring, dict),
         "tickInterval": int,
         "tickLength": int,
@@ -638,10 +567,7 @@ class yAxisOptions(BaseOptions):
         "tickPositioner": (JSfunction, basestring),
         "tickPositions": list,
         "tickWidth": int,
-        "tickmarkPlacement": basestring,
-        "title": (Title, dict),
-        "type": basestring,
-        "units": list    
+        "title": (Title, dict),  
     }
 
 class MultiAxis(object):

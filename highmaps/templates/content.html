@@ -5,9 +5,29 @@
 
 {% block body %}
 
+    {% if chart.jquery_head_flag %}
+        {{chart.jquery_head_script}}
+    {% if endif %}
+
+	Highcharts.setOptions({{chart.setoption}});
+    
     var option = {{chart.option}};
-    var data = {{chart.data}};
-    option.series = data;
-    var chart = new Highcharts.Chart(option);
+    
+    {% if not chart.jsonp_flag or not chart.jsonp_data %}
+    	var data = {{chart.data}};
+    {% endif %} 
+	
+	    option.series = data;
+
+    {% if chart.drilldown_flag %}
+    	var drilldowndata = {{chart.drilldown_data}};
+    	option.drilldown = drilldowndata;
+    {% endif %} 
+
+    var chart = new Highcharts.Map(option);
+
+    {% if chart.jquery_end_flag %}
+        {{chart.jquery_end_script}}
+    {% if endif %}
 
 {% endblock body %}

@@ -40,21 +40,6 @@ template_page = jinja2_env.get_template(PAGE_FILENAME)
     
 DEFAULT_POINT_INTERVAL = 86400000
 
-FORMAT_SPECIAL_CASES = {    
-    "formatter": "formatter",
-    "labelFormatter": "formatter",
-    "pointStart": "skip_quotes",
-    "events": "skip_quotes",
-    "load": "skip_quotes",
-    "multiaxis": "multiaxis"
-}
-
-def stab(tab=1):
-    """
-    create space tabulation
-    """
-    return ' ' * 4 * tab
-
 
 class Highcharts(object):
     """

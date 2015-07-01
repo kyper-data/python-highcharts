@@ -224,7 +224,7 @@ class ChartOptions(BaseOptions):
         "borderWidth": int,
         "className": basestring,
         "defaultSeriesType": basestring,
-        "events": Events,
+        "events": (Events, dict),
         "height": [int,basestring],
         "ignoreHiddenSeries": bool,
         "inverted": bool,
@@ -406,7 +406,6 @@ class LegendOptions(BaseOptions):
         "width": int,
         "x": int,
         "y": int,
-
     }
 
 
@@ -643,6 +642,7 @@ class yAxisOptions(BaseOptions):
         "type": basestring,
         "units": list    
     }
+    
 
 class MultiAxis(object):
 

@@ -139,6 +139,22 @@ class Formatter(object):
     def __options__(self):
         return self.formatter
 
+class MapObject(object):
+    """ Base Map Class """
+
+    def __init__(self, mapdata=None):
+        if mapdata:
+            if isinstance(mapdata, basestring):
+                self.map = RawJavaScriptText(mapdata)
+            elif isinstance(mapdata, JSfunction):
+                self.map = mapdata
+            else:
+                raise OptionTypeError("Option Type Mismatch: Expected: %s" % basestring)
+
+
+    def __options__(self):
+        return self.map
+
 class ColorObject(object):
     """ color object """
     
@@ -270,6 +286,7 @@ class CommonObject(object):
                     print(k, v) 
                     raise OptionTypeError("Option Type Mismatch: Expected: %s" % self.ALLOWED_OPTIONS[k])
             else:
+                print(k,v)
                 raise OptionTypeError("Option: %s Not Allowed For Event Class:" % k)
 
 
@@ -323,10 +340,12 @@ class ContextButton(CommonObject):
     """ Option class for the export button """
     ALLOWED_OPTIONS = {
     "align": basestring,
+    "alignTo": basestring,
     "enabled": bool,
     "height": int,
     "menuItems": NotImplemented,
     "onclick": (JSfunction, basestring),
+    "style": (CSSObject, dict),
     "symbol": basestring,
     "symbolFill": basestring,
     "symbolSize": int,
@@ -342,6 +361,11 @@ class ContextButton(CommonObject):
     "y": int, 
     }
 
+class Button(CommonObject):
+    ALLOWED_OPTIONS = {
+    "zoomIn": (ContextButton, dict),
+    "zoomOut": (ContextButton, dict),
+    }
 
 class Options3d(CommonObject): 
     ALLOWED_OPTIONS = {
@@ -383,7 +407,7 @@ class Labels(CommonObject):
     "defer": bool,
     "distance": int,
     "enabled": bool,
-    "format": basestring,
+    "format": [basestring, NoneType],
     "formatter": (Formatter, JSfunction, basestring),
     "inside": bool,
     "overflow": basestring,
@@ -418,7 +442,7 @@ class Title(CommonObject):
 class Navigation(CommonObject): 
     ALLOWED_OPTIONS = {
     "activeColor": (ColorObject, basestring, dict),
-    "animation": NotImplemented,
+    "animation": NotImplemented, #need animation object
     "arrowSize": int,
     "inactiveColor": (ColorObject, basestring, dict),
     "style": (CSSObject, dict),
@@ -473,6 +497,10 @@ class Halo(CommonObject):
 
 class Hover(CommonObject):
     ALLOWED_OPTIONS = {
+    "borderColor": (ColorObject, basestring, dict),
+    "borderWidth": [int, float],
+    "brightness": [int, float],
+    "color": (ColorObject, basestring, dict),
     "enabled": bool,
     "fillColor": (ColorObject, basestring, dict),
     "halo": (Halo, dict),
@@ -487,6 +515,7 @@ class Hover(CommonObject):
 class States(CommonObject):
     ALLOWED_OPTIONS = {
     "hover": (Hover, dict),
+    "normal": dict, #need animation object
     "select": (Select, dict)
     }
 
@@ -561,31 +590,6 @@ class ArrayObject(object):
                 raise OptionTypeError("Option: %s Not Allowed For Event Class:" % k)
         #self.data.append(self.__dict__)
 
-class PlotBands(ArrayObject):
-    ALLOWED_OPTIONS = {
-    "borderColor": (ColorObject, basestring, dict),
-    "borderWidth": int,
-    "color": (ColorObject, basestring, dict),
-    "events": (Events, dict),
-    "from": [int, float, datetime.datetime],
-    "id": basestring,
-    "label": (Labels, dict),
-    "to": [int, float, datetime.datetime],
-    "zIndex": int
-    }
-
-class PlotLines(ArrayObject):
-    ALLOWED_OPTIONS = {
-    "color": (ColorObject, basestring, dict),
-    "dashStyle": int,
-    "events": (Events, dict),
-    "id": basestring,
-    "label": (Labels, dict),
-    "value": [int, float],
-    "width": int,
-    "zIndex": int
-    }
-
 class Items(ArrayObject):
     ALLOWED_OPTIONS = {
     "html": basestring,
@@ -611,12 +615,12 @@ class Breaks(ArrayObject):
     "to": [int, float],
     }
 
-class Zones(ArrayObject):
+class DataClasses(ArrayObject):
     ALLOWED_OPTIONS = {
     "color": (ColorObject, basestring, dict),
-    "dashStyle": basestring,
-    "fillColor": (ColorObject, basestring, dict),
-    "value": [int, float],
+    "from": [int, float],
+    "name": basestring,
+    "to": [int, float],
     }
 
 
