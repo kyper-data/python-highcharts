@@ -399,20 +399,12 @@ class PaneOptions(BaseOptions):
 class PlotOptions(BaseOptions):
     """ Another Special Case: Interface With all the different Highchart Plot Types Here """
     ALLOWED_OPTIONS = {
-        "area": (SeriesOptions, dict),
-        "arearange": (SeriesOptions, dict),
-        "areaspline": (SeriesOptions, dict),
-        "areasplinerange": (SeriesOptions, dict),
-        "bar": (SeriesOptions, dict),
-        "column": (SeriesOptions, dict),
-        "columnrange": (SeriesOptions, dict),
-        "gauge": (SeriesOptions, dict),
-        "line": (SeriesOptions, dict),
-        "pie": (SeriesOptions, dict),
-        "scatter": (SeriesOptions, dict),
+        "heatmap": (SeriesOptions, dict),
+        "map": (SeriesOptions, dict),
+        "mapbubble": (SeriesOptions, dict),
+        "mapline": (SeriesOptions, dict),
+        "mappoint": (SeriesOptions, dict),
         "series": (SeriesOptions, dict),
-        "spline": (SeriesOptions, dict) ,
-        "boxplot": (SeriesOptions, dict),
     }
 
 

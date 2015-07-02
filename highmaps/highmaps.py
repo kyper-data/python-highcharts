@@ -71,7 +71,8 @@ class Highmaps(object):
 
         self.JSsource = [
                 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js',
-                'https://code.highcharts.com/maps/highmaps.js',
+                'http://code.highcharts.com/highcharts.js',
+                'http://code.highcharts.com/maps/modules/map.js',
                 'https://code.highcharts.com/maps/modules/data.js',
                 'https://code.highcharts.com/maps/modules/exporting.js'
             ]
@@ -85,25 +86,26 @@ class Highmaps(object):
         # set data
         self.data = []
         self.data_temp = []
+        # data from jsonp
+        self.jsonp_data_flag = False
 
         # set drilldown data
         self.drilldown_data = []
         self.drilldown_data_temp = []
 
-        # if JSONP
-        self.jsonp_flag = kwargs.get('jsonp', False)
-        self.jsonp_url = kwargs.get('url_jsonp', None)
-        self.jsonp_map = kwargs.get('map_jsonp', None)
-        self.jsonp_data = kwargs.get('data_jsonp', None)
+        # map
+        self.map = None
 
-        #jquery scrip
-        self.jquery_head_flag = kwargs.get('jquery_head', False)
-        self.jquery_head_script = kwargs.get('jquery_head_script', None)
-        self.jquery_end_flag = kwargs.get('jquery_end', False)
-        self.jquery_end_script = kwargs.get('jquery_end_script', None)
+        # jsonp map
+        self.jsonp_map_flag = kwargs.get('jsonp_map_flag', False)
+
+        # javascript
+        self.jscript_head_flag = False
+        self.jscript_head = kwargs.get('jscript_head', None)
+        self.jscript_end_flag = False
+        self.jscript_end = kwargs.get('jscript_end', None)
 
         # accepted keywords
-
         self.div_style = kwargs.get('style', '')
         self.drilldown_flag = kwargs.get('drilldown_flag', False)
         self.date_flag = kwargs.get('date_flag', False)
@@ -119,13 +121,6 @@ class Highmaps(object):
         #: Header for javascript code
         self.containerheader = u''
         
-        #: Javascript code as string
-        #self.jschart = None
-        # self.custom_tooltip_flag = False
-        # self.tooltip_condition_string = ''
-        # self.charttooltip = ''
-        self.serie_no = 1
-
         # Default Nulls // ?
         self.hold_point_start = None
         self.hold_point_interval = None
@@ -134,7 +129,7 @@ class Highmaps(object):
         # Bind Base Classes to self
         self.options = {
             "chart": ChartOptions(),
-            "colorAxis": ColorAxisOptions(),
+            #"colorAxis": ColorAxisOptions(), # cannot put in until there is data
             "colors": ColorsOptions(),
             "credits": CreditsOptions(),
             #"data": #NotImplemented
@@ -231,7 +226,7 @@ class Highmaps(object):
             raise OptionTypeError("Option: %s Not Allowed For Series Type: %s" % type(new_src))
 
 
-    def add_data_set(self, data, series_type="line", name=None, **kwargs):
+    def add_data_set(self, data, series_type="map", name=None, **kwargs):
         """ Set data for series option in highcharts """
         self.data_set_count += 1
         if not name:
@@ -244,6 +239,8 @@ class Highmaps(object):
             kwargs.update({"pointInterval":self.hold_point_interval})
             self.hold_point_interval = None
 
+        if self.map and 'mapData' in kwargs.keys():
+            kwargs.update({'mapData': self.map})
         series_data = Series(data, series_type=series_type, **kwargs)
        
         series_data.__options__().update(SeriesOptions(series_type=series_type, **kwargs).__options__())
@@ -262,17 +259,42 @@ class Highmaps(object):
         series_data.__options__().update(SeriesOptions(series_type=series_type, **kwargs).__options__())
         self.drilldown_data_temp.append(series_data)
 
-    def add_jquery(self, jquery_script, jquery_loc):
-        pass
+    def add_data_from_jsonp(self, data_src, data_name = 'json_data', series_type="map", name=None, **kwargs):
+        self.jsonp_data_flag = True
+        self.jsonp_data_url = json.dumps(data_src)
+        if data_name == 'data':
+            data_name = 'json_'+ data_name
+        self.jsonp_data = data_name
+        self.add_data_set(RawJavaScriptText(data_name), series_type, name=name, **kwargs)
 
-    def set_map_source(self, map_name, map_src, js_src = None):
-        if not js_src:
-            self.jsonp_flag = True
-            self.jsonp_map = map_name
-            self.jsonp_url = json.dumps(map_src)
+    def add_jscript(self, js_script, js_loc):
+        if js_loc == 'head':
+            self.jscript_head_flag = True
+            self.jscript_head = js_script
+        elif js_loc == 'end':
+            self.jscript_end_flag = True
+            self.jscript_end = js_script
         else:
-            self.set_JSsource(js_src)
-            self.jsonp_map = 'Highcharts.maps[' + map_name + ']'
+            raise OptionTypeError("Not An Accepted script location: %s, either 'head' or 'end'" 
+                                % js_loc)
+
+    def set_map_source(self, map_src = "http://code.highcharts.com/mapdata/", map_name = 'geojson', jsonp_map = False):
+        """Set Map data"""
+        # The default is to use js script from highcharts' map collection: http://code.highcharts.com/mapdata/
+
+        if  jsonp_map:
+            self.jsonp_map_flag = True
+            if map_name == 'data':
+                map_name = 'geojson_'+ map_name
+            self.map = map_name
+            self.jsonp_map_url = json.dumps(map_src)
+        else:
+            map_src = map_src+map_name+'.js'
+            self.set_JSsource(map_src)
+            self.map = 'Highcharts.maps["' + map_name + '"]'
+
+        if self.data_temp:
+            self.data_temp[0].__options__().update({'mapData': MapObject(self.map)})
 
     def set_options(self, option_type, option_dict, force_options=False):
         """ Set Plot Options """
@@ -285,6 +307,9 @@ class Highmaps(object):
             self.options[option_type] = MultiAxis(option_type)
             for each_dict in option_dict:
                 self.options[option_type].update(**each_dict)
+        elif option_type == 'colorAxis':
+            self.options.update({"colorAxis": ColorAxisOptions()})
+            self.options[option_type].update_dict(**option_dict)
         else:
             self.options[option_type].update_dict(**option_dict)
 

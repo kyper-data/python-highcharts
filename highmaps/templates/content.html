@@ -3,31 +3,52 @@
 	    {{ chart.container }}
 {%  endblock  container %}
 
-{% block body %}
+{% block body_head %}
 
-    {% if chart.jquery_head_flag %}
-        {{chart.jquery_head_script}}
-    {% if endif %}
+        {% if chart.jsonp_map_flag %}
+            $.getJSON({{chart.jsonp_map_url}}, function ({{chart.map}})
+                {
+        {% endif %}
+        {% if chart.jsonp_data_flag %}
+            $.getJSON({{chart.jsonp_data_url}}, function ({{chart.jsonp_data}})
+                {
+        {% endif %} 
 
-	Highcharts.setOptions({{chart.setoption}});
-    
-    var option = {{chart.option}};
-    
-    {% if not chart.jsonp_flag or not chart.jsonp_data %}
-    	var data = {{chart.data}};
-    {% endif %} 
-	
-	    option.series = data;
+{% endblock body_head %}
 
-    {% if chart.drilldown_flag %}
-    	var drilldowndata = {{chart.drilldown_data}};
-    	option.drilldown = drilldowndata;
-    {% endif %} 
+{% block body_content %}
 
-    var chart = new Highcharts.Map(option);
+        {% if chart.jscript_head_flag %}
+            {{chart.jscript_head}}
+        {% endif %}
 
-    {% if chart.jquery_end_flag %}
-        {{chart.jquery_end_script}}
-    {% if endif %}
+        	Highcharts.setOptions({{chart.setoption}});
+            var option = {{chart.option}};
+        
+            var data = {{chart.data}}
+    	
+    	    option.series = data;
 
-{% endblock body %}
+        {% if chart.drilldown_flag %}
+        	var drilldowndata = {{chart.drilldown_data}};
+        	option.drilldown = drilldowndata;
+        {% endif %} 
+
+            var chart = new Highcharts.Map(option);
+
+        {% if chart.jscript_end_flag %}
+            {{chart.jscript_end}}
+        {% endif %}
+
+{% endblock body_content %}
+
+{% block body_end %}
+
+        {% if chart.jsonp_map_flag %}
+            });
+        {% endif %} 
+        {% if chart.jsonp_data_flag %}
+            });
+        {% endif %} 
+
+{% endblock body_end %}
