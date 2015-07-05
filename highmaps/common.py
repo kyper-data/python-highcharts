@@ -390,7 +390,7 @@ class DrillUpButton(CommonObject):
     "position": (Position, dict),
     "relativeTo": basestring,
     "theme": NotImplemented #ThemeObject
-    },
+    }
 
 class Labels(CommonObject):   
     ALLOWED_OPTIONS = {

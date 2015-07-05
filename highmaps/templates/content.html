@@ -24,14 +24,17 @@
 
         	Highcharts.setOptions({{chart.setoption}});
             var option = {{chart.option}};
-        
+
+        {% if chart.mapdata_flag %}
+            var geojson = {{chart.mapdata}}
+        {% endif %}
+
             var data = {{chart.data}}
-    	
     	    option.series = data;
 
         {% if chart.drilldown_flag %}
         	var drilldowndata = {{chart.drilldown_data}};
-        	option.drilldown = drilldowndata;
+        	option.drilldown.series = drilldowndata;
         {% endif %} 
 
             var chart = new Highcharts.Map(option);

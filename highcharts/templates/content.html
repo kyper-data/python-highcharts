@@ -16,7 +16,7 @@
 
     {% if chart.drilldown_flag %}
     	var drilldowndata = {{chart.drilldown_data}};
-    	option.drilldown = drilldowndata;
+    	option.drilldown.series = drilldowndata;
     {% endif %} 
 
     var chart = new Highcharts.Chart(option);

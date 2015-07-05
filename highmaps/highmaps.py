@@ -8,7 +8,11 @@ Project location : xxxxx
 """
 
 from __future__ import unicode_literals
+from future.standard_library import install_aliases
+install_aliases()
+
 from optparse import OptionParser
+from urllib.request import urlopen
 from jinja2 import Environment, PackageLoader
 # import sys
 # reload(sys)
@@ -28,6 +32,8 @@ from options import BaseOptions, ChartOptions, \
 from highmap_types import Series, SeriesOptions, HighchartsError
 from common import Formatter, CSSObject, SVGObject, MapObject, JSfunction, RawJavaScriptText, \
     CommonObject, ArrayObject, ColorObject
+
+
 
 CONTENT_FILENAME = "./content.html"
 PAGE_FILENAME = "./page.html"
@@ -59,16 +65,15 @@ class Highmaps(object):
         accepted:
         :keyword: **display_container** - default: ``True``
         """
-        # set the model
+        # Set the model
         self.model = self.__class__.__name__  #: The chart model,
         self.div_name = kwargs.get("renderTo", "container")
 
-        # an Instance of Jinja2 template
+        # An Instance of Jinja2 template
         self.template_page_highcharts = template_page
         self.template_content_highcharts = template_content
         
-        # set Javascript src
-
+        # Set Javascript src
         self.JSsource = [
                 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js',
                 'http://code.highcharts.com/highcharts.js',
@@ -78,34 +83,33 @@ class Highmaps(object):
             ]
 
         # set CSS src
-
         self.CSSsource = [
                 'https://www.highcharts.com/highslide/highslide.css',
-
             ]
-        # set data
+        # Set data
         self.data = []
         self.data_temp = []
-        # data from jsonp
+        # Data from jsonp
         self.jsonp_data_flag = False
 
-        # set drilldown data
+        # Set drilldown data
         self.drilldown_data = []
         self.drilldown_data_temp = []
 
-        # map
+        # Map
+        self.mapdata_flag = False
         self.map = None
 
-        # jsonp map
+        # Jsonp map
         self.jsonp_map_flag = kwargs.get('jsonp_map_flag', False)
 
-        # javascript
+        # Javascript
         self.jscript_head_flag = False
         self.jscript_head = kwargs.get('jscript_head', None)
         self.jscript_end_flag = False
         self.jscript_end = kwargs.get('jscript_end', None)
 
-        # accepted keywords
+        # Accepted keywords
         self.div_style = kwargs.get('style', '')
         self.drilldown_flag = kwargs.get('drilldown_flag', False)
         self.date_flag = kwargs.get('date_flag', False)
@@ -115,11 +119,13 @@ class Highmaps(object):
 
         self.htmlcontent = ''  #: written by buildhtml
         self.htmlheader = ''
-        #: Place holder for the graph (the HTML div)
-        #: Written by ``buildcontainer``
+        # Place holder for the graph (the HTML div)
+        # Written by ``buildcontainer``
         self.container = u''
-        #: Header for javascript code
+        # Header for javascript code
         self.containerheader = u''
+        # Loading message
+        self.loading = None
         
         # Default Nulls // ?
         self.hold_point_start = None
@@ -255,7 +261,6 @@ class Highmaps(object):
         
         kwargs.update({'id':id})
         series_data = Series(data, series_type=series_type, **kwargs)
-       
         series_data.__options__().update(SeriesOptions(series_type=series_type, **kwargs).__options__())
         self.drilldown_data_temp.append(series_data)
 
@@ -270,28 +275,44 @@ class Highmaps(object):
     def add_jscript(self, js_script, js_loc):
         if js_loc == 'head':
             self.jscript_head_flag = True
-            self.jscript_head = js_script
+            if self.jscript_head:
+                self.jscript_head = self.jscript_head + '\n' +  js_script
+            else:
+                self.jscript_head = js_script
         elif js_loc == 'end':
             self.jscript_end_flag = True
-            self.jscript_end = js_script
+            if self.jscript_end:
+                self.jscript_end = self.jscript_end + '\n' +  js_script
+            else:
+                self.jscript_end = js_script
         else:
             raise OptionTypeError("Not An Accepted script location: %s, either 'head' or 'end'" 
                                 % js_loc)
 
-    def set_map_source(self, map_src = "http://code.highcharts.com/mapdata/", map_name = 'geojson', jsonp_map = False):
+    def add_map_data(self, geojson):
+        self.mapdata_flag = True
+        self.map = 'geojson'
+        self.mapdata = json.dumps(geojson,  encoding='utf8')
+        if self.data_temp:
+            self.data_temp[0].__options__().update({'mapData': MapObject(self.map)})
+
+
+    def set_map_source(self, map_src, jsonp_map = False):
         """Set Map data"""
         # The default is to use js script from highcharts' map collection: http://code.highcharts.com/mapdata/
-
+        if not map_src:
+            raise OptionTypeError("No map source input, please refer: http://code.highcharts.com/mapdata/")
+        
         if  jsonp_map:
             self.jsonp_map_flag = True
-            if map_name == 'data':
-                map_name = 'geojson_'+ map_name
-            self.map = map_name
+            self.map = 'geojson'
             self.jsonp_map_url = json.dumps(map_src)
         else:
-            map_src = map_src+map_name+'.js'
             self.set_JSsource(map_src)
-            self.map = 'Highcharts.maps["' + map_name + '"]'
+            map_name = self._get_jsmap_name_(map_src)
+            self.map = 'geojson'
+            self.jsmap = self.map + ' = Highcharts.geojson(' + map_name + ');'
+            self.add_jscript('var ' + self.jsmap, 'head')
 
         if self.data_temp:
             self.data_temp[0].__options__().update({'mapData': MapObject(self.map)})
@@ -308,11 +329,10 @@ class Highmaps(object):
             for each_dict in option_dict:
                 self.options[option_type].update(**each_dict)
         elif option_type == 'colorAxis':
-            self.options.update({"colorAxis": ColorAxisOptions()})
+            self.options.update({'colorAxis': self.options.get('colorAxis', ColorAxisOptions())})
             self.options[option_type].update_dict(**option_dict)
         else:
             self.options[option_type].update_dict(**option_dict)
-
 
     def set_dict_optoins(self, options):
         for key, option_data in options.items():
@@ -323,6 +343,10 @@ class Highmaps(object):
         """Set containerheader"""
         self.containerheader = containerheader
 
+    def _get_jsmap_name_(self, url):
+        """return 'name' of the map in .js format"""
+        ret = urlopen(url)
+        return ret.read().decode('utf-8').split('=')[0].replace(" ", "") #return the name of map file, Ex. 'Highcharts.maps["xxx/xxx"]'
 
     def __str__(self):
         """return htmlcontent"""
@@ -352,9 +376,6 @@ class Highmaps(object):
         self.data = json.dumps(self.data_temp, encoding='utf8', cls = HighchartsEncoder)
         
         if self.drilldown_flag: 
-            tmp_dict = {} # put drilldown data set into a dict
-            tmp_dict.update({'series': self.drilldown_data_temp})
-            self.drilldown_data_temp = tmp_dict
             self.drilldown_data = json.dumps(self.drilldown_data_temp, encoding='utf8', \
                                             cls = HighchartsEncoder)
         self.htmlcontent = self.template_content_highcharts.render(chart=self).encode('utf-8')
@@ -377,7 +398,7 @@ class Highmaps(object):
         #Highcharts lib/ needs to make sure it's up to date
         
         if self.drilldown_flag:
-            self.set_JSsource('http://code.highcharts.com/modules/drilldown.js')
+            self.set_JSsource('http://code.highcharts.com/maps/modules/drilldown.js')
 
         self.header_css = [
             '<link href="%s" rel="stylesheet" />' % h for h in self.CSSsource
@@ -412,7 +433,7 @@ class Highmaps(object):
 
         self.div_name = self.options['chart'].__dict__['renderTo'] # recheck div name
         self.container = self.containerheader + \
-            '<div id="%s" style="%s"></div>\n' % (self.div_name, self.div_style)
+            '<div id="%s" style="%s">%s</div>\n' % (self.div_name, self.div_style, self.loading)
 
 
     # def buildjschart(self):

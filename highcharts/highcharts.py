@@ -358,9 +358,6 @@ class Highcharts(object):
         self.data = json.dumps(self.data_temp, encoding='utf8', cls = HighchartsEncoder)
         
         if self.drilldown_flag: 
-            tmp_dict = {} # put drilldown data set into a dict
-            tmp_dict.update({'series': self.drilldown_data_temp})
-            self.drilldown_data_temp = tmp_dict
             self.drilldown_data = json.dumps(self.drilldown_data_temp, encoding='utf8', \
                                             cls = HighchartsEncoder)
         self.htmlcontent = self.template_content_highcharts.render(chart=self).encode('utf-8')
