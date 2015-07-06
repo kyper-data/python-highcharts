@@ -1,7 +1,8 @@
 # -*- coding: UTF-8 -*-
 import json, datetime
 from common import Formatter, Events, Position, ContextButton, Options3d, ResetZoomButton, DrillUpButton, Labels, \
-    Marker, Point, PlotBands, States, Tooltip, Title, Zones, JSfunction, ColorObject, CSSObject, SVGObject, \
+    Marker, Point, PlotBands, States, Tooltip, Title, Zones, Levels, \
+    JSfunction, ColorObject, CSSObject, SVGObject, \
     CommonObject, ArrayObject
 
 from types import NoneType
@@ -318,23 +319,31 @@ PLOT_OPTION_ALLOWED_ARGS = {
   },
   "gauge": {
     "dial": NotImplemented,
-    "animation": bool,
-    "cursor": NotImplemented,
-    "dial": NotImplemented,
-    "id": NotImplemented,
-    "linkedTo": NotImplemented,
-    "negativeColor": NotImplemented,
+    "linkedTo": basestring,
+    "negativeColor": (ColorObject, basestring, dict),
+    "overshoot": [int, float]
     "pivot": NotImplemented,
-    "selected": bool,
-    "showCheckbox": bool,
-    "showInLegend": NotImplemented,
-    "states": NotImplemented,
     "stickyTracking": bool,
     "threshold": [int, NoneType],
-    "tooltip": NotImplemented,
-    "visible": bool,
     "wrap": bool,
-    "zIndex": NotImplemented,
+  },
+  "heatmap": {
+    "allowPointSelect": bool,
+    "borderColor": (ColorObject, basestring, dict),
+    "borderRadius": int,
+    "borderWidth": [int, float],
+    "colors": list,
+    "colorByPoint": bool,
+    "colsize": int,
+    "cropThreshold": int,
+    "getExtremesFromAll": bool,
+    "keys": list,
+    "legendIndex": [int, float],
+    "linkedTo": basestring,
+    "rowsize": int,
+    "shadow": [bool, dict], #shadow object
+    "stickyTracking": bool,
+    "turboThreshold": int,
   },
   "line": {
     "allowPointSelect": bool,
@@ -424,6 +433,28 @@ PLOT_OPTION_ALLOWED_ARGS = {
     "pointStart": [int,basestring,datetime.datetime],
     "shadow": [bool, dict],
     "stacking": basestring,
+    "turboThreshold": int,
+  },
+  "treemap": {
+    "allowDrillToNode": bool,
+    "allowPointSelect": bool,
+    "alternateStartingDirection": bool,
+    "borderColor": (ColorObject, basestring, dict),
+    "borderWidth": int,
+    "colors": list,
+    "colorByPoint": bool,
+    "cropThreshold": int,
+    "getExtremesFromAll": bool,
+    "interactByLeaf": bool,
+    "keys": list,
+    "layoutAlgorithm": basestring,
+    "layoutStartingDirection": basestring,
+    "legendIndex": [int, float],
+    "levelIsConstant": bool,
+    "levels": (Levels, dict),
+    "linkedTo": basestring,
+    "shadow": [bool, dict],
+    "stickyTracking": bool,
     "turboThreshold": int,
   },
 }

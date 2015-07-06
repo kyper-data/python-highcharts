@@ -8,6 +8,9 @@ Project location : xxxxx
 """
 
 from __future__ import unicode_literals
+from future.standard_library import install_aliases
+install_aliases()
+
 from optparse import OptionParser
 from jinja2 import Environment, PackageLoader
 # import sys
@@ -47,8 +50,6 @@ class Highcharts(object):
     """
     #: chart count
     count = 0
-    #:  directory holding the assets (bower_components)
-    assets_directory = './bower_components/'
 
     # this attribute is overriden by children of this
     # class
@@ -88,18 +89,20 @@ class Highcharts(object):
         # set data
         self.data = []
         self.data_temp = []
+        # Data from jsonp
+        self.jsonp_data_flag = False
 
         # set drilldown data
         self.drilldown_data = []
         self.drilldown_data_temp = []
-
-        # if JSONP
-        self.jsonp = kwargs.get('jsonp', False)
-        self.url_for_jsonp = kwargs.get('url_jsonp', None)
-        self.dataname_jsonp = kwargs.get('name_jsonp', None)
         
-        # accepted keywords
+        # javascript
+        self.jscript_head_flag = False
+        self.jscript_head = kwargs.get('jscript_head', None)
+        self.jscript_end_flag = False
+        self.jscript_end = kwargs.get('jscript_end', None)
 
+        # accepted keywords
         self.div_style = kwargs.get('style', '')
         self.drilldown_flag = kwargs.get('drilldown_flag', False)
         self.date_flag = kwargs.get('date_flag', False)
@@ -114,14 +117,9 @@ class Highcharts(object):
         self.container = u''
         #: Header for javascript code
         self.containerheader = u''
+        # Loading message
+        self.loading = 'Loading....'
         
-        #: Javascript code as string
-        #self.jschart = None
-        # self.custom_tooltip_flag = False
-        # self.tooltip_condition_string = ''
-        # self.charttooltip = ''
-        self.serie_no = 1
-
         # Default Nulls // ?
         self.hold_point_start = None
         self.hold_point_interval = None
@@ -199,16 +197,18 @@ class Highcharts(object):
             self.options["colors"].set_colors(colors)
 
 
-    # def chart_background(self, background=None):
-    #     """ Apply Chart Background """
-    #     if not background:
-    #         return self.options["chart"].backgroundColor
-    #     else:
-    #         self.options["chart"].update_dict(backgroundColor=background)
+    def chart_background(self, background=None):
+        """ Apply Chart Background """
+        if not background:
+            return self.options["chart"].backgroundColor
+        else:
+            self.options["chart"].update_dict(backgroundColor=background)
+
 
     def set_JSsource(self, new_src):
+        """add additional js script source(s)"""
         if isinstance(new_src, list):
-            for h in list:
+            for h in new_src:
                 self.JSsource.append(h)
         elif isinstance(new_src, basestring):
             self.JSsource.append(new_src)
@@ -217,6 +217,7 @@ class Highcharts(object):
 
 
     def set_CSSsource(self, new_src):
+        """add additional css source(s)"""
         if isinstance(new_src, list):
             for h in new_src:
                 self.CSSsource.append(h)
@@ -227,7 +228,8 @@ class Highcharts(object):
 
 
     def set_start(self, start, is_date = False):
-        """ Set Plot Start Date """
+        """set plot start date"""
+
         if is_date:
             if isinstance(start, (int, float)):
                 start = datetime.datetime.fromtimestamp(start)                
@@ -251,7 +253,8 @@ class Highcharts(object):
 
 
     def set_interval(self, interval):
-        """ Set Plot Step Interval """
+        """set plot step interval"""
+
         if not isinstance(interval, int):
             raise HighchartError("Interval Value Must Be An Integer")
         # Unset Any Held Values To Avoid Them Overwriting This Value
@@ -270,7 +273,8 @@ class Highcharts(object):
 
 
     def add_data_set(self, data, series_type="line", name=None, **kwargs):
-        """ Set data for series option in highcharts """
+        """set data for series option in highcharts"""
+
         self.data_set_count += 1
         if not name:
             name = "Series %d" % self.data_set_count
@@ -289,7 +293,8 @@ class Highcharts(object):
 
 
     def add_drilldown_data_set(self, data, series_type, id, **kwargs):
-        """ Set data for drilldown option in highcharts """
+        """set data for drilldown option in highcharts"""
+
         self.drilldown_data_set_count += 1
         if self.drilldown_flag == False:
             self.drilldown_flag = True
@@ -301,8 +306,42 @@ class Highcharts(object):
         self.drilldown_data_temp.append(series_data)
 
 
+    def add_data_from_jsonp(self, data_src, data_name = 'json_data', series_type="map", name=None, **kwargs):
+        """set map data directly from a https source
+        the data_src is the https link for data
+        and it must be in jsonp format
+        """
+        self.jsonp_data_flag = True
+        self.jsonp_data_url = json.dumps(data_src)
+        if data_name == 'data':
+            data_name = 'json_'+ data_name
+        self.jsonp_data = data_name
+        self.add_data_set(RawJavaScriptText(data_name), series_type, name=name, **kwargs)
+
+
+    def add_JSscript(self, js_script, js_loc):
+        """add (highcharts) javascript in the beginning or at the end of script
+        use only if necessary
+        """
+        if js_loc == 'head':
+            self.jscript_head_flag = True
+            if self.jscript_head:
+                self.jscript_head = self.jscript_head + '\n' +  js_script
+            else:
+                self.jscript_head = js_script
+        elif js_loc == 'end':
+            self.jscript_end_flag = True
+            if self.jscript_end:
+                self.jscript_end = self.jscript_end + '\n' +  js_script
+            else:
+                self.jscript_end = js_script
+        else:
+            raise OptionTypeError("Not An Accepted script location: %s, either 'head' or 'end'" 
+                                % js_loc)
+
+
     def set_options(self, option_type, option_dict, force_options=False):
-        """ Set Plot Options """
+        """set plot options """
         if force_options:
             self.options[option_type].update(option_dict)
         elif option_type == 'plotOptions':
@@ -321,8 +360,14 @@ class Highcharts(object):
 
 
     def set_dict_optoins(self, options):
-        for key, option_data in options.items():
-            self.set_options(key, option_data)
+        """set data for drilldown option in highmaps 
+        id must be input and corresponding to drilldown arguments in data series 
+        """
+        if isinstance(options, dict):
+            for key, option_data in options.items():
+                self.set_options(key, option_data)
+        else:
+            raise OptionTypeError("Not An Accepted Input Format: %s. Must be Dictionary" %type(options))
 
 
     def set_containerheader(self, containerheader):
@@ -346,13 +391,11 @@ class Highcharts(object):
         
         f.closed
 
+
     def buildcontent(self):
-        """Build HTML content only, no header or body tags. To be useful this
-        will require the attribute `juqery_on_ready` to be set which
-        will wrap the js in $(function(){<regular_js>};)
-        """
+        """build HTML content only, no header or body tags"""
+
         self.buildcontainer()
-        #self.buildjschart()
         self.option = json.dumps(self.options, encoding='utf8', cls = HighchartsEncoder)
         self.setoption = json.dumps(self.setOptions, cls = HighchartsEncoder) 
         self.data = json.dumps(self.data_temp, encoding='utf8', cls = HighchartsEncoder)
@@ -364,10 +407,9 @@ class Highcharts(object):
 
 
     def buildhtml(self):
-        """Build the HTML page
-        Create the htmlheader with css / js
-        Create html page
-        Add Js code for highcharts
+        """build the HTML page
+        create the htmlheader with css / js
+        create html page
         """
         self.buildcontent()
         self.buildhtmlheader()
@@ -415,24 +457,21 @@ class Highcharts(object):
 
         self.div_name = self.options['chart'].__dict__['renderTo'] # recheck div name
         self.container = self.containerheader + \
-            '<div id="%s" style="%s"></div>\n' % (self.div_name, self.div_style)
+            '<div id="%s" style="%s">%s</div>\n' % (self.div_name, self.div_style, self.loading)
 
-
-    # def buildjschart(self):
-    #     """generate javascript code for the chart"""
-    #     self.jschart = ''
 
 
 class TemplateMixin(object):
+    # a legacy from python-nvd3. 
+    # it is not in use now but could be useful in future 
+    # if adding templates for different charts.
     """
     A mixin that override buildcontent. Instead of building the complex
     content template we exploit Jinja2 inheritance. Thus each chart class
     renders it's own chart template which inherits from content.html
     """
     def buildcontent(self):
-        """Build HTML content only, no header or body tags. To be useful this
-        will usually require the attribute `juqery_on_ready` to be set which
-        will wrap the js in $(function(){<regular_js>};)
+        """Build HTML content only, no header or body tags.
         """
         self.buildcontainer()
         # if the subclass has a method buildjs this method will be

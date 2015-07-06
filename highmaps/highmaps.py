@@ -76,8 +76,8 @@ class Highmaps(object):
         # Set Javascript src
         self.JSsource = [
                 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js',
-                'http://code.highcharts.com/highcharts.js',
-                'http://code.highcharts.com/maps/modules/map.js',
+                'https://code.highcharts.com/highcharts.js',
+                'https://code.highcharts.com/maps/modules/map.js',
                 'https://code.highcharts.com/maps/modules/data.js',
                 'https://code.highcharts.com/maps/modules/exporting.js'
             ]
@@ -125,17 +125,13 @@ class Highmaps(object):
         # Header for javascript code
         self.containerheader = u''
         # Loading message
-        self.loading = None
+        self.loading = 'Loading....'
         
-        # Default Nulls // ?
-        self.hold_point_start = None
-        self.hold_point_interval = None
-        self.start_date_set = None
 
         # Bind Base Classes to self
         self.options = {
             "chart": ChartOptions(),
-            #"colorAxis": ColorAxisOptions(), # cannot put in until there is data
+            #"colorAxis": # cannot input until there is data, do it later
             "colors": ColorsOptions(),
             "credits": CreditsOptions(),
             #"data": #NotImplemented
@@ -205,16 +201,10 @@ class Highmaps(object):
             self.options["colors"].set_colors(colors)
 
 
-    # def chart_background(self, background=None):
-    #     """ Apply Chart Background """
-    #     if not background:
-    #         return self.options["chart"].backgroundColor
-    #     else:
-    #         self.options["chart"].update_dict(backgroundColor=background)
-
     def set_JSsource(self, new_src):
+        """add additional js script source(s)"""
         if isinstance(new_src, list):
-            for h in list:
+            for h in new_src:
                 self.JSsource.append(h)
         elif isinstance(new_src, basestring):
             self.JSsource.append(new_src)
@@ -223,6 +213,7 @@ class Highmaps(object):
 
 
     def set_CSSsource(self, new_src):
+        """add additional css source(s)"""
         if isinstance(new_src, list):
             for h in new_src:
                 self.CSSsource.append(h)
@@ -233,17 +224,12 @@ class Highmaps(object):
 
 
     def add_data_set(self, data, series_type="map", name=None, **kwargs):
-        """ Set data for series option in highcharts """
+        """set data for series option in highmaps """
+        
         self.data_set_count += 1
         if not name:
             name = "Series %d" % self.data_set_count
         kwargs.update({'name':name})
-        if self.hold_point_start:
-            kwargs.update({"pointStart":self.hold_point_start})
-            self.hold_point_start = None
-        if self.hold_point_interval:
-            kwargs.update({"pointInterval":self.hold_point_interval})
-            self.hold_point_interval = None
 
         if self.map and 'mapData' in kwargs.keys():
             kwargs.update({'mapData': self.map})
@@ -254,7 +240,9 @@ class Highmaps(object):
 
 
     def add_drilldown_data_set(self, data, series_type, id, **kwargs):
-        """ Set data for drilldown option in highcharts """
+        """set data for drilldown option in highmaps 
+        id must be input and corresponding to drilldown arguments in data series 
+        """
         self.drilldown_data_set_count += 1
         if self.drilldown_flag == False:
             self.drilldown_flag = True
@@ -264,7 +252,12 @@ class Highmaps(object):
         series_data.__options__().update(SeriesOptions(series_type=series_type, **kwargs).__options__())
         self.drilldown_data_temp.append(series_data)
 
+
     def add_data_from_jsonp(self, data_src, data_name = 'json_data', series_type="map", name=None, **kwargs):
+        """set map data directly from a https source
+        the data_src is the https link for data
+        and it must be in jsonp format
+        """
         self.jsonp_data_flag = True
         self.jsonp_data_url = json.dumps(data_src)
         if data_name == 'data':
@@ -272,7 +265,11 @@ class Highmaps(object):
         self.jsonp_data = data_name
         self.add_data_set(RawJavaScriptText(data_name), series_type, name=name, **kwargs)
 
-    def add_jscript(self, js_script, js_loc):
+
+    def add_JSscript(self, js_script, js_loc):
+        """add (highcharts) javascript in the beginning or at the end of script
+        use only if necessary
+        """
         if js_loc == 'head':
             self.jscript_head_flag = True
             if self.jscript_head:
@@ -289,6 +286,7 @@ class Highmaps(object):
             raise OptionTypeError("Not An Accepted script location: %s, either 'head' or 'end'" 
                                 % js_loc)
 
+
     def add_map_data(self, geojson):
         self.mapdata_flag = True
         self.map = 'geojson'
@@ -298,10 +296,15 @@ class Highmaps(object):
 
 
     def set_map_source(self, map_src, jsonp_map = False):
-        """Set Map data"""
-        # The default is to use js script from highcharts' map collection: http://code.highcharts.com/mapdata/
+        """set map data 
+        use if the mapData is loaded directly from a https source
+        the map_src is the https link for the mapData
+        geojson (from jsonp) or .js formates are acceptable
+        default is js script from highcharts' map collection: https://code.highcharts.com/mapdata/
+        """
+
         if not map_src:
-            raise OptionTypeError("No map source input, please refer: http://code.highcharts.com/mapdata/")
+            raise OptionTypeError("No map source input, please refer to: https://code.highcharts.com/mapdata/")
         
         if  jsonp_map:
             self.jsonp_map_flag = True
@@ -309,17 +312,18 @@ class Highmaps(object):
             self.jsonp_map_url = json.dumps(map_src)
         else:
             self.set_JSsource(map_src)
-            map_name = self._get_jsmap_name_(map_src)
+            map_name = self._get_jsmap_name(map_src)
             self.map = 'geojson'
             self.jsmap = self.map + ' = Highcharts.geojson(' + map_name + ');'
-            self.add_jscript('var ' + self.jsmap, 'head')
+            self.add_JSscript('var ' + self.jsmap, 'head')
 
         if self.data_temp:
             self.data_temp[0].__options__().update({'mapData': MapObject(self.map)})
 
     def set_options(self, option_type, option_dict, force_options=False):
-        """ Set Plot Options """
-        if force_options:
+        """set plot options"""
+
+        if force_options: # not to use unless it is really needed
             self.options[option_type].update(option_dict)
         elif option_type == 'plotOptions':
             for key in option_dict.keys():
@@ -335,16 +339,23 @@ class Highmaps(object):
             self.options[option_type].update_dict(**option_dict)
 
     def set_dict_optoins(self, options):
-        for key, option_data in options.items():
-            self.set_options(key, option_data)
-
+        """for dict-like inputs
+        options must be in python dictionary format
+        """
+        if isinstance(options, dict):
+            for key, option_data in options.items():
+                self.set_options(key, option_data)
+        else:
+            raise OptionTypeError("Not An Accepted Input Format: %s. Must be Dictionary" %type(options))
 
     def set_containerheader(self, containerheader):
-        """Set containerheader"""
+        """set containerheader"""
+        
         self.containerheader = containerheader
 
-    def _get_jsmap_name_(self, url):
+    def _get_jsmap_name(self, url):
         """return 'name' of the map in .js format"""
+        
         ret = urlopen(url)
         return ret.read().decode('utf-8').split('=')[0].replace(" ", "") #return the name of map file, Ex. 'Highcharts.maps["xxx/xxx"]'
 
@@ -353,9 +364,9 @@ class Highmaps(object):
         self.buildhtml()
         return self.htmlcontent
 
-
     def file(self, filename = 'highmaps'):
-        """ save htmlcontent as .html file """
+        """save htmlcontent as .html file"""
+
         filename = filename + '.html'
         
         with open(filename, 'w') as f:
@@ -365,12 +376,9 @@ class Highmaps(object):
         f.closed
 
     def buildcontent(self):
-        """Build HTML content only, no header or body tags. To be useful this
-        will require the attribute `juqery_on_ready` to be set which
-        will wrap the js in $(function(){<regular_js>};)
-        """
+        """build HTML content only, no header or body tags"""
+
         self.buildcontainer()
-        #self.buildjschart()
         self.option = json.dumps(self.options, encoding='utf8', cls = HighchartsEncoder)
         self.setoption = json.dumps(self.setOptions, cls = HighchartsEncoder) 
         self.data = json.dumps(self.data_temp, encoding='utf8', cls = HighchartsEncoder)
@@ -385,7 +393,6 @@ class Highmaps(object):
         """Build the HTML page
         Create the htmlheader with css / js
         Create html page
-        Add Js code for highcharts
         """
         self.buildcontent()
         self.buildhtmlheader()
@@ -398,7 +405,7 @@ class Highmaps(object):
         #Highcharts lib/ needs to make sure it's up to date
         
         if self.drilldown_flag:
-            self.set_JSsource('http://code.highcharts.com/maps/modules/drilldown.js')
+            self.set_JSsource('https://code.highcharts.com/maps/modules/drilldown.js')
 
         self.header_css = [
             '<link href="%s" rel="stylesheet" />' % h for h in self.CSSsource
@@ -436,21 +443,17 @@ class Highmaps(object):
             '<div id="%s" style="%s">%s</div>\n' % (self.div_name, self.div_style, self.loading)
 
 
-    # def buildjschart(self):
-    #     """generate javascript code for the chart"""
-    #     self.jschart = ''
-
-
 class TemplateMixin(object):
+    # a legacy from python-nvd3. 
+    # it is not in use now but could be useful in future 
+    # if adding templates for different charts or maps.
     """
     A mixin that override buildcontent. Instead of building the complex
     content template we exploit Jinja2 inheritance. Thus each chart class
     renders it's own chart template which inherits from content.html
     """
     def buildcontent(self):
-        """Build HTML content only, no header or body tags. To be useful this
-        will usually require the attribute `juqery_on_ready` to be set which
-        will wrap the js in $(function(){<regular_js>};)
+        """Build HTML content only, no header or body tags.
         """
         self.buildcontainer()
         # if the subclass has a method buildjs this method will be

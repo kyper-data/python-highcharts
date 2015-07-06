@@ -54,14 +54,14 @@ def geojson_handler(geojson, hType = 'map'):
         if hType == 'mapline':
             newlist.append(
             {'name': each_dict['properties'].get('name', None), 
-             'path': coordinates_to_path(each_dict['geometry']['coordinates'], hType, geojson_type),
+             'path': _coordinates_to_path(each_dict['geometry']['coordinates'], hType, geojson_type),
              'properties': each_dict['properties'],
              }
             )
         elif hType == 'map':
             newlist.append(
             {'name': each_dict['properties']['name'], 
-             'path': coordinates_to_path(each_dict['geometry']['coordinates'], hType, geojson_type),
+             'path': _coordinates_to_path(each_dict['geometry']['coordinates'], hType, geojson_type),
              'properties': each_dict['properties'],
              }
             )
@@ -77,7 +77,7 @@ def geojson_handler(geojson, hType = 'map'):
     return newlist
 
 
-def coordinates_to_path(coordinates_array, hType, geojson_type):
+def _coordinates_to_path(coordinates_array, hType, geojson_type):
     new_array = []
 
     def _svglabel(alist):

@@ -93,8 +93,8 @@ H.add_data_from_jsonp(data_url, 'json_data', 'map', 'Unemployment rate', joinBy 
 H.add_data_set(RawJavaScriptText('[lines[0]]'), 'mapline', 'State borders', color = 'white')
 H.add_data_set(RawJavaScriptText('[lines[1]]'), 'mapline', 'Separator', color = 'gray')
 H.set_map_source('http://code.highcharts.com/mapdata/countries/us/us-all-all.js', jsonp_map = False)
-H.add_jscript("var lines = Highcharts.geojson(Highcharts.maps['countries/us/us-all-all'], 'mapline');", 'head')
-H.add_jscript("Highcharts.each(geojson, function (mapPoint) {\
+H.add_JSscript("var lines = Highcharts.geojson(Highcharts.maps['countries/us/us-all-all'], 'mapline');", 'head')
+H.add_JSscript("Highcharts.each(geojson, function (mapPoint) {\
             mapPoint.name = mapPoint.name + ', ' + mapPoint.properties['hc-key'].substr(3, 2);\
         });", 'head')
 

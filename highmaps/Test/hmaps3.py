@@ -59,7 +59,7 @@ H.add_data_from_jsonp(data_url, 'json_data', 'map', 'Population density', joinBy
                 )
 
 H.set_map_source('http://code.highcharts.com/mapdata/countries/us/us-all.js', jsonp_map = False)
-H.add_jscript("$.each(json_data, function () {\
+H.add_JSscript("$.each(json_data, function () {\
             this.code = this.code.toUpperCase();\
         });", 'head')
 H.file()

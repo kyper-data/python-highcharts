@@ -595,12 +595,12 @@ class Items(ArrayObject):
 class Background(ArrayObject):
     ALLOWED_OPTIONS = {
     "backgroundColor": (ColorObject, basestring, dict),
-    "shape": basestring,
-    "innerWidth": int,
-    "outerWidth": int,
     "borderWidth": int,
     "borderColor": (ColorObject, basestring, dict),
+    "innerWidth": int,
+    "outerWidth": int,
     "outerRadius": basestring,
+    "shape": basestring,
     }
 
 class Breaks(ArrayObject):
@@ -618,6 +618,18 @@ class Zones(ArrayObject):
     "fillColor": (ColorObject, basestring, dict),
     "value": [int, float],
     }
+
+class Levels(ArrayObject):
+    ALLOWED_OPTIONS = {
+    "borderColor": (ColorObject, basestring, dict),
+    "borderDashStyle", basestring,
+    "borderWidth": int,
+    "color": (ColorObject, basestring, dict),
+    "dataLabels": (Labels, dict),
+    "layoutAlgorithm": basestring,
+    "layoutStartingDirection": basestring,
+    "level": int,
+    }    
 
 
 IDV_OBJECT_LIST = [JSfunction, Formatter, Halo, Marker, \
