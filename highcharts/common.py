@@ -673,7 +673,7 @@ class Levels(ArrayObject):
 
 
 IDV_OBJECT_LIST = [JSfunction, Formatter, Halo, Marker, Labels,
-                    Position, Hover, Select, Events, States, 
+                    Position, Hover, Select, Events, States, ContextButton,
                     CSSObject, SVGObject, ColorObject,
                     RawJavaScriptText, DateTimeLabelFormats]
 

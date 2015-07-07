@@ -233,6 +233,7 @@ class Highmaps(object):
 
         if self.map and 'mapData' in kwargs.keys():
             kwargs.update({'mapData': self.map})
+
         series_data = Series(data, series_type=series_type, **kwargs)
        
         series_data.__options__().update(SeriesOptions(series_type=series_type, **kwargs).__options__())
@@ -325,9 +326,6 @@ class Highmaps(object):
 
         if force_options: # not to use unless it is really needed
             self.options[option_type].update(option_dict)
-        elif option_type == 'plotOptions':
-            for key in option_dict.keys():
-                self.options[option_type].update_dict(**{key:SeriesOptions(key,**option_dict[key])})
         elif (option_type == 'yAxis' or option_type == 'xAxis') and isinstance(option_dict, list):
             self.options[option_type] = MultiAxis(option_type)
             for each_dict in option_dict:

@@ -35,53 +35,36 @@ class BaseOptions(object):
 
         for k, v in kwargs.items(): 
             if k in self.ALLOWED_OPTIONS:
-                if isinstance(v, SeriesOptions):
+                if isinstance(self.ALLOWED_OPTIONS[k], tuple) and isinstance(self.ALLOWED_OPTIONS[k][0](), SeriesOptions):
                     if self.__getattr__(k):
-                        self.__dict__[k].__options__().update(v.__options__())
-                        v = SeriesOptions(series_type=k, supress_errors=True, 
-                            **self.__dict__[k].__options__())
-                    self.__dict__.update({k:v})
+                        self.__dict__[k].update(series_type = k, **v)
+                    else:
+                        v = SeriesOptions(series_type = k, **v)
+                        self.__dict__.update({k:v})
 
                 elif isinstance(self.ALLOWED_OPTIONS[k], tuple) and isinstance(self.ALLOWED_OPTIONS[k][0](), CommonObject):
                     # re-construct input dict with existing options in objects
                     if self.__getattr__(k):
-                        if isinstance(v, dict): 
-                            for key, value in v.items(): # check if v has object input 
-                                if isinstance(value, dict):
-                                    for key2, value2 in value.items():
-                                        self.__dict__[k].__options__()[key].__options__().update({key2:value2})
-                                elif isinstance(self.__dict__[k].ALLOWED_OPTIONS[key], tuple):
-                                    self.__dict__[k].__options__().update({key:self.__dict__[k].ALLOWED_OPTIONS[key][0](value)})
-                                else:
-                                    self.__dict__[k].__options__().update({key:value})
-                        else:
-                            self.__dict__[k].__options__().update(v)
-                        v = self.__dict__[k].__options__()
+                        self.__dict__[k].update(v)
                     # upating object
-                    if isinstance(v, dict):
+                    elif isinstance(v, dict):
                         self.__dict__.update({k:self.ALLOWED_OPTIONS[k][0](**v)})
                     else:
                         self.__dict__.update({k:self.ALLOWED_OPTIONS[k][0](v)})
 
                 elif isinstance(self.ALLOWED_OPTIONS[k], tuple) and isinstance(self.ALLOWED_OPTIONS[k][0](), ArrayObject):
                     if self.__getattr__(k): # update array 
-                        if isinstance(v, dict):
-                            self.__dict__[k].append(self.ALLOWED_OPTIONS[k][0](**v))
-                        elif isinstance(v, list):
-                            for item in v:
-                                self.__dict__[k].append(self.ALLOWED_OPTIONS[k][0](**item))
-                        else:
-                            OptionTypeError("Not An Accepted Input Type: %s" % type(v))        
+                        self.__dict__[k].update(v)        
                     else: #first 
                         if isinstance(v, dict):
-                            self.__dict__.update({k:[self.ALLOWED_OPTIONS[k][0](**v)]})
+                            self.__dict__.update({k:self.ALLOWED_OPTIONS[k][0](**v)})
                         elif isinstance(v, list):
                             if len(v) == 1:
-                                self.__dict__.update({k:[self.ALLOWED_OPTIONS[k][0](**v[0])]})
+                                self.__dict__.update({k:self.ALLOWED_OPTIONS[k][0](**v[0])})
                             else:
-                                self.__dict__.update({k:[self.ALLOWED_OPTIONS[k][0](**v[0])]})
+                                self.__dict__.update({k:self.ALLOWED_OPTIONS[k][0](**v[0])})
                                 for item in v[1:]:
-                                    self.__dict__[k].append(self.ALLOWED_OPTIONS[k][0](**item))
+                                    self.__dict__[k].update(item)
                         else:
                             OptionTypeError("Not An Accepted Input Type: %s" % type(v)) 
 
