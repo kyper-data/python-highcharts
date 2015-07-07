@@ -113,7 +113,6 @@ options = {
     } 
 
 chart.set_dict_optoins(options)
-
 ```
 
 The map data is set by set_map_source function. It is recommended to use the map collection on highcharts: http://code.highcharts.com/mapdata/
@@ -123,14 +122,12 @@ For the map properties: http://www.highcharts.com/docs/maps/map-collection
 The default setting is to use highchart javascript map
 
 ```python
-
 # Set map requires a least one argument: the map data url
 chart.set_map_source('http://code.highcharts.com/mapdata/countries/us/us-all-all.js', jsonp_map = False)
 ```
 
 However, the better practice is to load map data using function in highmap_helper library 
 and convert it in preparation to be added directly by the add_map or add_data_set functions. 
-
 ```python
 from highmap_helper import jsonp_loader, js_map_loader, geojson_handler
 
@@ -200,7 +197,9 @@ chart.add_JSscript("var lines = Highcharts.geojson(Highcharts.maps['countries/us
 ## Usage
 
 Bad practice: 
-1. load data directionly and handle in javascript 2. has javascript at front and in the end 3. require unquote function: RawJavaScriptText 
+1) load data directionly and handle in javascript 
+2) has javascript at front and in the end 
+3) require unquote function: RawJavaScriptText 
 ```python
 from highmaps import Highmaps
 from common import RawJavaScriptText
