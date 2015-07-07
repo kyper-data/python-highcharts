@@ -65,7 +65,7 @@ class BaseOptions(object):
                             else:
                                 self.__dict__.update({k:self.ALLOWED_OPTIONS[k][0](**v[0])})
                                 for item in v[1:]:
-                                    self.__dict__[k].update(self.ALLOWED_OPTIONS[k][0](item))
+                                    self.__dict__[k].update(item)
                         else:
                             OptionTypeError("Not An Accepted Input Type: %s" % type(v)) 
 
