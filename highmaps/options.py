@@ -31,7 +31,6 @@ class BaseOptions(object):
             return isinstance(v[keys[0]],ov[keys[0]])
         return isinstance(v, ov) 
 
-
     def update_dict(self,**kwargs):
 
         for k, v in kwargs.items(): 

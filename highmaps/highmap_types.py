@@ -29,8 +29,7 @@ PLOT_OPTION_ALLOWED_ARGS = {
     "xAxis": [int, basestring],
     "yAxis": [int, basestring],
     "zIndex": int,
-    },
-  "heatmap": {
+    },  "heatmap": {
     "allowPointSelect": bool,
     "borderColor": (ColorObject, basestring, dict),
     "borderWidth": [int, float],
@@ -57,7 +56,7 @@ PLOT_OPTION_ALLOWED_ARGS = {
     "allAreas": bool,
     "allowPointSelect": bool,
     "borderColor": (ColorObject, basestring, dict),
-    "borderWidth": [int, float],
+    "borderWidth": [int, float, basestring],
     "displayNegative": bool, 
     "joinBy": [basestring, list],
     "legendIndex": [int, float],

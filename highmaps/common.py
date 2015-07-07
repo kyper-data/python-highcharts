@@ -398,7 +398,7 @@ class Labels(CommonObject):
     "backgroundColor": (ColorObject, basestring, dict),
     "borderColor": (ColorObject, basestring, dict),
     "borderRadius": [float, int],
-    "borderWidth": int,
+    "borderWidth": [int, float, basestring],
     "color": (ColorObject, basestring, dict),
     "connectorColor": (ColorObject, basestring, dict),
     "connectorPadding": [float, int],
@@ -498,7 +498,7 @@ class Halo(CommonObject):
 class Hover(CommonObject):
     ALLOWED_OPTIONS = {
     "borderColor": (ColorObject, basestring, dict),
-    "borderWidth": [int, float],
+    "borderWidth": [int, float, basestring],
     "brightness": [int, float],
     "color": (ColorObject, basestring, dict),
     "enabled": bool,
@@ -588,7 +588,6 @@ class ArrayObject(object):
                     raise OptionTypeError("Option Type Mismatch: Expected: %s" % self.ALLOWED_OPTIONS[k])
             else: 
                 raise OptionTypeError("Option: %s Not Allowed For Event Class:" % k)
-        #self.data.append(self.__dict__)
 
 class Items(ArrayObject):
     ALLOWED_OPTIONS = {
@@ -602,7 +601,7 @@ class Background(ArrayObject):
     "shape": basestring,
     "innerWidth": int,
     "outerWidth": int,
-    "borderWidth": int,
+    "borderWidth": [int, float, basestring],
     "borderColor": (ColorObject, basestring, dict),
     "outerRadius": basestring,
     }
@@ -624,9 +623,9 @@ class DataClasses(ArrayObject):
     }
 
 
-IDV_OBJECT_LIST = [JSfunction, Formatter, Halo, Marker, \
-                    Position, Hover, Select, Events, \
-                    CSSObject, SVGObject, ColorObject, \
+IDV_OBJECT_LIST = [JSfunction, Formatter, Halo, Marker,
+                    Position, Hover, Select, Events, 
+                    CSSObject, SVGObject, ColorObject, 
                     RawJavaScriptText, DateTimeLabelFormats]
 
 
@@ -634,19 +633,3 @@ class OptionTypeError(Exception):
 
     def __init__(self,*args):
         self.args = args
-
-
-def path_to_array(path):
-    print path
-    path = path.replace(r'/([A-Za-z])/g', r' $1 ')
-    path = path.replace(r'/^\s*/', "").replace(r'/\s*$/', "")
-    path = path.split(" ");
-    for i, v in enumerate(path):
-        try:
-            path[i] = float(v)
-        except:
-            pass
-    return path
-
-if __name__ == '__main__':
-    print path_to_array("M 4687 2398 L 4679 2402 4679 2398 Z")

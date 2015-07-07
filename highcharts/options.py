@@ -3,7 +3,8 @@
 from highchart_types import OptionTypeError, Series, SeriesOptions
 from common import Formatter, Events, Position, ContextButton, Options3d, ResetZoomButton, \
     DrillUpButton, Labels, PlotBands, PlotLines, Title, Items, Navigation, Background, Breaks, \
-    DateTimeLabelFormats, Zones, JSfunction, ColorObject, CSSObject, SVGObject, CommonObject, ArrayObject
+    DateTimeLabelFormats, Zones, Levels, \
+    JSfunction, ColorObject, CSSObject, SVGObject, CommonObject, ArrayObject
 
 import json, datetime
 from types import NoneType
@@ -31,149 +32,40 @@ class BaseOptions(object):
             return isinstance(v[keys[0]],ov[keys[0]])
         return isinstance(v, ov) 
 
-    def update_dict2(self,**kwargs):
-
-        DICTOBJECT_LIST = {
-            "backgroundColor": ColorObject,
-            "borderColor": ColorObject,
-            "events": Events,
-            "options3d": Options3d,
-            "resetZoomButton": ResetZoomButton,
-            "drillUpButton": DrillUpButton,
-            "position": Position,
-            "buttons": ContextButton,
-            "labels": Labels,
-            "title": Title,
-            "formatter": Formatter,
-            "labelFormatter": Formatter,
-            "chartOptions": ChartOptions,
-            "getTimezoneOffset": JSfunction,
-            "positioner": JSfunction,
-            "style": CSSObject,
-        }
-
-        ARRAYOBJECT_LIST = {
-            "background": Background,
-            "breaks": Breaks,
-            "plotBands": PlotBands,
-            "plotLines": PlotLines,
-            "items": Items,
-            "zones": Zones
-        }
-
-        for k, v in kwargs.items(): 
-            if k in self.ALLOWED_OPTIONS:
-                if k in DICTOBJECT_LIST:
-                    # re-construct input dict with existing options in objects
-                    if self.__getattr__(k): 
-                        if isinstance(v, dict): 
-                            for key, value in v.items(): # check if v has object input 
-                                if key in DICTOBJECT_LIST:
-                                    self.__dict__[k].__options__()[key].__options__().update(value)
-                                    #new_v =  self.__dict__[k].__options__()[key].__options__()
-                                    #self.__dict__[k].__options__().update({key:new_v})
-                                else:
-                                    self.__dict__[k].__options__().update({key:value})
-                        else:
-                            self.__dict__[k].__options__().update(v)
-
-                        v = self.__dict__[k].__options__()
-                    # upating object
-                    if isinstance(v, dict):
-                        self.__dict__.update({k:DICTOBJECT_LIST[k](**v)})
-                    else:
-                        self.__dict__.update({k:DICTOBJECT_LIST[k](v)})
-
-                elif k in ARRAYOBJECT_LIST:
-                    if self.__getattr__(k): # update array 
-                        if isinstance(v, dict):
-                            self.__dict__[k].append(ARRAYOBJECT_LIST[k](**v))
-                        elif isinstance(v, list):
-                            for item in v:
-                                self.__dict__[k].append(ARRAYOBJECT_LIST[k](**item))
-                        else:
-                            OptionTypeError("Not An Accepted Input Type: %s" % type(v))        
-                    else: #first 
-                        if isinstance(v, dict):
-                            self.__dict__.update({k:[ARRAYOBJECT_LIST[k](**v)]})
-                        elif isinstance(v, list):
-                            if len(v) == 1:
-                                self.__dict__.update({k:[ARRAYOBJECT_LIST[k](**v[0])]})
-                            else:
-                                self.__dict__.update({k:[ARRAYOBJECT_LIST[k](**v[0])]})
-                                for item in v[1:]:
-                                    self.__dict__[k].append(ARRAYOBJECT_LIST[k](**item))
-                        else:
-                            OptionTypeError("Not An Accepted Input Type: %s" % type(v))
-
-                elif isinstance(v, SeriesOptions):
-                    if self.__getattr__(k):
-                        self.__dict__[k].__options__().update(v.__options__())
-                        v = SeriesOptions(series_type=k, supress_errors=True, 
-                            **self.__dict__[k].__options__())
-                    self.__dict__.update({k:v})      
-
-                else:
-                    self.__dict__.update({k:v})
-
-            else:
-                print(self.ALLOWED_OPTIONS)
-                print(self.__name__)
-                print(k, v)
-                raise OptionTypeError("Not An Accepted Option Type: %s" % k)
-
-
     def update_dict(self,**kwargs):
 
         for k, v in kwargs.items(): 
             if k in self.ALLOWED_OPTIONS:
-                if isinstance(v, SeriesOptions):
+                if isinstance(self.ALLOWED_OPTIONS[k], tuple) and isinstance(self.ALLOWED_OPTIONS[k][0](), SeriesOptions):
                     if self.__getattr__(k):
-                        self.__dict__[k].__options__().update(v.__options__())
-                        v = SeriesOptions(series_type=k, supress_errors=True, 
-                            **self.__dict__[k].__options__())
-                    self.__dict__.update({k:v})
+                        self.__dict__[k].update(series_type = k, **v)
+                    else:
+                        v = SeriesOptions(series_type = k, **v)
+                        self.__dict__.update({k:v})
 
                 elif isinstance(self.ALLOWED_OPTIONS[k], tuple) and isinstance(self.ALLOWED_OPTIONS[k][0](), CommonObject):
                     # re-construct input dict with existing options in objects
                     if self.__getattr__(k):
-                        if isinstance(v, dict): 
-                            for key, value in v.items(): # check if v has object input 
-                                if isinstance(value, dict):
-                                    for key2, value2 in value.items():
-                                        self.__dict__[k].__options__()[key].__options__().update({key2:value2})
-                                elif isinstance(self.__dict__[k].ALLOWED_OPTIONS[key], tuple):
-                                    self.__dict__[k].__options__().update({key:self.__dict__[k].ALLOWED_OPTIONS[key][0](value)})
-                                else:
-                                    self.__dict__[k].__options__().update({key:value})
-                        else:
-                            self.__dict__[k].__options__().update(v)
-                        v = self.__dict__[k].__options__()
+                        self.__dict__[k].update(v)
                     # upating object
-                    if isinstance(v, dict):
+                    elif isinstance(v, dict):
                         self.__dict__.update({k:self.ALLOWED_OPTIONS[k][0](**v)})
                     else:
                         self.__dict__.update({k:self.ALLOWED_OPTIONS[k][0](v)})
 
                 elif isinstance(self.ALLOWED_OPTIONS[k], tuple) and isinstance(self.ALLOWED_OPTIONS[k][0](), ArrayObject):
                     if self.__getattr__(k): # update array 
-                        if isinstance(v, dict):
-                            self.__dict__[k].append(self.ALLOWED_OPTIONS[k][0](**v))
-                        elif isinstance(v, list):
-                            for item in v:
-                                self.__dict__[k].append(self.ALLOWED_OPTIONS[k][0](**item))
-                        else:
-                            OptionTypeError("Not An Accepted Input Type: %s" % type(v))        
+                        self.__dict__[k].update(v)        
                     else: #first 
                         if isinstance(v, dict):
-                            self.__dict__.update({k:[self.ALLOWED_OPTIONS[k][0](**v)]})
+                            self.__dict__.update({k:self.ALLOWED_OPTIONS[k][0](**v)})
                         elif isinstance(v, list):
                             if len(v) == 1:
-                                self.__dict__.update({k:[self.ALLOWED_OPTIONS[k][0](**v[0])]})
+                                self.__dict__.update({k:self.ALLOWED_OPTIONS[k][0](**v[0])})
                             else:
-                                self.__dict__.update({k:[self.ALLOWED_OPTIONS[k][0](**v[0])]})
+                                self.__dict__.update({k:self.ALLOWED_OPTIONS[k][0](**v[0])})
                                 for item in v[1:]:
-                                    self.__dict__[k].append(self.ALLOWED_OPTIONS[k][0](**item))
+                                    self.__dict__[k].update(self.ALLOWED_OPTIONS[k][0](item))
                         else:
                             OptionTypeError("Not An Accepted Input Type: %s" % type(v)) 
 
@@ -445,15 +337,19 @@ class PlotOptions(BaseOptions):
         "areaspline": (SeriesOptions, dict),
         "areasplinerange": (SeriesOptions, dict),
         "bar": (SeriesOptions, dict),
+        "boxplot": (SeriesOptions, dict),
+        "bubble": (SeriesOptions, dict),
         "column": (SeriesOptions, dict),
         "columnrange": (SeriesOptions, dict),
+        "errorbar": (SeriesOptions, dict),
         "gauge": (SeriesOptions, dict),
+        "heatmap": (SeriesOptions, dict),
         "line": (SeriesOptions, dict),
         "pie": (SeriesOptions, dict),
         "scatter": (SeriesOptions, dict),
         "series": (SeriesOptions, dict),
-        "spline": (SeriesOptions, dict) ,
-        "boxplot": (SeriesOptions, dict),
+        "spline": (SeriesOptions, dict),
+        "treemap": (SeriesOptions, dict),
     }
 
 

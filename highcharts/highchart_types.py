@@ -1,7 +1,7 @@
 # -*- coding: UTF-8 -*-
 import json, datetime
-from common import Formatter, Events, Position, ContextButton, Options3d, ResetZoomButton, DrillUpButton, Labels, \
-    Marker, Point, PlotBands, States, Tooltip, Title, Zones, Levels, \
+from common import Formatter, Events, Position, ContextButton, Options3d, ResetZoomButton, DrillUpButton, \
+    Labels, Marker, Point, PlotBands, States, Tooltip, Title, Zones, Levels, \
     JSfunction, ColorObject, CSSObject, SVGObject, \
     CommonObject, ArrayObject
 
@@ -131,7 +131,7 @@ PLOT_OPTION_ALLOWED_ARGS = {
     "allowPointSelect": bool,
     "borderColor": (ColorObject, basestring, dict),
     "borderRadius": int,
-    "borderWidth": int,
+    "borderWidth": [int, basestring],
     "colorByPoint": bool,
     "colors": list,
     "cropThreshold": int,
@@ -224,7 +224,7 @@ PLOT_OPTION_ALLOWED_ARGS = {
     "allowPointSelect": bool,
     "borderColor": (ColorObject, basestring, dict),
     "borderRadius": int,
-    "borderWidth": int,
+    "borderWidth": [int, basestring],
     "colors": list,
     "colorByPoint": bool,
     "cropThreshold": int,
@@ -257,7 +257,7 @@ PLOT_OPTION_ALLOWED_ARGS = {
     "allowPointSelect": bool,
     "borderColor": (ColorObject, basestring, dict),
     "borderRadius": int,
-    "borderWidth": int,
+    "borderWidth": [int, basestring],
     "colors": list,
     "colorByPoint": bool,
     "depth": [int, float],
@@ -321,7 +321,7 @@ PLOT_OPTION_ALLOWED_ARGS = {
     "dial": NotImplemented,
     "linkedTo": basestring,
     "negativeColor": (ColorObject, basestring, dict),
-    "overshoot": [int, float]
+    "overshoot": [int, float],  
     "pivot": NotImplemented,
     "stickyTracking": bool,
     "threshold": [int, NoneType],
@@ -331,7 +331,7 @@ PLOT_OPTION_ALLOWED_ARGS = {
     "allowPointSelect": bool,
     "borderColor": (ColorObject, basestring, dict),
     "borderRadius": int,
-    "borderWidth": [int, float],
+    "borderWidth": [int, basestring],
     "colors": list,
     "colorByPoint": bool,
     "colsize": int,
@@ -371,7 +371,7 @@ PLOT_OPTION_ALLOWED_ARGS = {
   "pie": {
     "allowPointSelect": bool,
     "borderColor": (ColorObject, basestring, dict),
-    "borderWidth": int,
+    "borderWidth": [int, basestring],
     "center": list,
     "colors": list,
     "depth": [int, float],
@@ -407,6 +407,7 @@ PLOT_OPTION_ALLOWED_ARGS = {
   },
   "series": {
     "allowPointSelect": bool,
+    "borderWidth": [int, basestring],
     "connectEnds": bool,
     "connectNulls": bool,
     "cropThreshold": int,
@@ -440,7 +441,7 @@ PLOT_OPTION_ALLOWED_ARGS = {
     "allowPointSelect": bool,
     "alternateStartingDirection": bool,
     "borderColor": (ColorObject, basestring, dict),
-    "borderWidth": int,
+    "borderWidth": [int, basestring],
     "colors": list,
     "colorByPoint": bool,
     "cropThreshold": int,
@@ -451,7 +452,7 @@ PLOT_OPTION_ALLOWED_ARGS = {
     "layoutStartingDirection": basestring,
     "legendIndex": [int, float],
     "levelIsConstant": bool,
-    "levels": (Levels, dict),
+    "levels": (Levels, dict, list),
     "linkedTo": basestring,
     "shadow": [bool, dict],
     "stickyTracking": bool,
@@ -518,6 +519,69 @@ class SeriesOptions(object):
     def __display_options__(self):
         print(json.dumps(self.__options__(),indent=4,sort_keys=True))
 
+    def update(self,series_type, **kwargs):
+        allowed_args = PLOT_OPTION_ALLOWED_ARGS[series_type]
+        allowed_args.update(PLOT_OPTION_ALLOWED_ARGS["common"])
+
+        for k, v in kwargs.items():
+            if k in allowed_args:
+                if SeriesOptions.__validate_options__(k,v,allowed_args[k]):
+                    if isinstance(allowed_args[k], tuple) and isinstance(allowed_args[k][0](), CommonObject):
+                        # re-construct input dict with existing options in objects
+                        if isinstance(v, dict): 
+                            for key, value in v.items(): # check if v has object input 
+                                if isinstance(value, dict):
+                                    for key2, value2 in value.items():
+                                        self.__dict__[k].__options__()[key].__options__().update({key2:value2})
+                                elif isinstance(self.__dict__[k].allowed_args[key], tuple):
+                                    self.__dict__[k].__options__().update({key:self.__dict__[k].allowed_args[key][0](value)})
+                                else:
+                                    self.__dict__[k].__options__().update({key:value})
+                        else:
+                            self.__dict__[k].__options__().update(v)
+                        v = self.__dict__[k].__options__()
+                        # upating object
+                        if isinstance(v, dict):
+                            self.__dict__.update({k:allowed_args[k][0](**v)})
+                        else:
+                            self.__dict__.update({k:allowed_args[k][0](v)})
+
+                    elif isinstance(allowed_args[k], tuple) and isinstance(allowed_args[k][0](), ArrayObject):
+                        # update array 
+                        if isinstance(v, dict):
+                            self.__dict__[k].append(allowed_args[k][0](**v))
+                        elif isinstance(v, list):
+                            for item in v:
+                                self.__dict__[k].append(allowed_args[k][0](**item))
+                        else:
+                            OptionTypeError("Not An Accepted Input Type: %s" % type(v))        
+
+                    elif isinstance(allowed_args[k], tuple) and \
+                        (isinstance(allowed_args[k][0](), CSSObject) or isinstance(allowed_args[k][0](), SVGObject)):
+
+                        for key, value in v.items(): # check if v has object input 
+                            self.__dict__[k].__options__().update({key:value})
+                        
+                        v = self.__dict__[k].__options__()
+                        # upating object
+                        if isinstance(v, dict):
+                            self.__dict__.update({k:allowed_args[k][0](**v)})
+                        else:
+                            self.__dict__.update({k:allowed_args[k][0](v)})
+
+                    elif isinstance(allowed_args[k], tuple) and (isinstance(allowed_args[k][0](), JSfunction) or \
+                        isinstance(allowed_args[k][0](), Formatter) or isinstance(allowed_args[k][0](), ColorObject)):
+                        if isinstance(v, dict):
+                            self.__dict__.update({k:allowed_args[k][0](**v)})
+                        else:
+                            self.__dict__.update({k:allowed_args[k][0](v)})
+                    else:
+                        self.__dict__.update({k:v})
+            else: 
+                print(k,v)
+                if not supress_errors: raise OptionTypeError("Option Type Mismatch: Expected: %s" % allowed_args[k])
+                
+
     def process_kwargs(self,kwargs,series_type,supress_errors=False):
         allowed_args = PLOT_OPTION_ALLOWED_ARGS[series_type]
         allowed_args.update(PLOT_OPTION_ALLOWED_ARGS["common"])
@@ -528,28 +592,23 @@ class SeriesOptions(object):
                     if isinstance(allowed_args[k], tuple):
                         if isinstance(v, dict):
                             self.__dict__.update({k:allowed_args[k][0](**v)})
-                        elif isinstance(v, CommonObject) or isinstance(v, ArrayObject):
-                            self.__dict__.update({k:allowed_args[k][0](**v.__options__())})
-                        elif isinstance(v, JSfunction) or isinstance(v, Formatter):
-                            self.__dict__.update({k:allowed_args[k][0](v.__options__().get_jstext())})
-                        elif isinstance(v, CSSObject) or isinstance(v, SVGObject):
-                            self.__dict__.update({k:allowed_args[k][0](**v.__options__())})
-                        elif isinstance(v, ColorObject):
-                            if isinstance(v.__options__(), basestring):
-                                self.__dict__.update({k:allowed_args[k][0](v.__options__())})
+                        elif isinstance(v, list):
+                            if len(v) == 1:
+                                self.__dict__.update({k:allowed_args[k][0](**v[0])})
                             else:
-                                self.__dict__.update({k:allowed_args[k][0](**v.__options__())})
+                                self.__dict__.update({k:allowed_args[k][0](**v[0])})
+                                for item in v[1:]:
+                                    self.__dict__[k].update(item)
                         elif isinstance(v, datetime.datetime):
                             self.__dict__.update({k:v})                            
                         else:
                             self.__dict__.update({k:allowed_args[k][0](v)})
                     else:
-                        self.__dict__.update({k:v})
+                        self.__dict__.update({k:v})          
                 else: 
                     print(k,v)
                     if not supress_errors: raise OptionTypeError("Option Type Mismatch: Expected: %s" % allowed_args[k])
-            # else:
-            #     if not supress_errors: raise OptionTypeError("Option: %s Not Allowed For Series Type: %s" % (k,series_type))
+           
 
     def load_defaults(self,series_type):
         self.process_kwargs(DEFAULT_OPTIONS.get(series_type,{}),series_type)
@@ -575,7 +634,8 @@ class Series(object):
 
     def __init__(self,data,series_type="line",supress_errors=False,**kwargs):
 
-        # List of dictionaries. Each dict contains data and properties, which need to handle before construct the object for series 
+        # List of dictionaries. Each dict contains data and properties, 
+        # which need to handle before construct the object for series 
         for item in data:
             if isinstance(item, dict):
                 for k, v in item.items():
@@ -584,17 +644,6 @@ class Series(object):
                             if isinstance(DATA_SERIES_ALLOWED_OPTIONS[k], tuple):
                                 if isinstance(v, dict):
                                     item.update({k:DATA_SERIES_ALLOWED_OPTIONS[k][0](**v)})
-                                elif isinstance(v, CommonObject) or isinstance(v, ArrayObject):
-                                    item.update({k:DATA_SERIES_ALLOWED_OPTIONS[k][0](**v.__options__())})
-                                elif isinstance(v, JSfunction) or isinstance(v, Formatter):
-                                    item.update({k:DATA_SERIES_ALLOWED_OPTIONS[k][0](v.__options__().get_jstext())})
-                                elif isinstance(v, CSSObject) or isinstance(v, SVGObject):
-                                    item.update({k:DATA_SERIES_ALLOWED_OPTIONS[k][0](**v.__options__())})
-                                elif isinstance(v, ColorObject):
-                                    if isinstance(v.__options__(), basestring):
-                                        item.update({k:allowed_args[k][0](v.__options__())})
-                                    else:
-                                        item.update({k:allowed_args[k][0](**v.__options__())})
                                 elif isinstance(v, datetime.datetime):
                                     item.update({k:v})                            
                                 else:
@@ -614,17 +663,6 @@ class Series(object):
                     if isinstance(DATA_SERIES_ALLOWED_OPTIONS[k], tuple):
                         if isinstance(v, dict):
                             self.__dict__.update({k:DATA_SERIES_ALLOWED_OPTIONS[k][0](**v)})
-                        elif isinstance(v, CommonObject) or isinstance(v, ArrayObject):
-                            self.__dict__.update({k:DATA_SERIES_ALLOWED_OPTIONS[k][0](**v.__options__())})
-                        elif isinstance(v, JSfunction) or isinstance(v, Formatter):
-                            self.__dict__.update({k:DATA_SERIES_ALLOWED_OPTIONS[k][0](v.__options__().get_jstext())})
-                        elif isinstance(v, CSSObject) or isinstance(v, SVGObject):
-                            self.__dict__.update({k:DATA_SERIES_ALLOWED_OPTIONS[k][0](**v.__options__())})
-                        elif isinstance(v, ColorObject):
-                            if isinstance(v.__options__(), basestring):
-                                self.__dict__.update({k:allowed_args[k][0](v.__options__())})
-                            else:
-                                self.__dict__.update({k:allowed_args[k][0](**v.__options__())})
                         elif isinstance(v, datetime.datetime):
                             self.__dict__.update({k:v})                            
                         else:

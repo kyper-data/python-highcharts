@@ -106,4 +106,20 @@ def _coordinates_to_path(coordinates_array, hType, geojson_type):
     
     return new_array
 
+
+def _path_to_array(path):
+    print path
+    path = path.replace(r'/([A-Za-z])/g', r' $1 ')
+    path = path.replace(r'/^\s*/', "").replace(r'/\s*$/', "")
+    path = path.split(" ");
+    for i, v in enumerate(path):
+        try:
+            path[i] = float(v)
+        except:
+            pass
+    return path
+
+if __name__ == '__main__':
+    print path_to_array("M 4687 2398 L 4679 2402 4679 2398 Z")
+
                 

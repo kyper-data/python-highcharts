@@ -9,7 +9,8 @@ sys.path.append('/Users/hankchu/Documents/python-highcharts/highcharts')
 import highcharts
 H = highcharts.Highcharts(width = 550, height = 400)
 
-options = {'chart': {
+options = {
+        'chart': {
             'polar': True,
             'type': 'line',
             'renderTo': 'test'

@@ -17,7 +17,6 @@ from jinja2 import Environment, PackageLoader
 # reload(sys)
 # sys.setdefaultencoding("utf-8")
 
-# from slugify import slugify
 import json, uuid
 import datetime, random, os, inspect
 from _abcoll import Iterable
@@ -29,7 +28,7 @@ from options import BaseOptions, ChartOptions, \
     TooltipOptions, xAxisOptions, yAxisOptions, MultiAxis
 
 from highchart_types import Series, SeriesOptions, HighchartsError
-from common import Formatter, CSSObject, SVGObject, JSfunction, RawJavaScriptText, \
+from common import Levels, Formatter, CSSObject, SVGObject, JSfunction, RawJavaScriptText, \
     CommonObject, ArrayObject, ColorObject
 
 CONTENT_FILENAME = "./content.html"
@@ -71,8 +70,7 @@ class Highcharts(object):
         self.template_page_highcharts = template_page
         self.template_content_highcharts = template_content
         
-        # set Javascript src
-
+        # set Javascript src, Highcharts lib needs to make sure it's up to date
         self.JSsource = [
                 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js',
                 'https://code.highcharts.com/highcharts.js',
@@ -81,7 +79,6 @@ class Highcharts(object):
             ]
 
         # set CSS src
-
         self.CSSsource = [
                 'https://www.highcharts.com/highslide/highslide.css',
 
@@ -248,7 +245,6 @@ class Highcharts(object):
             for series_type, series_options in hold_iterable:
                 self.set_options('plotOptions',{series_type:{'pointStart':start}})
 
-
         self.start_date_set = True
 
 
@@ -269,7 +265,7 @@ class Highcharts(object):
                 self.set_options('plotOptions',{series_type:{'pointInterval':interval}})
 
         if not self.start_date_set:
-            print "Set The Start Date With .set_start_date(date)"
+            print("Set The Start Date With .set_start_date(date)")
 
 
     def add_data_set(self, data, series_type="line", name=None, **kwargs):
@@ -285,6 +281,9 @@ class Highcharts(object):
         if self.hold_point_interval:
             kwargs.update({"pointInterval":self.hold_point_interval})
             self.hold_point_interval = None
+
+        if series_type == 'treemap':
+            self.set_JSsource('http://code.highcharts.com/modules/treemap.js')
 
         series_data = Series(data, series_type=series_type, **kwargs)
        
@@ -344,10 +343,8 @@ class Highcharts(object):
         """set plot options """
         if force_options:
             self.options[option_type].update(option_dict)
-        elif option_type == 'plotOptions':
-            for key in option_dict.keys():
-                self.options[option_type].update_dict(**{key:SeriesOptions(key,**option_dict[key])})
         elif (option_type == 'yAxis' or option_type == 'xAxis') and isinstance(option_dict, list):
+            # For multi-Axis
             self.options[option_type] = MultiAxis(option_type)
             for each_dict in option_dict:
                 self.options[option_type].update(**each_dict)
@@ -419,7 +416,6 @@ class Highcharts(object):
 
     def buildhtmlheader(self):
         """generate HTML header content"""
-        #Highcharts lib/ needs to make sure it's up to date
         
         if self.drilldown_flag:
             self.set_JSsource('http://code.highcharts.com/modules/drilldown.js')
