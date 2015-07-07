@@ -202,7 +202,6 @@ chart.add_JSscript("var lines = Highcharts.geojson(Highcharts.maps['countries/us
 Bad practice: 
 1. load data directionly and handle in javascript 2. has javascript at front and in the end 3. require unquote function: RawJavaScriptText 
 ```python
-
 from highmaps import Highmaps
 from common import RawJavaScriptText
 
