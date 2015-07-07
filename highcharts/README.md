@@ -14,6 +14,9 @@ The frame was originated from PyHighcharts on Github but alienated from it since
 
  -need to work on this-
 
+---------------------------------------------------------------------------------------------------------------
+# Highcharts
+    
 ## Design Overview
 
 The usage is designed to close to it on Javascript. 
@@ -185,4 +188,4 @@ chart.file()
 * Clean code and put more explanation
 * Unittests
 
-Reference: [Highcharts API](http://api.highcharts.com/highcharts)`""`````````
+Reference: [Highcharts API](http://api.highcharts.com/highcharts)
