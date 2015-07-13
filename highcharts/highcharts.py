@@ -27,7 +27,7 @@ from options import BaseOptions, ChartOptions, \
     PlotOptions, SeriesData, SubtitleOptions, TitleOptions, \
     TooltipOptions, xAxisOptions, yAxisOptions, MultiAxis
 
-from highchart_types import Series, SeriesOptions, HighchartsError
+from highchart_types import Series, SeriesOptions
 from common import Levels, Formatter, CSSObject, SVGObject, JSfunction, RawJavaScriptText, \
     CommonObject, ArrayObject, ColorObject
 

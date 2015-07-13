@@ -7,7 +7,7 @@ import datetime
 sys.path.append('/Users/hankchu/Documents/python-highcharts/highcharts')
 
 import highcharts
-H = highcharts.Highcharts(width = 550, height = 400)
+H = highcharts.Charts(width = 550, height = 400)
 
 options = {
 		'title': {
@@ -53,7 +53,7 @@ data = [{
                 'value': 1
             }]
 
-H.set_dict_optoins(options)
+H.set_dict_options(options)
 H.add_data_set(data, 'treemap', layoutAlgorithm = 'squarified',
             levels = [{
                 'level': 1,

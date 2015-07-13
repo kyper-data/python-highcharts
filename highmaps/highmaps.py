@@ -28,7 +28,7 @@ from options import BaseOptions, ChartOptions, \
     PlotOptions, SeriesData, SubtitleOptions, TitleOptions, \
     TooltipOptions, xAxisOptions, yAxisOptions
 
-from highmap_types import Series, SeriesOptions, HighchartsError
+from highmap_types import Series, SeriesOptions
 from common import Formatter, CSSObject, SVGObject, MapObject, JSfunction, RawJavaScriptText, \
     CommonObject, ArrayObject, ColorObject
 

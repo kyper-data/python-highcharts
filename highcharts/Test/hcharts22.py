@@ -7,7 +7,7 @@ import datetime
 sys.path.append('/Users/hankchu/Documents/python-highcharts/highcharts')
 
 import highcharts
-H = highcharts.Highcharts(width = 550, height = 400)
+H = highcharts.Charts(width = 550, height = 400)
 
 options = {
         'chart': {
@@ -54,7 +54,7 @@ options = {
 data1 = [43000, 19000, 60000, 35000, 17000, 10000]
 data2 = [50000, 39000, 42000, 31000, 26000, 14000]
 
-H.set_dict_optoins(options)
+H.set_dict_options(options)
 H.add_data_set(data1, name = 'Allocated Budget', pointPlacement = 'on')
 H.add_data_set(data2, name ='Actual Spending',  pointPlacement = 'on')
 
