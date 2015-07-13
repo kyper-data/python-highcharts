@@ -4,10 +4,9 @@ import pandas as pd
 import numpy as np
 import datetime
 
-sys.path.append('/Users/hankchu/Documents/python-highcharts/highcharts')
-
 import highcharts
-H = highcharts.Highcharts(width = 850, height = 400)
+
+H = highcharts.Highcharts(width=850, height=400)
 
 data = [
                 ['Firefox',   45.0],
@@ -39,10 +38,10 @@ options = {
 
 H.set_dict_optoins(options)
 
-H.add_data_set(data, 'pie', 'Browser share', allowPointSelect = True,
-                cursor = 'pointer',
-                showInLegend = True,
-                dataLabels = {
+H.add_data_set(data, 'pie', 'Browser share', allowPointSelect=True,
+                cursor='pointer',
+                showInLegend=True,
+                dataLabels={
                     'enabled': False,
                     'format': '<b>{point.name}</b>: {point.percentage:.1f} %',
                     'style': {

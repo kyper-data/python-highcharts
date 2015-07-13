@@ -4,9 +4,8 @@ import pandas as pd
 import numpy as np
 import datetime
 
-sys.path.append('/Users/hankchu/Documents/python-highcharts/highcharts')
-
 import highcharts
+
 H = highcharts.Highcharts(width = 850, height = 400)
 
 data = [{
@@ -59,27 +58,27 @@ data = [{
         }]
 
 options = {
-		'chart': {
-            'type': 'pie'
-        },
+	'chart': {
+        'type': 'pie'
+    },
+    'title': {
+        'text': 'Browser market share, April, 2011'
+    },
+    'yAxis': {
         'title': {
-            'text': 'Browser market share, April, 2011'
-        },
-        'yAxis': {
-            'title': {
-                'text': 'Total percent market share'
-            }
-        },
-        'plotOptions': {
-            'pie': {
-                'shadow': False,
-                'center': ['50%', '50%']
-            }
-        },
-        'tooltip': {
-            'valueSuffix': '%'
-        },
-    }
+            'text': 'Total percent market share'
+        }
+    },
+    'plotOptions': {
+        'pie': {
+            'shadow': False,
+            'center': ['50%', '50%']
+        }
+    },
+    'tooltip': {
+        'valueSuffix': '%'
+    },
+}
 
 
 categories = ['MSIE', 'Firefox', 'Chrome', 'Safari', 'Opera']
@@ -101,13 +100,13 @@ for i in range(len(data)):
         versionsData.append({
             'name': data[i]['drilldown']['categories'][j],
             'y': data[i]['drilldown']['data'][j],
-            'color': 'Highcharts.Color('+ data[i]['color']+ ').brighten('+str(brightness)+').get()'
+            'color': 'Highcharts.Color(' + data[i]['color'] + ').brighten(' + str(brightness) + ').get()'
         })
         
-H.set_dict_optoins(options)
+H.set_dict_options(options)
 
-H.add_data_set(browserData, 'pie', 'Browsers', size = '60%',
-            dataLabels = {
+H.add_data_set(browserData, 'pie', 'Browsers', size='60%',
+            dataLabels={
                 'formatter': 'function () { \
                                     return this.y > 5 ? this.point.name : null;\
                                 }',
@@ -115,9 +114,9 @@ H.add_data_set(browserData, 'pie', 'Browsers', size = '60%',
                 'distance': -30
             })
 
-H.add_data_set(versionsData, 'pie', 'Versions', size = '80%',
-            innerSize = '60%',
-            dataLabels = {
+H.add_data_set(versionsData, 'pie', 'Versions', size='80%',
+            innerSize='60%',
+            dataLabels={
                 'formatter': "function () {\
                                     return this.y > 1 ? '<b>' + this.point.name + ':</b> ' + this.y + '%'  : null;\
                                 }"

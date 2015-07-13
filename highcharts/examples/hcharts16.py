@@ -4,71 +4,70 @@ import pandas as pd
 import numpy as np
 import datetime
 
-sys.path.append('/Users/hankchu/Documents/python-highcharts/highcharts')
-
 import highcharts
-H = highcharts.Highcharts(width = 850, height = 400)
+
+H = highcharts.Highcharts(width=850, height=400)
 
 options = {
-		'chart': {
-            'type': 'scatter',
-            'zoomType': 'xy'
-        },
+	'chart': {
+        'type': 'scatter',
+        'zoomType': 'xy'
+    },
+    'title': {
+        'text': 'Height Versus Weight of 507 Individuals by Gender'
+    },
+    'subtitle': {
+        'text': 'Source: Heinz  2003'
+    },
+    'xAxis': {
         'title': {
-            'text': 'Height Versus Weight of 507 Individuals by Gender'
+            'enabled': True,
+            'text': 'Height (cm)'
         },
-        'subtitle': {
-            'text': 'Source: Heinz  2003'
-        },
-        'xAxis': {
-            'title': {
-                'enabled': True,
-                'text': 'Height (cm)'
-            },
-            'startOnTick': True,
-            'endOnTick': True,
-            'showLastLabel': True
-        },
-        'yAxis': {
-            'title': {
-                'text': 'Weight (kg)'
-            }
-        },
-        'legend': {
-            'layout': 'vertical',
-            'align': 'left',
-            'verticalAlign': 'top',
-            'x': 100,
-            'y': 70,
-            'floating': True,
-            'backgroundColor': "(Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'",
-            'borderWidth': 1
-        },
-        'plotOptions': {
-            'scatter': {
-                'marker': {
-                    'radius': 5,
-                    'states': {
-                        'hover': {
-                            'enabled': True,
-                            'lineColor': 'rgb(100,100,100)'
-                        }
-                    }
-                },
+        'startOnTick': True,
+        'endOnTick': True,
+        'showLastLabel': True
+    },
+    'yAxis': {
+        'title': {
+            'text': 'Weight (kg)'
+        }
+    },
+    'legend': {
+        'layout': 'vertical',
+        'align': 'left',
+        'verticalAlign': 'top',
+        'x': 100,
+        'y': 70,
+        'floating': True,
+        'backgroundColor': "(Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'",
+        'borderWidth': 1
+    },
+    'plotOptions': {
+        'scatter': {
+            'marker': {
+                'radius': 5,
                 'states': {
                     'hover': {
-                        'marker': {
-                            'enabled': False
-                        }
+                        'enabled': True,
+                        'lineColor': 'rgb(100,100,100)'
                     }
-                },
-                'tooltip': {
-                    'headerFormat': '<b>{series.name}</b><br>',
-                    'pointFormat': '{point.x} cm, {point.y} kg'
                 }
+            },
+            'states': {
+                'hover': {
+                    'marker': {
+                        'enabled': False
+                    }
+                }
+            },
+            'tooltip': {
+                'headerFormat': '<b>{series.name}</b><br>',
+                'pointFormat': '{point.x} cm, {point.y} kg'
             }
-        },
-    }
+        }
+    },
+}
 
 
 data1 = [[161.2, 51.6], [167.5, 59.0], [159.5, 49.2], [157.0, 63.0], [155.8, 53.6],
@@ -176,7 +175,7 @@ data2 = [[174.0, 65.6], [175.3, 71.8], [193.5, 80.7], [186.5, 72.6], [187.2, 78.
         [180.3, 83.2], [180.3, 83.2]]
 
 H.set_dict_optoins(options)
-H.add_data_set(data1, 'scatter', 'Female', color = 'rgba(223, 83, 83, .5)')
-H.add_data_set(data2, 'scatter', 'Male', color = 'rgba(119, 152, 191, .5)')
+H.add_data_set(data1, 'scatter', 'Female', color='rgba(223, 83, 83, .5)')
+H.add_data_set(data2, 'scatter', 'Male', color='rgba(119, 152, 191, .5)')
 
 H.file()

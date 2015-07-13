@@ -4,8 +4,8 @@ import pandas as pd
 import numpy as np
 import datetime
 
-sys.path.append('/Users/hankchu/Documents/python-highcharts/highcharts')
 import highcharts
+
 H = highcharts.Highcharts()
 
 options = {
@@ -34,9 +34,9 @@ options = {
         'shared': True,
         'pointFormat': '{series.name}: {point.y}°C <br>'
     }
-    }
+}
 
-H.set_dict_optoins(options)
+H.set_dict_options(options)
 
 data1 =  [7.0, 6.9, 9.5, 14.5, 18.2, 21.5, 25.2, {
                 'y': 26.5,
@@ -50,10 +50,10 @@ data2 = [{'y': 3.9,'marker': {
             }, 4.2, 5.7, 8.5, 11.9, 15.2, 17.0, 16.6, 14.2, 10.3, 6.6, 4.8]
 
 
-H.add_data_set(data1, 'spline', 'Tokyo', marker = {
+H.add_data_set(data1, 'spline', 'Tokyo', marker={
                 'symbol': 'square'
             })
-H.add_data_set(data2, 'spline', 'London', marker = {
+H.add_data_set(data2, 'spline', 'London', marker={
                 'symbol': 'diamond'
             }) 
 
