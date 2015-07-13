@@ -516,8 +516,8 @@ class SeriesOptions(object):
     def __options__(self):
         return self.__dict__
 
-    def __display_options__(self):
-        print(json.dumps(self.__options__(),indent=4,sort_keys=True))
+    def __jsonable__(self):
+        return self.__dict__
 
     def update(self,series_type, **kwargs):
         allowed_args = PLOT_OPTION_ALLOWED_ARGS[series_type]
@@ -611,21 +611,7 @@ class SeriesOptions(object):
             return None # Attribute Not Set
         else:
             return True
-
-class HighchartsError(Exception):
-
-    def __init__(self, *args):
-        self.args = args
-
-
-class MultiAxis(object):
-
-    def __init__(self, axis):
-        self.axis = axis
-
-    def __options__(self):
-        return self.__dict__
-
+            
 
 class Series(object):
     """Series class for input data """
@@ -678,6 +664,8 @@ class Series(object):
     def __options__(self):
         return self.__dict__
 
+    def __jsonable__(self):
+        return self.__dict__
 
     def __getattr__(self,item):
         if not item in self.__dict__:
