@@ -667,8 +667,8 @@ class Series(object):
     def __jsonable__(self):
         return self.__dict__
 
-    def __getattr__(self,item):
-        if not item in self.__dict__:
-            return None # Attribute Not Set
-        else:
-            return True
+    # def __getattr__(self,item):
+    #     if not item in self.__dict__:
+    #         return None # Attribute Not Set
+    #     else:
+    #         return True

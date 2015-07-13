@@ -287,7 +287,7 @@ class Charts(object):
             self.add_JSsource("http://code.highcharts.com/highcharts-3d.js")
 
 
-    def set_dict_optoins(self, options):
+    def set_dict_options(self, options):
         """set data for drilldown option in highmaps 
         id must be input and corresponding to drilldown arguments in data series 
         """
