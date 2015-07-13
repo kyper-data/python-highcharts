@@ -3,8 +3,9 @@ import pandas as pd
 import numpy as np
 
 sys.path.append('/Users/hankchu/Documents/python-highcharts/highcharts')
-import highcharts
-H = highcharts.Highcharts()
+#import highcharts
+from highcharts import Highcharts
+H = Highcharts()
 data = range(1,20)
 data2 = range(20,1,-1)
 H.add_data_set(data2,'line')

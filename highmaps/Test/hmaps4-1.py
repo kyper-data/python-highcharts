@@ -99,7 +99,6 @@ lines = geojson_handler(geojson, 'mapline')
 for x in mapdata:
     x.update({'name':x['name']+', '+x['properties']['hc-key'].split('-')[1].upper()})
 
-#map(lambda x: x['properties'].update({'name':x['properties']['name']+', '+x['properties']['hc-key'].split('-')[1]}), geojson['features'])
 
 H.add_data_set(data, 'map', 'Unemployment rate', joinBy = ['hc-key', 'code'], 
      tooltip = {
@@ -115,11 +114,7 @@ H.add_data_set(data, 'map', 'Unemployment rate', joinBy = ['hc-key', 'code'],
 H.add_data_set([lines[0]], 'mapline', 'State borders', color = 'white')
 H.add_data_set([lines[3]], 'mapline', 'Separator', color = 'gray')
 H.add_map_data(mapdata)
-#H.set_map_source('http://code.highcharts.com/mapdata/countries/us/us-all-all.js', jsonp_map = False)
-#H.add_jscript("var lines = Highcharts.geojson(Highcharts.maps['countries/us/us-all-all'], 'mapline');", 'head')
-# H.add_jscript("Highcharts.each(geojson, function (mapPoint) {\
-#             mapPoint.name = mapPoint.name + ', ' + mapPoint.properties['hc-key'].substr(3, 2);\
-#         });", 'head')
+
 
 
 H.file()

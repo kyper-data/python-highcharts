@@ -32,10 +32,10 @@ class BaseOptions(object):
         return isinstance(v, ov) 
 
     def update_dict(self,**kwargs):
-
         for k, v in kwargs.items(): 
             if k in self.ALLOWED_OPTIONS:
-                if isinstance(self.ALLOWED_OPTIONS[k], tuple) and isinstance(self.ALLOWED_OPTIONS[k][0](), SeriesOptions):
+                # if isinstance(self.ALLOWED_OPTIONS[k], tuple) and isinstance(self.ALLOWED_OPTIONS[k][0](), SeriesOptions):
+                if k in PlotOptions.ALLOWED_OPTIONS.keys():
                     if self.__getattr__(k):
                         self.__dict__[k].update(series_type = k, **v)
                     else:
@@ -43,18 +43,24 @@ class BaseOptions(object):
                         self.__dict__.update({k:v})
 
                 elif isinstance(self.ALLOWED_OPTIONS[k], tuple) and isinstance(self.ALLOWED_OPTIONS[k][0](), CommonObject):
-                    # re-construct input dict with existing options in objects
-                    if self.__getattr__(k):
-                        self.__dict__[k].update(v)
-                    # upating object
-                    elif isinstance(v, dict):
-                        self.__dict__.update({k:self.ALLOWED_OPTIONS[k][0](**v)})
+                    if isinstance(v, dict): 
+                        if self.__getattr__(k): 
+                            self.__dict__[k].update(v) #update dict
+                        else: # first
+                            self.__dict__.update({k:self.ALLOWED_OPTIONS[k][0](**v)})
                     else:
-                        self.__dict__.update({k:self.ALLOWED_OPTIONS[k][0](v)})
+                        OptionTypeError("Not An Accepted Input Type: %s, must be dictionary" % type(v))
 
                 elif isinstance(self.ALLOWED_OPTIONS[k], tuple) and isinstance(self.ALLOWED_OPTIONS[k][0](), ArrayObject):
-                    if self.__getattr__(k): # update array 
-                        self.__dict__[k].update(v)        
+                    if self.__getattr__(k): #existing attr
+                        if isinstance(v, dict):
+                            self.__dict__[k].update(v) # update array
+                        elif isinstance(v, list):
+                            for item in v:
+                                self.__dict__[k].update(item) # update array
+                        else:
+                            OptionTypeError("Not An Accepted Input Type: %s, must be list or dictionary" 
+                                            % type(v))          
                     else: #first 
                         if isinstance(v, dict):
                             self.__dict__.update({k:self.ALLOWED_OPTIONS[k][0](**v)})
@@ -66,11 +72,11 @@ class BaseOptions(object):
                                 for item in v[1:]:
                                     self.__dict__[k].update(item)
                         else:
-                            OptionTypeError("Not An Accepted Input Type: %s" % type(v)) 
+                            OptionTypeError("Not An Accepted Input Type: %s, must be list or dictionary"
+                                            % type(v))
 
                 elif isinstance(self.ALLOWED_OPTIONS[k], tuple) and \
                     (isinstance(self.ALLOWED_OPTIONS[k][0](), CSSObject) or isinstance(self.ALLOWED_OPTIONS[k][0](), SVGObject)):
-
                     if self.__getattr__(k): 
                         for key, value in v.items(): # check if v has object input 
                             self.__dict__[k].__options__().update({key:value})
@@ -93,7 +99,6 @@ class BaseOptions(object):
 
             else:
                 print(self.ALLOWED_OPTIONS)
-                print(self.__name__)
                 print(k, v)
                 raise OptionTypeError("Not An Accepted Option Type: %s" % k)
 
@@ -546,23 +551,4 @@ class yAxisOptions(BaseOptions):
         "tickWidth": int,
         "title": (Title, dict),  
     }
-
-class MultiAxis(object):
-
-    def __init__(self, axis):
-        AXIS_LIST = {
-            "xAxis": xAxisOptions,
-            "yAxis": yAxisOptions
-            }
-        self.axis = []
-        self.AxisObj = AXIS_LIST[axis]
-
-    def update(self, **kwargs):
-        self.axis.append(self.AxisObj(**kwargs))
-    def __jsonable__(self):
-        return self.axis
-
-
-if __name__ == '__main__':
-    C = ChartOptions(type="pie")
-    C.__display_options__()
+    

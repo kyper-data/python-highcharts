@@ -27,7 +27,7 @@ from options import BaseOptions, ChartOptions, \
     GlobalOptions, LabelsOptions, LangOptions, \
     LegendOptions, LoadingOptions, MapNavigationOptions, NavigationOptions, PaneOptions, \
     PlotOptions, SeriesData, SubtitleOptions, TitleOptions, \
-    TooltipOptions, xAxisOptions, yAxisOptions, MultiAxis
+    TooltipOptions, xAxisOptions, yAxisOptions
 
 from highmap_types import Series, SeriesOptions, HighchartsError
 from common import Formatter, CSSObject, SVGObject, MapObject, JSfunction, RawJavaScriptText, \
@@ -76,7 +76,8 @@ class Highmaps(object):
         # Set Javascript src
         self.JSsource = [
                 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js',
-                'https://code.highcharts.com/highcharts.js',
+                'https://code.highcharts.com/maps/highmaps.js',
+                'https://code.highcharts.com/highcharts.js',  
                 'https://code.highcharts.com/maps/modules/map.js',
                 'https://code.highcharts.com/maps/modules/data.js',
                 'https://code.highcharts.com/maps/modules/exporting.js'
@@ -89,6 +90,7 @@ class Highmaps(object):
         # Set data
         self.data = []
         self.data_temp = []
+        self.data_is_coordinate = False
         # Data from jsonp
         self.jsonp_data_flag = False
 
@@ -223,13 +225,21 @@ class Highmaps(object):
             raise OptionTypeError("Option: %s Not Allowed For Series Type: %s" % type(new_src))
 
 
-    def add_data_set(self, data, series_type="map", name=None, **kwargs):
+    def add_data_set(self, data, series_type="map", name=None, is_coordinate = False, **kwargs):
         """set data for series option in highmaps """
         
         self.data_set_count += 1
         if not name:
             name = "Series %d" % self.data_set_count
         kwargs.update({'name':name})
+
+        if is_coordinate:
+            self.data_is_coordinate = True
+            self.set_JSsource('https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.3.6/proj4.js')
+            if self.map and not self.data_temp:
+                series_data = Series([], series_type='map', **{'mapData': self.map})
+                series_data.__options__().update(SeriesOptions(series_type='map', **{'mapData': self.map}).__options__())
+                self.data_temp.append(series_data)
 
         if self.map and 'mapData' in kwargs.keys():
             kwargs.update({'mapData': self.map})
@@ -288,11 +298,22 @@ class Highmaps(object):
                                 % js_loc)
 
 
-    def add_map_data(self, geojson):
+    def add_map_data(self, geojson, **kwargs):
         self.mapdata_flag = True
         self.map = 'geojson'
         self.mapdata = json.dumps(geojson,  encoding='utf8')
-        if self.data_temp:
+
+        if self.data_is_coordinate:
+            kwargs.update({'mapData': self.map})
+            series_data = Series([], 'map')
+            series_data.__options__().update(SeriesOptions('map', **kwargs).__options__())
+            self.data_temp.append(series_data)
+        elif kwargs:
+            kwargs.update({'mapData': self.map})
+            series_data = Series([], 'map')
+            series_data.__options__().update(SeriesOptions('map', **kwargs).__options__())
+            self.data_temp.append(series_data)
+        elif self.data_temp:
             self.data_temp[0].__options__().update({'mapData': MapObject(self.map)})
 
 
@@ -484,7 +505,7 @@ class HighchartsEncoder(json.JSONEncoder):
                     .format(year=utc[0], month=utc[1]-1, day=utc[2], hours=utc[3],
                             minutes=utc[4], seconds=utc[5], millisec=obj.microsecond/1000))
             return RawJavaScriptText(obj)
-        elif isinstance(obj, BaseOptions) or isinstance(obj, MultiAxis):
+        elif isinstance(obj, BaseOptions):
             return obj.__jsonable__()
         elif isinstance(obj, CSSObject) or isinstance(obj, Formatter) or isinstance(obj, JSfunction) \
             or isinstance(obj, MapObject): 

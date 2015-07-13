@@ -163,23 +163,31 @@ class SeriesOptions(object):
                 if SeriesOptions.__validate_options__(k,v,allowed_args[k]):
                     if isinstance(allowed_args[k], tuple) and isinstance(allowed_args[k][0](), CommonObject):
                         # re-construct input dict with existing options in objects
-                        if isinstance(v, dict): 
-                            for key, value in v.items(): # check if v has object input 
-                                if isinstance(value, dict):
-                                    for key2, value2 in value.items():
-                                        self.__dict__[k].__options__()[key].__options__().update({key2:value2})
-                                elif isinstance(self.__dict__[k].allowed_args[key], tuple):
-                                    self.__dict__[k].__options__().update({key:self.__dict__[k].allowed_args[key][0](value)})
-                                else:
-                                    self.__dict__[k].__options__().update({key:value})
+                        if self.__getattr__(k):
+                            if isinstance(v, dict):
+                                self.__options__()[k].update(v)
+                            else:
+                                self.__options__()[k].__options__().update(v)
                         else:
-                            self.__dict__[k].__options__().update(v)
-                        v = self.__dict__[k].__options__()
-                        # upating object
-                        if isinstance(v, dict):
-                            self.__dict__.update({k:allowed_args[k][0](**v)})
-                        else:
-                            self.__dict__.update({k:allowed_args[k][0](v)})
+                            self.__options__().update({k:allowed_args[k][0](**v)}) 
+
+                        # if isinstance(v, dict): 
+                        #     for key, value in v.items(): # check if v has object input 
+                        #         if isinstance(value, dict):
+                        #             for key2, value2 in value.items():
+                        #                 self.__dict__[k].__options__()[key].__options__().update({key2:value2})
+                        #         elif isinstance(self.__dict__[k].allowed_args[key], tuple):
+                        #             self.__dict__[k].__options__().update({key:self.__dict__[k].allowed_args[key][0](value)})
+                        #         else:
+                        #             self.__dict__[k].__options__().update({key:value})
+                        # else:
+                        #     self.__dict__[k].__options__().update(v)
+                        # v = self.__dict__[k].__options__()
+                        # # upating object
+                        # if isinstance(v, dict):
+                        #     self.__dict__.update({k:allowed_args[k][0](**v)})
+                        # else:
+                        #     self.__dict__.update({k:allowed_args[k][0](v)})
 
                     elif isinstance(allowed_args[k], tuple) and isinstance(allowed_args[k][0](), ArrayObject):
                         # update array 
@@ -193,9 +201,11 @@ class SeriesOptions(object):
 
                     elif isinstance(allowed_args[k], tuple) and \
                         (isinstance(allowed_args[k][0](), CSSObject) or isinstance(allowed_args[k][0](), SVGObject)):
-
-                        for key, value in v.items(): # check if v has object input 
-                            self.__dict__[k].__options__().update({key:value})
+                        if self.__getattr__(k):
+                            for key, value in v.items():
+                                self.__dict__[k].__options__().update({key:value})
+                        else:
+                            self.__dict__.update({k:allowed_args[k][0](**v)})
                         
                         v = self.__dict__[k].__options__()
                         # upating object
@@ -234,8 +244,10 @@ class SeriesOptions(object):
                                 self.__dict__.update({k:allowed_args[k][0](**v[0])})
                                 for item in v[1:]:
                                     self.__dict__[k].update(item)
-                        elif isinstance(v, datetime.datetime):
-                            self.__dict__.update({k:v})                            
+                        elif isinstance(v, CommonObject) or isinstance(v, ArrayObject) or \
+                            isinstance(v, CSSObject) or isinstance(v, SVGObject) or isinstance(v, ColorObject) or \
+                            isinstance(v, JSfunction) or isinstance(v, Formatter) or isinstance(v, datetime.datetime):
+                            self.__dict__.update({k:v})                           
                         else:
                             self.__dict__.update({k:allowed_args[k][0](v)})
                     else:
@@ -247,6 +259,11 @@ class SeriesOptions(object):
     def load_defaults(self,series_type):
         self.process_kwargs(DEFAULT_OPTIONS.get(series_type,{}),series_type)
 
+    def __getattr__(self,item):
+        if not item in self.__dict__:
+            return None # Attribute Not Set
+        else:
+            return True
 
 class HighchartsError(Exception):
 
@@ -297,17 +314,6 @@ class Series(object):
                     if isinstance(DATA_SERIES_ALLOWED_OPTIONS[k], tuple):
                         if isinstance(v, dict):
                             self.__dict__.update({k:DATA_SERIES_ALLOWED_OPTIONS[k][0](**v)})
-                        # elif isinstance(v, CommonObject) or isinstance(v, ArrayObject):
-                        #     self.__dict__.update({k:DATA_SERIES_ALLOWED_OPTIONS[k][0](**v.__options__())})
-                        # elif isinstance(v, JSfunction) or isinstance(v, Formatter):
-                        #     self.__dict__.update({k:DATA_SERIES_ALLOWED_OPTIONS[k][0](v.__options__().get_jstext())})
-                        # elif isinstance(v, CSSObject) or isinstance(v, SVGObject):
-                        #     self.__dict__.update({k:DATA_SERIES_ALLOWED_OPTIONS[k][0](**v.__options__())})
-                        # elif isinstance(v, ColorObject):
-                        #     if isinstance(v.__options__(), basestring):
-                        #         self.__dict__.update({k:allowed_args[k][0](v.__options__())})
-                        #     else:
-                        #         self.__dict__.update({k:allowed_args[k][0](**v.__options__())})
                         elif isinstance(v, datetime.datetime):
                             self.__dict__.update({k:v})                            
                         else:

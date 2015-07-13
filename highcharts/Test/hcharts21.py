@@ -32,7 +32,15 @@ options = {'chart': {
             'title': {
                 'text': 'Observations'
             },
-            'plotLines': [{
+
+        },
+    }
+
+
+options2 = { 
+
+        'yAxis': {
+           'plotLines': [{
                 'value': 932,
                 'color': 'red',
                 'width': 1,
@@ -44,8 +52,9 @@ options = {'chart': {
                     }
                 }
             }]
-        },
+        }
     }
+
 
 data =[
                 [760, 801, 848, 895, 965],
@@ -60,6 +69,8 @@ data_outline = [[0, 644],
                 [4, 969]]
 
 H.set_dict_optoins(options)
+H.set_dict_optoins(options2)
+
 H.add_data_set(data, 'boxplot', 'Observations', tooltip = {
                 'headerFormat': '<em>Experiment No {point.key}</em><br/>'})
 H.add_data_set(data_outline, 'scatter', 'Outlier', marker = {

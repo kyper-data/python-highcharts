@@ -185,7 +185,7 @@ class ColorObject(object):
 
 class CSSObject(object):
     """ CSS style class """
-    ALLOWED_OPTIONS = {}
+
     def __init__(self, **kwargs):
         self.css = kwargs
 
@@ -261,25 +261,16 @@ class CommonObject(object):
     def update(self, kwargs):
         for k, v in kwargs.items(): 
             if k in self.ALLOWED_OPTIONS:
+                print k
                 if isinstance(self.ALLOWED_OPTIONS[k], tuple) and isinstance(self.ALLOWED_OPTIONS[k][0](), CommonObject):
                     # re-construct input dict with existing options in objects
-                    if isinstance(v, dict): 
-                        for key, value in v.items(): # check if v has object input 
-                            if isinstance(value, dict):
-                                for key2, value2 in value.items():
-                                    self.__dict__[k].__options__()[key].__options__().update({key2:value2})
-                            elif isinstance(self.__dict__[k].ALLOWED_OPTIONS[key], tuple):
-                                self.__dict__[k].__options__().update({key:self.__dict__[k].ALLOWED_OPTIONS[key][0](value)})
-                            else:
-                                self.__dict__[k].__options__().update({key:value})
+                    if self.__getattr__(k):
+                        if isinstance(v, dict):
+                            self.__options__()[k].update(v)
+                        else:
+                            self.__options__()[k].__options__().update(v)
                     else:
-                        self.__dict__[k].__options__().update(v)
-                    v = self.__dict__[k].__options__()
-                    # upating object
-                    if isinstance(v, dict):
-                        self.__dict__.update({k:self.ALLOWED_OPTIONS[k][0](**v)})
-                    else:
-                        self.__dict__.update({k:self.ALLOWED_OPTIONS[k][0](v)})
+                        self.__options__().update({k:allowed_args[k][0](**v)}) 
 
                 elif isinstance(self.ALLOWED_OPTIONS[k], tuple) and isinstance(self.ALLOWED_OPTIONS[k][0](), ArrayObject):
                     # update array 
@@ -293,9 +284,11 @@ class CommonObject(object):
 
                 elif isinstance(self.ALLOWED_OPTIONS[k], tuple) and \
                     (isinstance(self.ALLOWED_OPTIONS[k][0](), CSSObject) or isinstance(self.ALLOWED_OPTIONS[k][0](), SVGObject)):
-
-                    for key, value in v.items(): # check if v has object input 
-                        self.__dict__[k].__options__().update({key:value})
+                    if self.__getattr__(k):
+                        for key, value in v.items():
+                            self.__dict__[k].__options__().update({key:value})
+                    else:
+                        self.__dict__.update({k:allowed_args[k][0](**v)})
                     
                     v = self.__dict__[k].__options__()
                     # upating object
@@ -327,6 +320,10 @@ class CommonObject(object):
                         self.ALLOWED_OPTIONS[k][0] in IDV_OBJECT_LIST:
                         if isinstance(v, dict):
                             self.__dict__.update({k:self.ALLOWED_OPTIONS[k][0](**v)})
+                        elif isinstance(v, CommonObject) or isinstance(v, ArrayObject) or \
+                            isinstance(v, CSSObject) or isinstance(v, SVGObject) or isinstance(v, ColorObject) or \
+                            isinstance(v, JSfunction) or isinstance(v, Formatter) or isinstance(v, datetime.datetime):
+                            self.__dict__.update({k:v})
                         else:
                             self.__dict__.update({k:self.ALLOWED_OPTIONS[k][0](v)})
                     else:
@@ -335,7 +332,7 @@ class CommonObject(object):
                     print(k, v) 
                     raise OptionTypeError("Option Type Mismatch: Expected: %s" % self.ALLOWED_OPTIONS[k])
             else:
-                raise OptionTypeError("Option: %s Not Allowed For Event Class:" % k)
+                raise OptionTypeError("Option: %s Not Allowed For CommonObject:" % k)
 
 
 class Events(CommonObject):
@@ -619,6 +616,10 @@ class ArrayObject(object):
                         self.ALLOWED_OPTIONS[k][0] in IDV_OBJECT_LIST:
                         if isinstance(v, dict):
                             temp.update({k:self.ALLOWED_OPTIONS[k][0](**v)})
+                        elif isinstance(v, CommonObject) or isinstance(v, ArrayObject) or \
+                            isinstance(v, CSSObject) or isinstance(v, SVGObject) or isinstance(v, ColorObject) or \
+                            isinstance(v, JSfunction) or isinstance(v, Formatter) or isinstance(v, datetime.datetime):
+                            temp.update({k:v})
                         else:
                             temp.update({k:self.ALLOWED_OPTIONS[k][0](v)})
                     else:
@@ -626,7 +627,7 @@ class ArrayObject(object):
                 else: 
                     raise OptionTypeError("Option Type Mismatch: Expected: %s" % self.ALLOWED_OPTIONS[k])
             else: 
-                raise OptionTypeError("Option: %s Not Allowed For Event Class:" % k)
+                raise OptionTypeError("Option: %s Not Allowed For ArrayObject:" % k)
         self.data.append(temp)
 
 class Items(ArrayObject):
