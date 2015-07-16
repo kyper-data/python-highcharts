@@ -2,9 +2,11 @@ import json, os, sys
 import pandas as pd
 import numpy as np
 
+sys.path.append('/Users/hankchu/Documents/python-highcharts/highcharts')
+
 import highcharts
 
-H = highcharts.Highcharts()
+H = highcharts.Charts()
 data = range(1,20)
 data2 = range(20,1,-1)
 H.add_data_set(data2,'line')
@@ -38,4 +40,6 @@ H.set_options('xAxis', {'plotBands': {'color': '#FCFFC5', 'from': 2, 'to': 4}})
 H.set_options('xAxis', {'plotBands': {'color': '#FCFFC5', 'from': 6, 'to': 8}})
 H.set_options('xAxis', {'plotBands': {'color': '#FCFFC5', 'from': 10, 'to': 12}})
 
-H.file()
+html = H.htmlcontent
+print html
+H.save_file()

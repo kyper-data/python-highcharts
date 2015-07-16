@@ -603,7 +603,7 @@ class SeriesOptions(object):
                     if not supress_errors: raise OptionTypeError("Option Type Mismatch: Expected: %s" % allowed_args[k])
            
 
-    def load_defaults(self,series_type):
+    def load_defaults(self,series_type): # not in use
         self.process_kwargs(DEFAULT_OPTIONS.get(series_type,{}),series_type)
 
     def __getattr__(self,item):
@@ -666,9 +666,3 @@ class Series(object):
 
     def __jsonable__(self):
         return self.__dict__
-
-    # def __getattr__(self,item):
-    #     if not item in self.__dict__:
-    #         return None # Attribute Not Set
-    #     else:
-    #         return True

@@ -273,25 +273,6 @@ class CommonObject(object):
                     else:
                         self.__options__().update({k:allowed_args[k][0](**v)}) 
 
-                    # if isinstance(v, dict): 
-                    #     for key, value in v.items(): # check if v has object input 
-                    #         if isinstance(value, dict):
-                    #             for key2, value2 in value.items():
-                    #                 self.__dict__[k].__options__()[key].__options__().update({key2:value2})
-                    #         elif isinstance(self.__dict__[k].ALLOWED_OPTIONS[key], tuple):
-                    #             self.__dict__[k].__options__().update({key:self.__dict__[k].ALLOWED_OPTIONS[key][0](value)})
-                    #         else:
-                    #             self.__dict__[k].__options__().update({key:value})
-                    # else:
-                    #     self.__dict__[k].__options__().update(v)
-
-                    # v = self.__dict__[k].__options__()
-                    # # upating object
-                    # if isinstance(v, dict):
-                    #     self.__dict__.update({k:self.ALLOWED_OPTIONS[k][0](**v)})
-                    # else:
-                    #     self.__dict__.update({k:self.ALLOWED_OPTIONS[k][0](v)})
-
                 elif isinstance(self.ALLOWED_OPTIONS[k], tuple) and isinstance(self.ALLOWED_OPTIONS[k][0](), ArrayObject):
                     # update array 
                     if isinstance(v, dict):
@@ -390,9 +371,6 @@ class Events(CommonObject):
     "pointBreak": (JSfunction, basestring),
     "setExtremes": (JSfunction, basestring)  
     }
-
-    # def load_defaults(self,series_type):
-    #     self.process_kwargs(DEFAULT_OPTIONS.get(series_type,{}),series_type)
 
 class Point(CommonObject):
     ALLOWED_OPTIONS = {

@@ -383,9 +383,6 @@ class Events(CommonObject):
     "setExtremes": (JSfunction, basestring)  
     }
 
-    # def load_defaults(self,series_type):
-    #     self.process_kwargs(DEFAULT_OPTIONS.get(series_type,{}),series_type)
-
 class Point(CommonObject):
     ALLOWED_OPTIONS = {
     "events": Events

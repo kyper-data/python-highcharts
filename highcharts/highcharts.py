@@ -105,7 +105,7 @@ class Charts(object):
         # None keywords attribute that should be modified by methods
         # We should change all these to _attr
 
-        self.htmlcontent = ''  #: written by buildhtml
+        self._htmlcontent = ''  #: written by buildhtml
         self.htmlheader = ''
         #: Place holder for the graph (the HTML div)
         #: Written by ``buildcontainer``
@@ -114,11 +114,6 @@ class Charts(object):
         self.containerheader = u''
         # Loading message
         self.loading = 'Loading....'
-        
-        # Default Nulls // ?
-        self.hold_point_start = None
-        self.hold_point_interval = None
-        self.start_date_set = None
 
         # Bind Base Classes to self
         self.options = {
@@ -206,12 +201,6 @@ class Charts(object):
         if not name:
             name = "Series %d" % self.data_set_count
         kwargs.update({'name':name})
-        if self.hold_point_start:
-            kwargs.update({"pointStart":self.hold_point_start})
-            self.hold_point_start = None
-        if self.hold_point_interval:
-            kwargs.update({"pointInterval":self.hold_point_interval})
-            self.hold_point_interval = None
 
         if series_type == 'treemap':
             self.add_JSsource('http://code.highcharts.com/modules/treemap.js')
@@ -279,6 +268,8 @@ class Charts(object):
             self.options[option_type] = MultiAxis(option_type)
             for each_dict in option_dict:
                 self.options[option_type].update(**each_dict)
+        elif option_type == 'colors':
+            self.options["colors"].set_colors(option_dict) # option_dict should be a list
         else:
             self.options[option_type].update_dict(**option_dict)
 
@@ -298,23 +289,6 @@ class Charts(object):
             raise OptionTypeError("Not An Accepted Input Format: %s. Must be Dictionary" %type(options))
 
 
-    def __str__(self):
-        """return htmlcontent"""
-        self.buildhtml()
-        return self.htmlcontent
-
-
-    def file(self, filename = 'highcharts'):
-        """ save htmlcontent as .html file """
-        filename = filename + '.html'
-        
-        with open(filename, 'w') as f:
-            self.buildhtml()
-            f.write(self.htmlcontent)
-        
-        f.closed
-
-
     def buildcontent(self):
         """build HTML content only, no header or body tags"""
 
@@ -326,7 +300,7 @@ class Charts(object):
         if self.drilldown_flag: 
             self.drilldown_data = json.dumps(self.drilldown_data_temp, encoding='utf8', \
                                             cls = HighchartsEncoder)
-        self.htmlcontent = self.template_content_highcharts.render(chart=self).encode('utf-8')
+        self._htmlcontent = self.template_content_highcharts.render(chart=self).encode('utf-8')
 
 
     def buildhtml(self):
@@ -336,9 +310,10 @@ class Charts(object):
         """
         self.buildcontent()
         self.buildhtmlheader()
-        self.content = self.htmlcontent.decode('utf-8') # need to ensure unicode
-        self.htmlcontent = self.template_page_highcharts.render(chart=self).encode('utf-8')
-
+        self.content = self._htmlcontent.decode('utf-8') # need to ensure unicode
+        self._htmlcontent = self.template_page_highcharts.render(chart=self).encode('utf-8')
+        return self._htmlcontent
+        
 
     def buildhtmlheader(self):
         """generate HTML header content"""
@@ -381,6 +356,24 @@ class Charts(object):
         self.container = self.containerheader + \
             '<div id="%s" style="%s">%s</div>\n' % (self.div_name, self.div_style, self.loading)
 
+    @property
+    def htmlcontent(self):
+        return self.buildhtml()
+
+    def __str__(self):
+        """return htmlcontent"""
+        #self.buildhtml()
+        return self.htmlcontent
+
+    def save_file(self, filename = 'highcharts'):
+        """ save htmlcontent as .html file """
+        filename = filename + '.html'
+        
+        with open(filename, 'w') as f:
+            #self.buildhtml()
+            f.write(self.htmlcontent)
+        
+        f.closed
 
 class HighchartsEncoder(json.JSONEncoder):
     def __init__(self, *args, **kwargs):

@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 '''
 ipython compatability module for highcharts-python
 This adds simple ipython compatibility to the highcharts-python package, without making any
@@ -13,19 +15,12 @@ try:
 except:
     _ip = None
 if _ip and _ip.__module__.startswith('IPython'):
-    #global _js_initialized
-    #_js_initialized = False
 
     def _print_html(chart):
         '''Function to return the HTML code for the div container plus the javascript
         to generate the chart.  This function is bound to the ipython formatter so that
         charts are displayed inline.'''
-        #global _js_initialized
-        #if not _js_initialized:
-            #print('js not initialized - pausing to allow time for it to load...')
-            #initialize_javascript()
-            #import time
-            #time.sleep(5)
+        
         chart.buildhtml()
         import html
         htmlsrcdoc = html.escape(chart.htmlcontent)
@@ -40,7 +35,6 @@ if _ip and _ip.__module__.startswith('IPython'):
                 return '<iframe style="border:0;outline:none;overflow:hidden" srcdoc="'+ htmlsrcdoc + ' "height= '+ str(height) + ' width = ' + str(width) + '></iframe>'
         else:
             return '<iframe style="border:0;outline:none;overflow:hidden" srcdoc="'+ htmlsrcdoc + ' "height= '+ str(height) + ' width = ' + str(width) + '></iframe>'
-        #return chart.htmlcontent
 
     def _setup_ipython_formatter(ip):
         ''' Set up the ipython formatter to display HTML formatted output inline'''
@@ -51,54 +45,5 @@ if _ip and _ip.__module__.startswith('IPython'):
             html_formatter = ip.display_formatter.formatters['text/html']
             for chart_type in nvd3_all:
                 html_formatter.for_type_by_name('nvd3.' + chart_type, chart_type, _print_html)
-
-    def initialize_javascript(d3_js_url='http://nvd3.org/assets/lib/d3.v3.js',
-                              nvd3_js_url='https://cdnjs.cloudflare.com/ajax/libs/nvd3/1.7.0/nv.d3.js',
-                              nvd3_css_url='https://cdnjs.cloudflare.com/ajax/libs/nvd3/1.7.0/nv.d3.css',
-                              use_remote=False):
-        '''Initialize the ipython notebook to be able to display nvd3 results.
-        by instructing IPython to load the nvd3 JS and css files, and the d3 JS file.
-
-        by default, it looks for the files in your IPython Notebook working directory.
-
-        Takes the following options:
-
-        use_remote: use remote hosts for d3.js, nvd3.js, and nv.d3.css (default False)
-        * Note:  the following options are ignored if use_remote is False:
-        nvd3_css_url: location of nvd3 css file (default http://nvd3.org/assets/css/nv.d3.css)
-        nvd3_js_url: location of nvd3 javascript file (default  http://nvd3.org/assets/js/nv.d3.js)
-        nvds_url: location of d3 javascript file (default http://nvd3.org/assets/lib/d3.v3.js)
-        '''
-        from IPython.display import display, Javascript, HTML
-
-        if not use_remote:
-            # these file locations are for IPython 1.x, and will probably change when 2.x is released
-            d3_js_url = 'files/d3.v3.js'
-            nvd3_js_url = 'files/nv.d3.js'
-            nvd3_css_url = 'files/nv.d3.css'
-
-        # load the required javascript files
-
-        #display(Javascript('''$.getScript("%s")''' %(d3_js_url)))
-        display(HTML('''<link media="all" href="%s" type="text/css"
-                        rel="stylesheet"/>''' % (nvd3_css_url)))
-        # The following two methods for loading the script file are redundant.
-        # This is intentional.
-        # Ipython's loading of javscript in version 1.x is a bit squirrely, especially
-        # when creating demos to view in nbviewer.
-        # by trying twice, in two different ways (one using jquery and one using plain old
-        # HTML), we maximize our chances of successfully loading the script.
-        display(Javascript('''$.getScript("%s")''' % (nvd3_js_url)))
-        display(Javascript('''$.getScript("%s", function() {
-                              $.getScript("%s", function() {})});''' % (d3_js_url, nvd3_js_url)))
-        display(HTML('<script src="%s"></script>' % (d3_js_url)))
-        display(HTML('<script src="%s"></script>' % (nvd3_js_url)))
-
-        global _js_initialized
-        _js_initialized = True
-
-    #print('loaded nvd3 IPython extension\n'
-    #      'run nvd3.IPython_wrapper.initialize_javascript() to set up the notebook\n'
-    #      'help(nvd3.IPython_wrapper.initialize_javascript) for options')
 
     _setup_ipython_formatter(_ip)

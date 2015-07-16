@@ -14,9 +14,6 @@ install_aliases()
 from optparse import OptionParser
 from urllib.request import urlopen
 from jinja2 import Environment, PackageLoader
-# import sys
-# reload(sys)
-# sys.setdefaultencoding("utf-8")
 
 import json, uuid
 import datetime, random, os, inspect
@@ -116,7 +113,7 @@ class Maps(object):
         # None keywords attribute that should be modified by methods
         # We should change all these to _attr
 
-        self.htmlcontent = ''  #: written by buildhtml
+        self._htmlcontent = ''  #: written by buildhtml
         self.htmlheader = ''
         # Place holder for the graph (the HTML div)
         # Written by ``buildcontainer``
@@ -332,6 +329,8 @@ class Maps(object):
             self.options[option_type] = MultiAxis(option_type)
             for each_dict in option_dict:
                 self.options[option_type].update(**each_dict)
+        elif option_type == 'colors':
+            self.options["colors"].set_colors(option_dict) # option_dict should be a list
         elif option_type == 'colorAxis':
             self.options.update({'colorAxis': self.options.get('colorAxis', ColorAxisOptions())})
             self.options[option_type].update_dict(**option_dict)
@@ -348,10 +347,6 @@ class Maps(object):
         else:
             raise OptionTypeError("Not An Accepted Input Format: %s. Must be Dictionary" %type(options))
 
-    def set_containerheader(self, containerheader):
-        """set containerheader"""
-        
-        self.containerheader = containerheader
 
     def _get_jsmap_name(self, url):
         """return 'name' of the map in .js format"""
@@ -359,21 +354,6 @@ class Maps(object):
         ret = urlopen(url)
         return ret.read().decode('utf-8').split('=')[0].replace(" ", "") #return the name of map file, Ex. 'Highcharts.maps["xxx/xxx"]'
 
-    def __str__(self):
-        """return htmlcontent"""
-        self.buildhtml()
-        return self.htmlcontent
-
-    def file(self, filename = 'highmaps'):
-        """save htmlcontent as .html file"""
-
-        filename = filename + '.html'
-        
-        with open(filename, 'w') as f:
-            self.buildhtml()
-            f.write(self.htmlcontent)
-        
-        f.closed
 
     def buildcontent(self):
         """build HTML content only, no header or body tags"""
@@ -386,7 +366,7 @@ class Maps(object):
         if self.drilldown_flag: 
             self.drilldown_data = json.dumps(self.drilldown_data_temp, encoding='utf8', \
                                             cls = HighchartsEncoder)
-        self.htmlcontent = self.template_content_highcharts.render(chart=self).encode('utf-8')
+        self._htmlcontent = self.template_content_highcharts.render(chart=self).encode('utf-8')
 
 
     def buildhtml(self):
@@ -397,8 +377,8 @@ class Maps(object):
         self.buildcontent()
         self.buildhtmlheader()
         self.content = self.htmlcontent.decode('utf-8') # need to ensure unicode
-        self.htmlcontent = self.template_page_highcharts.render(chart=self).encode('utf-8')
-
+        self._htmlcontent = self.template_page_highcharts.render(chart=self).encode('utf-8')
+        return self._htmlcontent
 
     def buildhtmlheader(self):
         """generate HTML header content"""
@@ -442,6 +422,24 @@ class Maps(object):
         self.container = self.containerheader + \
             '<div id="%s" style="%s">%s</div>\n' % (self.div_name, self.div_style, self.loading)
 
+    @property
+    def htmlcontent(self):
+        return self.buildhtml()
+
+    def __str__(self):
+        """return htmlcontent"""
+        #self.buildhtml()
+        return self.htmlcontent
+
+    def save_file(self, filename = 'highcharts'):
+        """ save htmlcontent as .html file """
+        filename = filename + '.html'
+        
+        with open(filename, 'w') as f:
+            #self.buildhtml()
+            f.write(self.htmlcontent)
+        
+        f.closed
 
 class HighchartsEncoder(json.JSONEncoder):
     def __init__(self, *args, **kwargs):

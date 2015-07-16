@@ -1,5 +1,4 @@
 # -*- coding: UTF-8 -*-
-
 from highmap_types import OptionTypeError, Series, SeriesOptions
 from common import Formatter, Events, Position, ContextButton, Button, Options3d, ResetZoomButton, \
     DrillUpButton, Labels, DataClasses, Title, Items, Navigation, Background, Breaks, Marker, \
@@ -195,20 +194,8 @@ class ColorsOptions(BaseOptions):
     """ Special Case, this is simply just an array of colours """
     def __init__(self):
         self.colors = {}
-        # self.colors = ['#2f7ed8', 
-        #    '#0d233a', 
-        #    '#8bbc21', 
-        #    '#910000', 
-        #    '#1aadce', 
-        #    '#492970',
-        #    '#f28f43', 
-        #    '#77a1e5', 
-        #    '#c42525', 
-        #    '#a6c96a']
-
 
     def set_colors(self, colors):
-        #self.__dict__.update({"colors":colors})
         if isinstance(colors, basestring) or isinstance(colors, list):
             if not self.colors:
                 self.colors = []
