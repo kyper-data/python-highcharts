@@ -151,7 +151,13 @@ class SeriesOptions(object):
     def __options__(self):
         return self.__dict__
 
-    def update(self, series_type, **kwargs):
+    def __jsonable__(self):
+        return self.__dict__
+
+    def __display_options__(self):
+        print(json.dumps(self.__options__(),indent=4,sort_keys=True))
+
+    def update(self,series_type, **kwargs):
         allowed_args = PLOT_OPTION_ALLOWED_ARGS[series_type]
         allowed_args.update(PLOT_OPTION_ALLOWED_ARGS["common"])
 
@@ -167,24 +173,6 @@ class SeriesOptions(object):
                                 self.__options__()[k].__options__().update(v)
                         else:
                             self.__options__().update({k:allowed_args[k][0](**v)}) 
-
-                        # if isinstance(v, dict): 
-                        #     for key, value in v.items(): # check if v has object input 
-                        #         if isinstance(value, dict):
-                        #             for key2, value2 in value.items():
-                        #                 self.__dict__[k].__options__()[key].__options__().update({key2:value2})
-                        #         elif isinstance(self.__dict__[k].allowed_args[key], tuple):
-                        #             self.__dict__[k].__options__().update({key:self.__dict__[k].allowed_args[key][0](value)})
-                        #         else:
-                        #             self.__dict__[k].__options__().update({key:value})
-                        # else:
-                        #     self.__dict__[k].__options__().update(v)
-                        # v = self.__dict__[k].__options__()
-                        # # upating object
-                        # if isinstance(v, dict):
-                        #     self.__dict__.update({k:allowed_args[k][0](**v)})
-                        # else:
-                        #     self.__dict__.update({k:allowed_args[k][0](v)})
 
                     elif isinstance(allowed_args[k], tuple) and isinstance(allowed_args[k][0](), ArrayObject):
                         # update array 
@@ -262,20 +250,6 @@ class SeriesOptions(object):
         else:
             return True
 
-class HighchartsError(Exception):
-
-    def __init__(self, *args):
-        self.args = args
-
-
-class MultiAxis(object):
-
-    def __init__(self, axis):
-        self.axis = axis
-
-    def __options__(self):
-        return self.__dict__
-
 
 class Series(object):
     """Series class for input data """
@@ -320,7 +294,8 @@ class Series(object):
                 else: 
                     if not supress_errors: raise OptionTypeError("Option Type Mismatch: Expected: %s" % DATA_SERIES_ALLOWED_OPTIONS[k])
             
-
+    def __jsonable__(self):
+        return self.__dict__
 
     def __options__(self):
         return self.__dict__

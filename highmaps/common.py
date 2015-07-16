@@ -139,6 +139,9 @@ class Formatter(object):
     def __options__(self):
         return self.formatter
 
+    def __jsonable__(self):
+        return self.formatter
+
 class MapObject(object):
     """ Base Map Class """
 
@@ -151,9 +154,12 @@ class MapObject(object):
             else:
                 raise OptionTypeError("Option Type Mismatch: Expected: %s" % basestring)
 
-
     def __options__(self):
         return self.map
+
+    def __jsonable__(self):
+        return self.map
+
 
 class ColorObject(object):
     """ color object """
@@ -182,6 +188,9 @@ class ColorObject(object):
     def __options__(self):
         return self.color
 
+    def __jsonable__(self):
+        return self.color
+
 
 class CSSObject(object):
     """ CSS style class """
@@ -197,6 +206,8 @@ class CSSObject(object):
     def __options__(self):
         return self.css
 
+    def __jsonable__(self):
+        return self.css
 
 class SVGObject(object):
     """ SVG style class """
@@ -212,6 +223,8 @@ class SVGObject(object):
     def __options__(self):
         return self.svg
 
+    def __jsonable__(self):
+        return self.svg
 
 class JSfunction(object):
 
@@ -224,8 +237,10 @@ class JSfunction(object):
             else:
                 raise OptionTypeError("Option Type Mismatch: Expected: %s" % basestring)
 
-
     def __options__(self):
+        return self.function
+
+    def __jsonable__(self):
         return self.function
 
 
@@ -256,6 +271,9 @@ class CommonObject(object):
             else: return False
 
     def __options__(self):
+        return self.__dict__
+
+    def __jsonable__(self):
         return self.__dict__
 
     def update(self, kwargs):
@@ -602,6 +620,9 @@ class ArrayObject(object):
             else: return False
 
     def __options__(self):
+        return self.data
+
+    def __jsonable__(self):
         return self.data
 
     def update(self, kwargs):

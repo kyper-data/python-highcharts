@@ -77,10 +77,13 @@ def geojson_handler(geojson, hType='map'):
     return newlist
 
 def interpolateRGB(lowRGB, highRGB, fraction):
-    color = [];
+    color = []
+
     for i in range(3):
-        color[i] = (highRBG[i] - lowRGB[i]) * fraction + lowRGB[i];
-    return 'rgb(' + color[0] + ',' + color[1] + ',' + color[2] + ')'
+        color.append((highRGB[i] - lowRGB[i]) * fraction + lowRGB[i])
+
+    return 'rgb(' + str(int(round(color[0],0))) + ',' + str(int(round(color[1],0))) + ',' + \
+        str(int(round(color[2],0))) + ')'
 
 def _coordinates_to_path(coordinates_array, hType, geojson_type):
     new_array = []

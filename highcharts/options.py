@@ -557,6 +557,7 @@ class MultiAxis(object):
 
     def update(self, **kwargs):
         self.axis.append(self.AxisObj(**kwargs))
+        
     def __jsonable__(self):
         return self.axis
 
