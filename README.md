@@ -26,7 +26,7 @@ The main input is a python dictionary similart to options object, and the dictio
 Only the data_set(s) need to be input by separated function 
 
 ```python
-from highcharts import Highcharts
+from highcharts import Highchart
 
 # A chart is the container that your data will be rendered in, it can (obviously) support multiple data series within it.
 chart = Highchart()
@@ -127,7 +127,7 @@ chart.add_drilldown_data_set(data_2, 'column', 'Chrome', name = 'Chrome')
 ## Usage
 
 ```python
-from highcharts import Highcharts
+from highcharts import Highchart
 chart = Highchart()
 
 chart.set_options('chart', {'inverted': True})
@@ -202,7 +202,7 @@ The main input is a python dictionary similart to options object, and the dictio
 Only the data_set(s) need to be input by separated function 
 
 ```python
-from highmaps import Highmaps
+from highcharts import Highmap
 
 # A chart is the container that your data will be rendered in, it can (obviously) support multiple data series within it.
 chart = Highmap()
@@ -378,7 +378,7 @@ chart.add_JSscript("var lines = Highcharts.geojson(Highcharts.maps['countries/us
 Bad practice: 
 1) load data directionly and handle in javascript 2) has javascript at front and in the end 3) require unquote function: RawJavaScriptText 
 ```python
-from highmaps import Highmaps
+from highcharts import Highmap
 from common import RawJavaScriptText
 
 chart = Highmap()
@@ -477,7 +477,7 @@ chart.save_file()
 Better practice: 
 ```python
 
-from highmaps import Highmaps
+from highcharts import Highmap
 from highmap_helper import jsonp_loader, js_map_loader, geojson_handler
 
 chart = Highmap()
