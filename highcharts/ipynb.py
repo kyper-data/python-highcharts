@@ -21,20 +21,12 @@ if _ip and _ip.__module__.startswith('IPython'):
         to generate the chart.  This function is bound to the ipython formatter so that
         charts are displayed inline.'''
         
-        chart.buildhtml()
         import html
         htmlsrcdoc = html.escape(chart.htmlcontent)
         width = int(chart.width)+20 if chart.width else 820
         height = int(chart.height)+20 if chart.height else 520
 
-        if chart.model.lower() == 'lineplusbarchart':
-            if len(htmlsrcdoc) < 99965000 :
-                return '<iframe style="border:0;outline:none;overflow:hidden" src="data:text/html,'+ htmlsrcdoc + ' "height= ' + str(height) +' \
-                        width =' + str(width) + '></iframe>'
-            else:
-                return '<iframe style="border:0;outline:none;overflow:hidden" srcdoc="'+ htmlsrcdoc + ' "height= '+ str(height) + ' width = ' + str(width) + '></iframe>'
-        else:
-            return '<iframe style="border:0;outline:none;overflow:hidden" srcdoc="'+ htmlsrcdoc + ' "height= '+ str(height) + ' width = ' + str(width) + '></iframe>'
+        return '<iframe style="border:0;outline:none;overflow:hidden" srcdoc="'+ htmlsrcdoc + ' "height= '+ str(height) + ' width = ' + str(width) + '></iframe>'
 
     def _setup_ipython_formatter(ip):
         ''' Set up the ipython formatter to display HTML formatted output inline'''
@@ -43,7 +35,6 @@ if _ip and _ip.__module__.startswith('IPython'):
 
         if IPython_version >= '0.11':
             html_formatter = ip.display_formatter.formatters['text/html']
-            for chart_type in nvd3_all:
-                html_formatter.for_type_by_name('nvd3.' + chart_type, chart_type, _print_html)
+            html_formatter.for_type_by_name('highcharts.Charts', 'Charts', _print_html)
 
     _setup_ipython_formatter(_ip)
