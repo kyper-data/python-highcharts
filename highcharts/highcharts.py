@@ -305,7 +305,7 @@ class Highcharts(object):
         self.drilldown_data_temp.append(series_data)
 
 
-    def add_data_from_jsonp(self, data_src, data_name = 'json_data', series_type="map", name=None, **kwargs):
+    def add_data_from_jsonp(self, data_src, data_name='json_data', series_type="map", name=None, **kwargs):
         """set map data directly from a https source
         the data_src is the https link for data
         and it must be in jsonp format

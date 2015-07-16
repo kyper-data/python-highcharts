@@ -126,19 +126,19 @@ DEFAULT_OPTIONS = {
 
 class OptionTypeError(Exception):
 
-    def __init__(self,*args):
+    def __init__(self, *args):
         self.args = args
 
 
 class SeriesOptions(object):
     """Class for plotOptions"""
 
-    def __init__(self,series_type="map",supress_errors=False,**kwargs):
+    def __init__(self, series_type="map", supress_errors=False, **kwargs):
         self.load_defaults(series_type)
-        self.process_kwargs(kwargs,series_type=series_type,supress_errors=supress_errors)
+        self.process_kwargs(kwargs, series_type=series_type, supress_errors=supress_errors)
 
     @staticmethod
-    def __validate_options__(k,v,ov):
+    def __validate_options__(k, v, ov):
         if isinstance(ov,list):
             if isinstance(v,tuple(ov)): return True
             else:
@@ -151,10 +151,7 @@ class SeriesOptions(object):
     def __options__(self):
         return self.__dict__
 
-    def __display_options__(self):
-        print(json.dumps(self.__options__(),indent=4,sort_keys=True))
-
-    def update(self,series_type, **kwargs):
+    def update(self, series_type, **kwargs):
         allowed_args = PLOT_OPTION_ALLOWED_ARGS[series_type]
         allowed_args.update(PLOT_OPTION_ALLOWED_ARGS["common"])
 
@@ -227,7 +224,7 @@ class SeriesOptions(object):
                 if not supress_errors: raise OptionTypeError("Option Type Mismatch: Expected: %s" % allowed_args[k])
                 
 
-    def process_kwargs(self,kwargs,series_type,supress_errors=False):
+    def process_kwargs(self, kwargs, series_type, supress_errors=False):
         allowed_args = PLOT_OPTION_ALLOWED_ARGS[series_type]
         allowed_args.update(PLOT_OPTION_ALLOWED_ARGS["common"])
 
@@ -256,10 +253,10 @@ class SeriesOptions(object):
                     print(k,v)
                     if not supress_errors: raise OptionTypeError("Option Type Mismatch: Expected: %s" % allowed_args[k])
 
-    def load_defaults(self,series_type):
+    def load_defaults(self, series_type):
         self.process_kwargs(DEFAULT_OPTIONS.get(series_type,{}),series_type)
 
-    def __getattr__(self,item):
+    def __getattr__(self, item):
         if not item in self.__dict__:
             return None # Attribute Not Set
         else:
@@ -283,7 +280,7 @@ class MultiAxis(object):
 class Series(object):
     """Series class for input data """
 
-    def __init__(self,data,series_type="line",supress_errors=False,**kwargs):
+    def __init__(self, data, series_type="line", supress_errors=False, **kwargs):
 
         # List of dictionaries. Each dict contains data and properties, which need to handle before construct the object for series 
         if isinstance(data, list):

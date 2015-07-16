@@ -158,7 +158,7 @@ class MapObject(object):
 class ColorObject(object):
     """ color object """
     
-    def __init__(self, color = None, **kwargs):
+    def __init__(self, color=None, **kwargs):
         if not color:
             color = kwargs
         

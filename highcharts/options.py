@@ -17,12 +17,12 @@ class BaseOptions(object):
         self.update_dict(**kwargs)
 
     def __display_options__(self):
-        print(json.dumps(self.__dict__,indent=4,sort_keys=True))
+        print(json.dumps(self.__dict__, indent=4, sort_keys=True))
 
     def __jsonable__(self):
         return self.__dict__
 
-    def __validate_options__(self,k,v,ov):
+    def __validate_options__(self, k, v, ov):
         if ov == NotImplemented: 
             raise OptionTypeError("Option Type Currently Not Supported: %s" % k)
         if isinstance(v,dict) and isinstance(ov,dict):
@@ -32,15 +32,15 @@ class BaseOptions(object):
             return isinstance(v[keys[0]],ov[keys[0]])
         return isinstance(v, ov) 
 
-    def update_dict(self,**kwargs):
+    def update_dict(self, **kwargs):
         for k, v in kwargs.items(): 
             if k in self.ALLOWED_OPTIONS:
                 # if isinstance(self.ALLOWED_OPTIONS[k], tuple) and isinstance(self.ALLOWED_OPTIONS[k][0](), SeriesOptions):
                 if k in PlotOptions.ALLOWED_OPTIONS.keys():
                     if self.__getattr__(k):
-                        self.__dict__[k].update(series_type = k, **v)
+                        self.__dict__[k].update(series_type=k, **v)
                     else:
-                        v = SeriesOptions(series_type = k, **v)
+                        v = SeriesOptions(series_type=k, **v)
                         self.__dict__.update({k:v})
 
                 elif isinstance(self.ALLOWED_OPTIONS[k], tuple) and isinstance(self.ALLOWED_OPTIONS[k][0](), CommonObject):
@@ -104,7 +104,7 @@ class BaseOptions(object):
                 raise OptionTypeError("Not An Accepted Option Type: %s" % k)
 
 
-    def __getattr__(self,item):
+    def __getattr__(self, item):
         if not item in self.__dict__:
             return None # Attribute Not Set
         else:
@@ -170,7 +170,7 @@ class ColorsOptions(BaseOptions):
         #    '#a6c96a']
 
 
-    def set_colors(self,colors):
+    def set_colors(self, colors):
         #self.__dict__.update({"colors":colors})
         if isinstance(colors, basestring) or isinstance(colors, list):
             if not self.colors:

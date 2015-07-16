@@ -27,14 +27,14 @@ def jsonp_loader(url):
 def js_map_loader(url):
 
     hdr = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/535.7 (KHTML, like Gecko) Chrome/16.0.912.77 Safari/535.7'}
-    req = urllib.request.Request(url,headers=hdr)
+    req = urllib.request.Request(url, headers=hdr)
     page = urlopen(req)
     result = page.read()
     result = result[len(re.search(r'^.* = ', result).group()):]
 
     return json.loads(result)
 
-def geojson_handler(geojson, hType = 'map'):
+def geojson_handler(geojson, hType='map'):
     """Restructure a GeoJSON object in preparation to be added directly by the add_map or add_data_set functions. 
     The GeoJSON will be broken down to fit a specific Highcharts type, either map, mapline or mappoint. 
     Meta data in GeoJSON's properties object will be copied directly over to object['properties']."""

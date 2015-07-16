@@ -226,7 +226,7 @@ class CommonObject(object):
     def __init__(self, **kwargs):
         self.process_kwargs(kwargs)
 
-    def __validate_options__(self, k,v,ov):
+    def __validate_options__(self, k, v, ov):
 
         if ov == NotImplemented: 
             raise OptionTypeError("Option Type Currently Not Supported: %s" % k)
@@ -313,7 +313,7 @@ class CommonObject(object):
                 print(k, v)
                 raise OptionTypeError("Not An Accepted Option Type: %s" % k)
 
-    def process_kwargs(self,kwargs):
+    def process_kwargs(self, kwargs):
         
         for k, v in kwargs.items():
             if k in self.ALLOWED_OPTIONS:
@@ -336,7 +336,7 @@ class CommonObject(object):
             else:
                 raise OptionTypeError("Option: %s Not Allowed For Event Class:" % k)
 
-    def __getattr__(self,item):
+    def __getattr__(self, item):
         if not item in self.__dict__:
             return None # Attribute Not Set
         else:
@@ -603,7 +603,7 @@ class ArrayObject(object):
     def update(self, kwargs):
         self.process_kwargs(kwargs)
 
-    def process_kwargs(self,kwargs):
+    def process_kwargs(self, kwargs):
         temp = {}
         for k, v in kwargs.items():
             if k in self.ALLOWED_OPTIONS:
@@ -705,5 +705,5 @@ IDV_OBJECT_LIST = [JSfunction, Formatter, Halo, Marker, Labels,
 
 class OptionTypeError(Exception):
 
-    def __init__(self,*args):
+    def __init__(self, *args):
         self.args = args
