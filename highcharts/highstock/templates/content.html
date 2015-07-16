@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block container %}
+	    {{ chart.container }}
+{%  endblock  container %}
+
+{% block body %}
+	Highcharts.setOptions({{chart.setoption}});
+    
+    var option = {{chart.option}};
+    
+    {% if not chart.jsonp %}
+    	var data = {{chart.data}};
+    {% endif %} 
+	
+	    option.series = data;
+
+    {% if chart.drilldown_flag %}
+    	var drilldowndata = {{chart.drilldown_data}};
+    	option.drilldown = drilldowndata;
+    {% endif %} 
+
+    var chart = new Highcharts.Chart(option);
+{% endblock body %}
