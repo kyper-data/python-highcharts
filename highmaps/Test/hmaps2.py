@@ -8,46 +8,46 @@ sys.path.append('/Users/hankchu/Documents/python-highcharts/highmaps')
 
 import highmaps
 
-H = highmaps.Highmaps(width = 650, height = 500)
+H = highmaps.Highmaps(width=650, height=500)
 
 options = {
-        'chart': {
-            'spacingBottom': 20
-        },
-        'title' : {
-            'text' : 'Europe time zones'
-        },
+    'chart': {
+        'spacingBottom': 20
+    },
+    'title' : {
+        'text' : 'Europe time zones'
+    },
 
-        'legend': {
-            'enabled': True
-        },
+    'legend': {
+        'enabled': True
+    },
 
-        'plotOptions': {
-            'map': {
-                'allAreas': False,
-                'joinBy': ['iso-a2', 'code'],
-                'dataLabels': {
-                    'enabled': True,
-                    'color': 'white',
-                    'formatter': "function () {\
-                                            if (this.point.properties && this.point.properties.labelrank.toString() < 5) {\
-                                                return this.point.properties['iso-a2'];\
-                                            }\
-                    }",
-                    'format': None,
-                    'style': {
-                        'fontWeight': 'bold'
-                    }
-                },
-                'mapData': "Highcharts.maps['custom/europe']",
-                'tooltip': {
-                    'headerFormat': '',
-                    'pointFormat': '{point.name}: <b>{series.name}</b>'
+    'plotOptions': {
+        'map': {
+            'allAreas': False,
+            'joinBy': ['iso-a2', 'code'],
+            'dataLabels': {
+                'enabled': True,
+                'color': 'white',
+                'formatter': "function () {\
+                                        if (this.point.properties && this.point.properties.labelrank.toString() < 5) {\
+                                            return this.point.properties['iso-a2'];\
+                                        }\
+                }",
+                'format': None,
+                'style': {
+                    'fontWeight': 'bold'
                 }
-
+            },
+            'mapData': "Highcharts.maps['custom/europe']",
+            'tooltip': {
+                'headerFormat': '',
+                'pointFormat': '{point.name}: <b>{series.name}</b>'
             }
+
         }
-    } 
+    }
+} 
 
 
 
@@ -63,5 +63,5 @@ H.add_data_set(data2, 'map', 'UTC + 1')
 H.add_data_set(data3, 'map', 'UTC + 2')
 H.add_data_set(data4, 'map', 'UTC + 3')
 
-H.set_map_source('http://code.highcharts.com/mapdata/custom/europe.js', jsonp_map = False)
+H.set_map_source('http://code.highcharts.com/mapdata/custom/europe.js', jsonp_map=False)
 H.file()

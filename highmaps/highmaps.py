@@ -14,11 +14,7 @@ install_aliases()
 from optparse import OptionParser
 from urllib.request import urlopen
 from jinja2 import Environment, PackageLoader
-# import sys
-# reload(sys)
-# sys.setdefaultencoding("utf-8")
 
-# from slugify import slugify
 import json, uuid
 import datetime, random, os, inspect
 from _abcoll import Iterable
@@ -27,9 +23,9 @@ from options import BaseOptions, ChartOptions, \
     GlobalOptions, LabelsOptions, LangOptions, \
     LegendOptions, LoadingOptions, MapNavigationOptions, NavigationOptions, PaneOptions, \
     PlotOptions, SeriesData, SubtitleOptions, TitleOptions, \
-    TooltipOptions, xAxisOptions, yAxisOptions, MultiAxis
+    TooltipOptions, xAxisOptions, yAxisOptions
 
-from highmap_types import Series, SeriesOptions, HighchartsError
+from highmap_types import Series, SeriesOptions
 from common import Formatter, CSSObject, SVGObject, MapObject, JSfunction, RawJavaScriptText, \
     CommonObject, ArrayObject, ColorObject
 
@@ -44,9 +40,7 @@ jinja2_env = Environment(lstrip_blocks=True, trim_blocks=True, loader=pl)
 template_content = jinja2_env.get_template(CONTENT_FILENAME)
 template_page = jinja2_env.get_template(PAGE_FILENAME)
     
-DEFAULT_POINT_INTERVAL = 86400000
-
-class Highmaps(object):
+class Maps(object):
     """
     Highcharts Base class.
     """
@@ -76,7 +70,8 @@ class Highmaps(object):
         # Set Javascript src
         self.JSsource = [
                 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js',
-                'https://code.highcharts.com/highcharts.js',
+                'https://code.highcharts.com/maps/highmaps.js',
+                'https://code.highcharts.com/highcharts.js',  
                 'https://code.highcharts.com/maps/modules/map.js',
                 'https://code.highcharts.com/maps/modules/data.js',
                 'https://code.highcharts.com/maps/modules/exporting.js'
@@ -89,6 +84,7 @@ class Highmaps(object):
         # Set data
         self.data = []
         self.data_temp = []
+        self.data_is_coordinate = False
         # Data from jsonp
         self.jsonp_data_flag = False
 
@@ -117,7 +113,7 @@ class Highmaps(object):
         # None keywords attribute that should be modified by methods
         # We should change all these to _attr
 
-        self.htmlcontent = ''  #: written by buildhtml
+        self._htmlcontent = ''  #: written by buildhtml
         self.htmlheader = ''
         # Place holder for the graph (the HTML div)
         # Written by ``buildcontainer``
@@ -185,23 +181,7 @@ class Highmaps(object):
         self.options["credits"].update_dict(enabled=False)
 
 
-    def title(self, title=None):
-        """ Bind Title """
-        if not title:
-            return self.options["title"].text
-        else:
-            self.set_options("title", {'text':title})
-
-
-    def colors(self, colors=None):
-        """ Bind Color Array """
-        if not colors:
-            return self.options["colors"].__jsonable__() if self.options['colors'].__jsonable__() else None
-        else:
-            self.options["colors"].set_colors(colors)
-
-
-    def set_JSsource(self, new_src):
+    def add_JSsource(self, new_src):
         """add additional js script source(s)"""
         if isinstance(new_src, list):
             for h in new_src:
@@ -212,7 +192,7 @@ class Highmaps(object):
             raise OptionTypeError("Option: %s Not Allowed For Series Type: %s" % type(new_src))
 
 
-    def set_CSSsource(self, new_src):
+    def add_CSSsource(self, new_src):
         """add additional css source(s)"""
         if isinstance(new_src, list):
             for h in new_src:
@@ -223,13 +203,21 @@ class Highmaps(object):
             raise OptionTypeError("Option: %s Not Allowed For Series Type: %s" % type(new_src))
 
 
-    def add_data_set(self, data, series_type="map", name=None, **kwargs):
+    def add_data_set(self, data, series_type="map", name=None, is_coordinate = False, **kwargs):
         """set data for series option in highmaps """
         
         self.data_set_count += 1
         if not name:
             name = "Series %d" % self.data_set_count
         kwargs.update({'name':name})
+
+        if is_coordinate:
+            self.data_is_coordinate = True
+            self.add_JSsource('https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.3.6/proj4.js')
+            if self.map and not self.data_temp:
+                series_data = Series([], series_type='map', **{'mapData': self.map})
+                series_data.__options__().update(SeriesOptions(series_type='map', **{'mapData': self.map}).__options__())
+                self.data_temp.append(series_data)
 
         if self.map and 'mapData' in kwargs.keys():
             kwargs.update({'mapData': self.map})
@@ -288,11 +276,22 @@ class Highmaps(object):
                                 % js_loc)
 
 
-    def add_map_data(self, geojson):
+    def add_map_data(self, geojson, **kwargs):
         self.mapdata_flag = True
         self.map = 'geojson'
         self.mapdata = json.dumps(geojson,  encoding='utf8')
-        if self.data_temp:
+
+        if self.data_is_coordinate:
+            kwargs.update({'mapData': self.map})
+            series_data = Series([], 'map')
+            series_data.__options__().update(SeriesOptions('map', **kwargs).__options__())
+            self.data_temp.append(series_data)
+        elif kwargs:
+            kwargs.update({'mapData': self.map})
+            series_data = Series([], 'map')
+            series_data.__options__().update(SeriesOptions('map', **kwargs).__options__())
+            self.data_temp.append(series_data)
+        elif self.data_temp:
             self.data_temp[0].__options__().update({'mapData': MapObject(self.map)})
 
 
@@ -312,7 +311,7 @@ class Highmaps(object):
             self.map = 'geojson'
             self.jsonp_map_url = json.dumps(map_src)
         else:
-            self.set_JSsource(map_src)
+            self.add_JSsource(map_src)
             map_name = self._get_jsmap_name(map_src)
             self.map = 'geojson'
             self.jsmap = self.map + ' = Highcharts.geojson(' + map_name + ');'
@@ -330,13 +329,15 @@ class Highmaps(object):
             self.options[option_type] = MultiAxis(option_type)
             for each_dict in option_dict:
                 self.options[option_type].update(**each_dict)
+        elif option_type == 'colors':
+            self.options["colors"].set_colors(option_dict) # option_dict should be a list
         elif option_type == 'colorAxis':
             self.options.update({'colorAxis': self.options.get('colorAxis', ColorAxisOptions())})
             self.options[option_type].update_dict(**option_dict)
         else:
             self.options[option_type].update_dict(**option_dict)
 
-    def set_dict_optoins(self, options):
+    def set_dict_options(self, options):
         """for dict-like inputs
         options must be in python dictionary format
         """
@@ -346,10 +347,6 @@ class Highmaps(object):
         else:
             raise OptionTypeError("Not An Accepted Input Format: %s. Must be Dictionary" %type(options))
 
-    def set_containerheader(self, containerheader):
-        """set containerheader"""
-        
-        self.containerheader = containerheader
 
     def _get_jsmap_name(self, url):
         """return 'name' of the map in .js format"""
@@ -357,21 +354,6 @@ class Highmaps(object):
         ret = urlopen(url)
         return ret.read().decode('utf-8').split('=')[0].replace(" ", "") #return the name of map file, Ex. 'Highcharts.maps["xxx/xxx"]'
 
-    def __str__(self):
-        """return htmlcontent"""
-        self.buildhtml()
-        return self.htmlcontent
-
-    def file(self, filename = 'highmaps'):
-        """save htmlcontent as .html file"""
-
-        filename = filename + '.html'
-        
-        with open(filename, 'w') as f:
-            self.buildhtml()
-            f.write(self.htmlcontent)
-        
-        f.closed
 
     def buildcontent(self):
         """build HTML content only, no header or body tags"""
@@ -384,7 +366,7 @@ class Highmaps(object):
         if self.drilldown_flag: 
             self.drilldown_data = json.dumps(self.drilldown_data_temp, encoding='utf8', \
                                             cls = HighchartsEncoder)
-        self.htmlcontent = self.template_content_highcharts.render(chart=self).encode('utf-8')
+        self._htmlcontent = self.template_content_highcharts.render(chart=self).encode('utf-8')
 
 
     def buildhtml(self):
@@ -395,15 +377,15 @@ class Highmaps(object):
         self.buildcontent()
         self.buildhtmlheader()
         self.content = self.htmlcontent.decode('utf-8') # need to ensure unicode
-        self.htmlcontent = self.template_page_highcharts.render(chart=self).encode('utf-8')
-
+        self._htmlcontent = self.template_page_highcharts.render(chart=self).encode('utf-8')
+        return self._htmlcontent
 
     def buildhtmlheader(self):
         """generate HTML header content"""
         #Highcharts lib/ needs to make sure it's up to date
         
         if self.drilldown_flag:
-            self.set_JSsource('https://code.highcharts.com/maps/modules/drilldown.js')
+            self.add_JSsource('https://code.highcharts.com/maps/modules/drilldown.js')
 
         self.header_css = [
             '<link href="%s" rel="stylesheet" />' % h for h in self.CSSsource
@@ -440,33 +422,24 @@ class Highmaps(object):
         self.container = self.containerheader + \
             '<div id="%s" style="%s">%s</div>\n' % (self.div_name, self.div_style, self.loading)
 
+    @property
+    def htmlcontent(self):
+        return self.buildhtml()
 
-class TemplateMixin(object):
-    # a legacy from python-nvd3. 
-    # it is not in use now but could be useful in future 
-    # if adding templates for different charts or maps.
-    """
-    A mixin that override buildcontent. Instead of building the complex
-    content template we exploit Jinja2 inheritance. Thus each chart class
-    renders it's own chart template which inherits from content.html
-    """
-    def buildcontent(self):
-        """Build HTML content only, no header or body tags.
-        """
-        self.buildcontainer()
-        # if the subclass has a method buildjs this method will be
-        # called instead of the method defined here
-        # when this subclass method is entered it does call
-        self.buildjschart()
-        self.htmlcontent = self.template_chart_highcharts.render(chart=self).encode('utf-8')
+    def __str__(self):
+        """return htmlcontent"""
+        #self.buildhtml()
+        return self.htmlcontent
 
-
-class HighchartError(Exception):
-    """ Highcharts Error Class """
-    def __init__(self, *args):
-        Exception.__init__(self, *args)
-        self.args = args
-
+    def save_file(self, filename = 'highcharts'):
+        """ save htmlcontent as .html file """
+        filename = filename + '.html'
+        
+        with open(filename, 'w') as f:
+            #self.buildhtml()
+            f.write(self.htmlcontent)
+        
+        f.closed
 
 class HighchartsEncoder(json.JSONEncoder):
     def __init__(self, *args, **kwargs):
@@ -484,15 +457,15 @@ class HighchartsEncoder(json.JSONEncoder):
                     .format(year=utc[0], month=utc[1]-1, day=utc[2], hours=utc[3],
                             minutes=utc[4], seconds=utc[5], millisec=obj.microsecond/1000))
             return RawJavaScriptText(obj)
-        elif isinstance(obj, BaseOptions) or isinstance(obj, MultiAxis):
+        elif isinstance(obj, BaseOptions):
             return obj.__jsonable__()
         elif isinstance(obj, CSSObject) or isinstance(obj, Formatter) or isinstance(obj, JSfunction) \
             or isinstance(obj, MapObject): 
-            return obj.__options__()
+            return obj.__jsonable__()
         elif isinstance(obj, SeriesOptions) or isinstance(obj, Series):
-            return obj.__options__()
+            return obj.__jsonable__()
         elif isinstance(obj, CommonObject) or isinstance(obj, ArrayObject) or isinstance(obj, ColorObject):
-            return obj.__options__()
+            return obj.__jsonable__()
         else:
             return json.JSONEncoder.default(self, obj)
 
@@ -507,21 +480,3 @@ class OptionTypeError(Exception):
 
     def __init__(self,*args):
         self.args = args
-
-
-def _main():
-    """
-    Parse options and process commands
-    """
-    # Parse arguments
-    usage = "usage: highcharts.py [options]"
-    parser = OptionParser(usage=usage, version="python-highcharts - Charts generator with Highcharts library")
-    parser.add_option("-q", "--quiet",
-                      action="store_false", dest="verbose", default=True,
-                      help="don't print messages to stdout")
-
-    (options, args) = parser.parse_args()
-
-
-if __name__ == '__main__':
-    _main()

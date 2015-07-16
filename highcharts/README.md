@@ -12,11 +12,11 @@ The frame was originated from PyHighcharts on Github but alienated from it since
 
 ## Installation
 
- -need to work on this-
+-need to work on this-
 
 ---------------------------------------------------------------------------------------------------------------
 # Highcharts
-    
+
 ## Design Overview
 
 The usage is designed to close to it on Javascript. 
@@ -62,61 +62,61 @@ However, the better practice is to construct chart options by a dictionary (as h
 
 ```python
 options = {
-        'title': {
-            'text': 'Atmosphere Temperature by Altitude'
-        },
-        'subtitle': {
-            'text': 'According to the Standard Atmosphere Model'
-        },
-        'xAxis': {
-            'reversed': False,
-            'title': {
-                'enabled': True,
-                'text': 'Altitude'
-            },
-            'labels': {
-                'formatter': 'function () {\
-                                    return this.value + "km";\
-                                }'
-            },
-            'maxPadding': 0.05,
-            'showLastLabel': True
-        },
-        'yAxis': {
-            'title': {
-                'text': 'Temperature'
-            },
-            'labels': {
-                "formatter": "function () {\
-                                                    return this.value + '°';\
-                                                }"
-            },
-            'lineWidth': 2
-        },
-        'legend': {
-            'enabled': False
-        },
-        'tooltip': {
-            'headerFormat': '<b>{series.name}</b><br/>',
-            'pointFormat': '{point.x} km: {point.y}°C'
-        }
-        }
+'title': {
+'text': 'Atmosphere Temperature by Altitude'
+},
+'subtitle': {
+'text': 'According to the Standard Atmosphere Model'
+},
+'xAxis': {
+'reversed': False,
+'title': {
+'enabled': True,
+'text': 'Altitude'
+},
+'labels': {
+'formatter': 'function () {\
+return this.value + "km";\
+}'
+},
+'maxPadding': 0.05,
+'showLastLabel': True
+},
+'yAxis': {
+'title': {
+'text': 'Temperature'
+},
+'labels': {
+"formatter": "function () {\
+return this.value + '°';\
+}"
+},
+'lineWidth': 2
+},
+'legend': {
+'enabled': False
+},
+'tooltip': {
+'headerFormat': '<b>{series.name}</b><br/>',
+'pointFormat': '{point.x} km: {point.y}°C'
+}
+}
 
 chart.set_dict_optoins(options)
 
 ```
-            
+
 Only the series option in highchart needs to input by separated add_data_set (or/and add_drilldown_data_set) function, Ex.
 
 ```python
 chart.add_data_set(data, 'scatter', 'Outlier', marker = {
-                'fillColor': 'white',
-                'lineWidth': 1,
-                'lineColor': 'Highcharts.getOptions().colors[0]'
-            },
-            tooltip = {
-                'pointFormat': 'Observation: {point.y}'
-            })
+'fillColor': 'white',
+'lineWidth': 1,
+'lineColor': 'Highcharts.getOptions().colors[0]'
+},
+tooltip = {
+'pointFormat': 'Observation: {point.y}'
+})
 
 
 chart.add_drilldown_data_set(data_2, 'column', 'Chrome', name = 'Chrome')
@@ -133,49 +133,49 @@ chart = Highcharts()
 chart.set_options('chart', {'inverted': True})
 
 options = {
-        'title': {
-            'text': 'Atmosphere Temperature by Altitude'
-        },
-        'subtitle': {
-            'text': 'According to the Standard Atmosphere Model'
-        },
-        'xAxis': {
-            'reversed': False,
-            'title': {
-                'enabled': True,
-                'text': 'Altitude'
-            },
-            'labels': {
-                'formatter': 'function () {\
-                                    return this.value + "km";\
-                                }'
-            },
-            'maxPadding': 0.05,
-            'showLastLabel': True
-        },
-        'yAxis': {
-            'title': {
-                'text': 'Temperature'
-            },
-            'labels': {
-                "formatter": "function () {\
-                                                    return this.value + '°';\
-                                                }"
-            },
-            'lineWidth': 2
-        },
-        'legend': {
-            'enabled': False
-        },
-        'tooltip': {
-            'headerFormat': '<b>{series.name}</b><br/>',
-            'pointFormat': '{point.x} km: {point.y}°C'
-        }
-        }
+'title': {
+'text': 'Atmosphere Temperature by Altitude'
+},
+'subtitle': {
+'text': 'According to the Standard Atmosphere Model'
+},
+'xAxis': {
+'reversed': False,
+'title': {
+'enabled': True,
+'text': 'Altitude'
+},
+'labels': {
+'formatter': 'function () {\
+return this.value + "km";\
+}'
+},
+'maxPadding': 0.05,
+'showLastLabel': True
+},
+'yAxis': {
+'title': {
+'text': 'Temperature'
+},
+'labels': {
+"formatter": "function () {\
+return this.value + '°';\
+}"
+},
+'lineWidth': 2
+},
+'legend': {
+'enabled': False
+},
+'tooltip': {
+'headerFormat': '<b>{series.name}</b><br/>',
+'pointFormat': '{point.x} km: {point.y}°C'
+}
+}
 
 chart.set_dict_optoins(options)
 data =  [[0, 15], [10, -50], [20, -56.5], [30, -46.5], [40, -22.1], 
-        [50, -2.5], [60, -27.7], [70, -55.7], [80, -76.5]]
+[50, -2.5], [60, -27.7], [70, -55.7], [80, -76.5]]
 chart.add_data_set(data, 'spline', 'Temperature', marker = {'enabled': False}) 
 
 chart.file()
