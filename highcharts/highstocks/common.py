@@ -139,6 +139,9 @@ class Formatter(object):
     def __options__(self):
         return self.formatter
 
+    def __jsonable__(self):
+        return self.formatter
+
 class ColorObject(object):
     """ color object """
     
@@ -166,6 +169,9 @@ class ColorObject(object):
     def __options__(self):
         return self.color
 
+    def __jsonable__(self):
+        return self.color
+
 
 class CSSObject(object):
     """ CSS style class """
@@ -181,6 +187,9 @@ class CSSObject(object):
     def __options__(self):
         return self.css
 
+    def __jsonable__(self):
+        return self.css
+
 
 class SVGObject(object):
     """ SVG style class """
@@ -194,6 +203,9 @@ class SVGObject(object):
                 self.svg.update({k:v})
     
     def __options__(self):
+        return self.svg
+
+    def __jsonable__(self):
         return self.svg
 
 
@@ -212,6 +224,9 @@ class JSfunction(object):
     def __options__(self):
         return self.function
 
+    def __jsonable__(self):
+        return self.function
+
 
 class RawJavaScriptText:
 
@@ -226,7 +241,7 @@ class CommonObject(object):
     def __init__(self, **kwargs):
         self.process_kwargs(kwargs)
 
-    def __validate_options__(self, k,v,ov):
+    def __validate_options__(self, k, v, ov):
 
         if ov == NotImplemented: 
             raise OptionTypeError("Option Type Currently Not Supported: %s" % k)
@@ -242,7 +257,62 @@ class CommonObject(object):
     def __options__(self):
         return self.__dict__
 
-    def process_kwargs(self,kwargs):
+    def __jsonable__(self):
+        return self.__dict__
+
+    def update(self, kwargs):
+        for k, v in kwargs.items(): 
+            if k in self.ALLOWED_OPTIONS:
+                if isinstance(self.ALLOWED_OPTIONS[k], tuple) and isinstance(self.ALLOWED_OPTIONS[k][0](), CommonObject):
+                    # re-construct input dict with existing options in objects
+                    if self.__getattr__(k):
+                        if isinstance(v, dict):
+                            self.__options__()[k].update(v)
+                        else:
+                            self.__options__()[k].__options__().update(v)
+                    else:
+                        self.__options__().update({k:allowed_args[k][0](**v)}) 
+
+                elif isinstance(self.ALLOWED_OPTIONS[k], tuple) and isinstance(self.ALLOWED_OPTIONS[k][0](), ArrayObject):
+                    # update array 
+                    if isinstance(v, dict):
+                        self.__dict__[k].append(self.ALLOWED_OPTIONS[k][0](**v))
+                    elif isinstance(v, list):
+                        for item in v:
+                            self.__dict__[k].append(self.ALLOWED_OPTIONS[k][0](**item))
+                    else:
+                        OptionTypeError("Not An Accepted Input Type: %s" % type(v))        
+
+                elif isinstance(self.ALLOWED_OPTIONS[k], tuple) and \
+                    (isinstance(self.ALLOWED_OPTIONS[k][0](), CSSObject) or isinstance(self.ALLOWED_OPTIONS[k][0](), SVGObject)):
+                    if self.__getattr__(k):
+                        for key, value in v.items():
+                            self.__dict__[k].__options__().update({key:value})
+                    else:
+                        self.__dict__.update({k:allowed_args[k][0](**v)})
+                    
+                    v = self.__dict__[k].__options__()
+                    # upating object
+                    if isinstance(v, dict):
+                        self.__dict__.update({k:self.ALLOWED_OPTIONS[k][0](**v)})
+                    else:
+                        self.__dict__.update({k:self.ALLOWED_OPTIONS[k][0](v)})
+
+                elif isinstance(self.ALLOWED_OPTIONS[k], tuple) and (isinstance(self.ALLOWED_OPTIONS[k][0](), JSfunction) or
+                    isinstance(self.ALLOWED_OPTIONS[k][0](), Formatter) or isinstance(self.ALLOWED_OPTIONS[k][0](), ColorObject)):
+                    if isinstance(v, dict):
+                        self.__dict__.update({k:self.ALLOWED_OPTIONS[k][0](**v)})
+                    else:
+                        self.__dict__.update({k:self.ALLOWED_OPTIONS[k][0](v)})
+                else:
+                    self.__dict__.update({k:v})
+
+            else:
+                print(self.ALLOWED_OPTIONS)
+                print(k, v)
+                raise OptionTypeError("Not An Accepted Option Type: %s" % k)
+
+    def process_kwargs(self, kwargs):
         
         for k, v in kwargs.items():
             if k in self.ALLOWED_OPTIONS:
@@ -251,17 +321,10 @@ class CommonObject(object):
                         self.ALLOWED_OPTIONS[k][0] in IDV_OBJECT_LIST:
                         if isinstance(v, dict):
                             self.__dict__.update({k:self.ALLOWED_OPTIONS[k][0](**v)})
-                        elif isinstance(v, CommonObject) or isinstance(v, ArrayObject):
-                            self.__dict__.update({k:self.ALLOWED_OPTIONS[k][0](**v.__options__())})
-                        elif isinstance(v, JSfunction) or isinstance(v, Formatter):
-                            self.__dict__.update({k:self.ALLOWED_OPTIONS[k][0](v.__options__().get_jstext())})
-                        elif isinstance(v, CSSObject) or isinstance(v, SVGObject):
-                            self.__dict__.update({k:self.ALLOWED_OPTIONS[k][0](**v.__options__())})
-                        elif isinstance(v, ColorObject):
-                            if isinstance(v.__options__(), basestring):
-                                self.__dict__.update({k:self.ALLOWED_OPTIONS[k][0](v.__options__())})
-                            else:
-                                self.__dict__.update({k:self.ALLOWED_OPTIONS[k][0](**v.__options__())})
+                        elif isinstance(v, CommonObject) or isinstance(v, ArrayObject) or \
+                            isinstance(v, CSSObject) or isinstance(v, SVGObject) or isinstance(v, ColorObject) or \
+                            isinstance(v, JSfunction) or isinstance(v, Formatter) or isinstance(v, datetime.datetime):
+                            self.__dict__.update({k:v})
                         else:
                             self.__dict__.update({k:self.ALLOWED_OPTIONS[k][0](v)})
                     else:
@@ -272,6 +335,12 @@ class CommonObject(object):
             else:
                 raise OptionTypeError("Option: %s Not Allowed For Event Class:" % k)
 
+    def __getattr__(self, item):
+        if not item in self.__dict__:
+            return None # Attribute Not Set
+        else:
+            return True
+
 
 class Events(CommonObject):
     """ Class for event listener """
@@ -279,32 +348,29 @@ class Events(CommonObject):
     ALLOWED_OPTIONS = {
     "addSeries": (JSfunction, basestring),
     "afterPrint": (JSfunction, basestring),
+    "afterBreaks": (JSfunction, basestring),
+    "afterSetExtremes": (JSfunction, basestring),
+    "afterAnimate": (JSfunction, basestring),
     "beforePrint": (JSfunction, basestring),
+    "checkboxClick": (JSfunction, basestring),
     "click": (JSfunction, basestring),
     "drilldown": (JSfunction, basestring),
     "drillup": (JSfunction, basestring),
     "load": (JSfunction, basestring),
-    "redraw": (JSfunction, basestring),
-    "selection": (JSfunction, basestring),
-    "afterAnimate": (JSfunction, basestring),
-    "checkboxClick": (JSfunction, basestring),
     "hide": (JSfunction, basestring),
     "legendItemClick": (JSfunction, basestring),
     "mouseOut": (JSfunction, basestring),
     "mouseOver": (JSfunction, basestring),
-    "show": (JSfunction, basestring),
+    "pointBreak": (JSfunction, basestring),
     "remove": (JSfunction, basestring),
+    "redraw": (JSfunction, basestring),
+    "selection": (JSfunction, basestring),
+    "show": (JSfunction, basestring),
     "select": (JSfunction, basestring),
     "unselect": (JSfunction, basestring),
     "update": (JSfunction, basestring),
-    "afterBreaks": (JSfunction, basestring),
-    "afterSetExtremes": (JSfunction, basestring),
-    "pointBreak": (JSfunction, basestring),
     "setExtremes": (JSfunction, basestring)  
     }
-
-    # def load_defaults(self,series_type):
-    #     self.process_kwargs(DEFAULT_OPTIONS.get(series_type,{}),series_type)
 
 class Point(CommonObject):
     ALLOWED_OPTIONS = {
@@ -342,7 +408,6 @@ class ContextButton(CommonObject):
     "y": int, 
     }
 
-
 class Options3d(CommonObject): 
     ALLOWED_OPTIONS = {
     "alpha": [float, int],
@@ -361,20 +426,13 @@ class ResetZoomButton(CommonObject):
     "theme": NotImplemented #ThemeObject
     }
 
-class DrillUpButton(CommonObject): 
-    ALLOWED_OPTIONS = {
-    "position": (Position, dict),
-    "relativeTo": basestring,
-    "theme": NotImplemented #ThemeObject
-    },
-
 class Labels(CommonObject):   
     ALLOWED_OPTIONS = {
     "align": basestring,
     "backgroundColor": (ColorObject, basestring, dict),
     "borderColor": (ColorObject, basestring, dict),
     "borderRadius": [float, int],
-    "borderWidth": int,
+    "borderWidth": [int, basestring],
     "color": (ColorObject, basestring, dict),
     "connectorColor": (ColorObject, basestring, dict),
     "connectorPadding": [float, int],
@@ -424,6 +482,12 @@ class Navigation(CommonObject):
     "style": (CSSObject, dict),
     }
 
+class Handles(CommonObject):
+    ALLOWED_OPTIONS = {
+    "backgroundColor": (ColorObject, basestring, dict),
+    "borderColor": (ColorObject, basestring, dict),
+    }
+
 class DateTimeLabelFormats(CommonObject):
     ALLOWED_OPTIONS = {
     "millisecond": basestring,
@@ -434,6 +498,17 @@ class DateTimeLabelFormats(CommonObject):
     "week": basestring,
     "month": basestring,
     "year": basestring,
+    }
+
+class DataGrouping(CommonObject):
+    ALLOWED_OPTIONS = {
+    "approximation": (JSfunction, basestring),
+    "dateTimeLabelFormats": (DateTimeLabelFormats, dict),
+    "enabled": bool,
+    "forced": bool,
+    "groupPixelWidth": [int, float],
+    "smoothed": bool,
+    "units": list,
     }
 
 class Select(CommonObject):
@@ -507,12 +582,20 @@ class Tooltip(CommonObject):
     "xDateFormat": basestring
     }
 
+class Shadow(CommonObject):
+    # not in use yet... not sure hot wo implement
+    ALLOWED_OPTIONS = {
+    "color": (ColorObject, dict),
+    "offsetX": [int, float],
+    "offsetY": [int, float],
+    "opacity": [int, float],
+    "width": [int, float],
+    }
 
 class ArrayObject(object):
 
     def __init__(self, **kwargs):
-        #self.data = []
-        #self.temp_data = {}
+        self.data =[]
         self.process_kwargs(kwargs)
 
     def __validate_options__(self, k,v,ov):
@@ -529,42 +612,42 @@ class ArrayObject(object):
             else: return False
 
     def __options__(self):
-        return self.__dict__
+        return self.data
 
-    def process_kwargs(self,kwargs):
+    def __jsonable__(self):
+        return self.data
 
+    def update(self, kwargs):
+        self.process_kwargs(kwargs)
+
+    def process_kwargs(self, kwargs):
+        temp = {}
         for k, v in kwargs.items():
             if k in self.ALLOWED_OPTIONS:
                 if self.__validate_options__(k,v,self.ALLOWED_OPTIONS[k]):
                     if isinstance(self.ALLOWED_OPTIONS[k], tuple) and \
                         self.ALLOWED_OPTIONS[k][0] in IDV_OBJECT_LIST:
                         if isinstance(v, dict):
-                            self.__dict__.update({k:self.ALLOWED_OPTIONS[k][0](**v)})
-                        elif isinstance(v, CommonObject) or isinstance(v, ArrayObject):
-                            self.__dict__.update({k:self.ALLOWED_OPTIONS[k][0](**v.__options__())})
-                        elif isinstance(v, JSfunction) or isinstance(v, Formatter):
-                            self.__dict__.update({k:self.ALLOWED_OPTIONS[k][0](v.__options__().get_jstext())})
-                        elif isinstance(v, CSSObject) or isinstance(v, SVGObject):
-                            self.__dict__.update({k:self.ALLOWED_OPTIONS[k][0](**v.__options__())})
-                        elif isinstance(v, ColorObject):
-                            if isinstance(v.__options__(), basestring):
-                                self.__dict__.update({k:self.ALLOWED_OPTIONS[k][0](v.__options__())})
-                            else:
-                                self.__dict__.update({k:self.ALLOWED_OPTIONS[k][0](**v.__options__())})
+                            temp.update({k:self.ALLOWED_OPTIONS[k][0](**v)})
+                        elif isinstance(v, CommonObject) or isinstance(v, ArrayObject) or \
+                            isinstance(v, CSSObject) or isinstance(v, SVGObject) or isinstance(v, ColorObject) or \
+                            isinstance(v, JSfunction) or isinstance(v, Formatter) or isinstance(v, datetime.datetime):
+                            temp.update({k:v})
                         else:
-                            self.__dict__.update({k:self.ALLOWED_OPTIONS[k][0](v)})
+                            temp.update({k:self.ALLOWED_OPTIONS[k][0](v)})
                     else:
-                        self.__dict__.update({k:v})
-                else: 
+                        temp.update({k:v})   
+                else:
+                    print k 
                     raise OptionTypeError("Option Type Mismatch: Expected: %s" % self.ALLOWED_OPTIONS[k])
             else: 
                 raise OptionTypeError("Option: %s Not Allowed For Event Class:" % k)
-        #self.data.append(self.__dict__)
+        self.data.append(temp)
 
 class PlotBands(ArrayObject):
     ALLOWED_OPTIONS = {
     "borderColor": (ColorObject, basestring, dict),
-    "borderWidth": int,
+    "borderWidth": [int, basestring],
     "color": (ColorObject, basestring, dict),
     "events": (Events, dict),
     "from": [int, float, datetime.datetime],
@@ -595,20 +678,27 @@ class Items(ArrayObject):
 class Background(ArrayObject):
     ALLOWED_OPTIONS = {
     "backgroundColor": (ColorObject, basestring, dict),
-    "shape": basestring,
+    "borderWidth": [int, basestring],
+    "borderColor": (ColorObject, basestring, dict),
     "innerWidth": int,
     "outerWidth": int,
-    "borderWidth": int,
-    "borderColor": (ColorObject, basestring, dict),
     "outerRadius": basestring,
+    "shape": basestring,
     }
 
 class Breaks(ArrayObject):
     ALLOWED_OPTIONS = {
     "breakSize": int,
-    "from": [int, float],
+    "from": [int, float, datetime.datetime],
     "repeat": int,
-    "to": [int, float],
+    "to": [int, float, datetime.datetime],
+    }
+
+class Buttons(ArrayObject):
+    ALLOWED_OPTIONS = {
+    "type": basestring,
+    "count": [int, float],
+    "text": basestring,
     }
 
 class Zones(ArrayObject):
@@ -619,30 +709,26 @@ class Zones(ArrayObject):
     "value": [int, float],
     }
 
+class Levels(ArrayObject):
+    ALLOWED_OPTIONS = {
+    "borderColor": (ColorObject, basestring, dict),
+    "borderDashStyle": basestring,
+    "borderWidth": [int, basestring],
+    "color": (ColorObject, basestring, dict),
+    "dataLabels": (Labels, dict),
+    "layoutAlgorithm": basestring,
+    "layoutStartingDirection": basestring,
+    "level": int,
+    }    
 
-IDV_OBJECT_LIST = [JSfunction, Formatter, Halo, Marker, \
-                    Position, Hover, Select, Events, \
-                    CSSObject, SVGObject, ColorObject, \
+
+IDV_OBJECT_LIST = [JSfunction, Formatter, Halo, Marker, Labels,
+                    Position, Hover, Select, Events, States, ContextButton,
+                    CSSObject, SVGObject, ColorObject,
                     RawJavaScriptText, DateTimeLabelFormats]
 
 
 class OptionTypeError(Exception):
 
-    def __init__(self,*args):
+    def __init__(self, *args):
         self.args = args
-
-
-def path_to_array(path):
-    print path
-    path = path.replace(r'/([A-Za-z])/g', r' $1 ')
-    path = path.replace(r'/^\s*/', "").replace(r'/\s*$/', "")
-    path = path.split(" ");
-    for i, v in enumerate(path):
-        try:
-            path[i] = float(v)
-        except:
-            pass
-    return path
-
-if __name__ == '__main__':
-    print path_to_array("M 4687 2398 L 4679 2402 4679 2398 Z")

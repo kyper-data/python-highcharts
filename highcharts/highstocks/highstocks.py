@@ -13,37 +13,34 @@ install_aliases()
 
 from optparse import OptionParser
 from jinja2 import Environment, PackageLoader
-# import sys
-# reload(sys)
-# sys.setdefaultencoding("utf-8")
 
 import json, uuid
 import datetime, random, os, inspect
 from _abcoll import Iterable
 from options import BaseOptions, ChartOptions, \
-    ColorsOptions, CreditsOptions, DrilldownOptions, ExportingOptions, \
+    ColorsOptions, CreditsOptions, ExportingOptions, \
     GlobalOptions, LabelsOptions, LangOptions, \
-    LegendOptions, LoadingOptions, NavigationOptions, PaneOptions, \
-    PlotOptions, SeriesData, SubtitleOptions, TitleOptions, \
+    LegendOptions, LoadingOptions, NavigatorOptions, NavigationOptions, \
+    PlotOptions, RangeSelectorOptions, ScrollbarOptions, SeriesData, SubtitleOptions, TitleOptions, \
     TooltipOptions, xAxisOptions, yAxisOptions, MultiAxis
 
-from highchart_types import Series, SeriesOptions
+from highstock_types import Series, SeriesOptions
 from common import Levels, Formatter, CSSObject, SVGObject, JSfunction, RawJavaScriptText, \
     CommonObject, ArrayObject, ColorObject
 
 CONTENT_FILENAME = "./content.html"
 PAGE_FILENAME = "./page.html"
 
-pl = PackageLoader('highcharts', 'templates')
+pl = PackageLoader('highstocks', 'templates')
 jinja2_env = Environment(lstrip_blocks=True, trim_blocks=True, loader=pl)
 
 template_content = jinja2_env.get_template(CONTENT_FILENAME)
 template_page = jinja2_env.get_template(PAGE_FILENAME)
     
 
-class Highchart(object):
+class Highstock(object):
     """
-    Highcharts Base class.
+    Highstocks Base class.
     """
     #: chart count
     count = 0
@@ -71,9 +68,9 @@ class Highchart(object):
         # set Javascript src, Highcharts lib needs to make sure it's up to date
         self.JSsource = [
                 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js',
-                'https://code.highcharts.com/highcharts.js',
+                'https://code.highcharts.com/stock/highstock.js',
+                'https://code.highcharts.com/stock/modules/exporting.js',
                 'https://code.highcharts.com/highcharts-more.js',
-                'https://code.highcharts.com/modules/exporting.js'
             ]
 
         # set CSS src
@@ -84,12 +81,14 @@ class Highchart(object):
         # set data
         self.data = []
         self.data_temp = []
+
+        # set navigator series
+        self.navi_seri_flag = False
+        self.navi_seri = {}
+        self.navi_seri_temp = {}
+
         # Data from jsonp
         self.jsonp_data_flag = False
-
-        # set drilldown data
-        self.drilldown_data = []
-        self.drilldown_data_temp = []
         
         # javascript
         self.jscript_head_flag = False
@@ -99,7 +98,7 @@ class Highchart(object):
 
         # accepted keywords
         self.div_style = kwargs.get('style', '')
-        self.drilldown_flag = kwargs.get('drilldown_flag', False)
+        self.date_flag = kwargs.get('date_flag', False)
 
         # None keywords attribute that should be modified by methods
         # We should change all these to _attr
@@ -120,14 +119,15 @@ class Highchart(object):
             "colors": ColorsOptions(),
             "credits": CreditsOptions(),
             #"data": #NotImplemented
-            "drilldown": DrilldownOptions(),
             "exporting": ExportingOptions(),
             "labels": LabelsOptions(),
             "legend": LegendOptions(),
             "loading": LoadingOptions(),
             "navigation": NavigationOptions(),
-            "pane": PaneOptions(),
+            "navigator": NavigatorOptions(),
             "plotOptions": PlotOptions(),
+            "rangeSelector": RangeSelectorOptions(),
+            "scrollbar": ScrollbarOptions(),
             "series": SeriesData(),
             "subtitle": SubtitleOptions(),
             "title": TitleOptions(),
@@ -192,49 +192,57 @@ class Highchart(object):
             raise OptionTypeError("Option: %s Not Allowed For Series Type: %s" % type(new_src))
 
 
-
     def add_data_set(self, data, series_type="line", name=None, **kwargs):
-        """set data for series option in highcharts"""
+        """set data for series option in highstocks"""
 
         self.data_set_count += 1
         if not name:
             name = "Series %d" % self.data_set_count
         kwargs.update({'name':name})
 
-        if series_type == 'treemap':
-            self.add_JSsource('http://code.highcharts.com/modules/treemap.js')
-
         series_data = Series(data, series_type=series_type, **kwargs)
-       
         series_data.__options__().update(SeriesOptions(series_type=series_type, **kwargs).__options__())
         self.data_temp.append(series_data)
 
 
-    def add_drilldown_data_set(self, data, series_type, id, **kwargs):
-        """set data for drilldown option in highcharts"""
-
-        self.drilldown_data_set_count += 1
-        if self.drilldown_flag == False:
-            self.drilldown_flag = True
-        
-        kwargs.update({'id':id})
-        series_data = Series(data, series_type=series_type, **kwargs)
-       
-        series_data.__options__().update(SeriesOptions(series_type=series_type, **kwargs).__options__())
-        self.drilldown_data_temp.append(series_data)
-
-
-    def add_data_from_jsonp(self, data_src, data_name='json_data', series_type="map", name=None, **kwargs):
+    def add_data_from_jsonp(self, data_src, data_name='json_data', series_type="line", name=None, **kwargs):
         """set map data directly from a https source
         the data_src is the https link for data
         and it must be in jsonp format
         """
-        self.jsonp_data_flag = True
-        self.jsonp_data_url = json.dumps(data_src)
-        if data_name == 'data':
-            data_name = 'json_'+ data_name
-        self.jsonp_data = data_name
-        self.add_data_set(RawJavaScriptText(data_name), series_type, name=name, **kwargs)
+        if not self.jsonp_data_flag:
+            self.jsonp_data_flag = True
+            self.jsonp_data_url = json.dumps(data_src) 
+            
+            if data_name == 'data':
+                data_name = 'json_'+ data_name
+            
+            self.jsonp_data = data_name
+        
+        self.add_data_set(RawJavaScriptText(self.jsonp_data), series_type, name=name, **kwargs)
+
+
+    def add_navi_seri(self, data, series_type="line", **kwargs):
+        """set series for navigator option in highstocks"""
+
+        self.navi_seri_flag = True
+        series_data = Series(data, series_type=series_type, **kwargs)
+        series_data.__options__().update(SeriesOptions(series_type=series_type, **kwargs).__options__())           
+        self.navi_seri_temp = series_data
+
+    def add_navi_seri_from_jsonp(self, data_src=None, data_name='json_data', series_type="line", **kwargs):
+        """set series for navigator option in highstocks"""
+
+        if not self.jsonp_data_flag:
+            self.jsonp_data_flag = True
+            self.jsonp_data_url = json.dumps(data_src) 
+            
+            if data_name == 'data':
+                data_name = 'json_'+ data_name
+            
+            self.jsonp_data = data_name
+        
+        self.add_navi_seri(RawJavaScriptText(self.jsonp_data), series_type, **kwargs)
 
 
     def add_JSscript(self, js_script, js_loc):
@@ -272,10 +280,6 @@ class Highchart(object):
         else:
             self.options[option_type].update_dict(**option_dict)
 
-        if option_type == 'chart' and 'options3d' in option_dict:
-            # Add 3d.js into Javascript source header
-            self.add_JSsource("http://code.highcharts.com/highcharts-3d.js")
-
 
     def set_dict_options(self, options):
         """for dictionary-like inputs (as object in Javascript)
@@ -292,13 +296,15 @@ class Highchart(object):
         """build HTML content only, no header or body tags"""
 
         self.buildcontainer()
+
         self.option = json.dumps(self.options, encoding='utf8', cls = HighchartsEncoder)
         self.setoption = json.dumps(self.setOptions, cls = HighchartsEncoder) 
         self.data = json.dumps(self.data_temp, encoding='utf8', cls = HighchartsEncoder)
         
-        if self.drilldown_flag: 
-            self.drilldown_data = json.dumps(self.drilldown_data_temp, encoding='utf8', \
-                                            cls = HighchartsEncoder)
+        if self.navi_seri_flag:        
+            self.navi_seri = json.dumps(self.navi_seri_temp, encoding='utf8',\
+                                        cls = HighchartsEncoder)
+
         self._htmlcontent = self.template_content_highcharts.render(chart=self).encode('utf-8')
 
 
@@ -316,9 +322,6 @@ class Highchart(object):
 
     def buildhtmlheader(self):
         """generate HTML header content"""
-        
-        if self.drilldown_flag:
-            self.add_JSsource('http://code.highcharts.com/modules/drilldown.js')
 
         self.header_css = [
             '<link href="%s" rel="stylesheet" />' % h for h in self.CSSsource

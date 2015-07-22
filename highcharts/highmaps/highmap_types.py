@@ -256,7 +256,8 @@ class Series(object):
 
     def __init__(self, data, series_type="line", supress_errors=False, **kwargs):
 
-        # List of dictionaries. Each dict contains data and properties, which need to handle before construct the object for series 
+        # List of dictionaries. Each dict contains data and properties, 
+        # which need to handle before construct the object for series 
         if isinstance(data, list):
             for item in data:
                 if isinstance(item, dict):

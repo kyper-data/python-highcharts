@@ -4,12 +4,12 @@ import pandas as pd
 import numpy as np
 import datetime
 
-sys.path.append('/Users/hankchu/Documents/python-highcharts/highmaps')
+sys.path.append('/Users/hankchu/Documents/python-highcharts/highcharts/highmaps')
 
 import highmaps
 from common import RawJavaScriptText
 
-H = highmaps.Highmaps()
+H = highmaps.Highmap()
 
 options = {
         'chart': {
@@ -77,7 +77,7 @@ options = {
         },
     } 
 
-H.set_dict_optoins(options)
+H.set_dict_options(options)
 data_url = 'http://www.highcharts.com/samples/data/jsonp.php?filename=us-counties-unemployment.json&callback=?'
 H.add_data_from_jsonp(data_url, 'json_data', 'map', 'Unemployment rate', joinBy = ['hc-key', 'code'], 
      tooltip = {
@@ -99,5 +99,5 @@ H.add_JSscript("Highcharts.each(geojson, function (mapPoint) {\
         });", 'head')
 
 
-H.file()
+H.save_file()
 

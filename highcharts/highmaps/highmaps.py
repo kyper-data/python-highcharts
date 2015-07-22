@@ -108,7 +108,6 @@ class Highmap(object):
         # Accepted keywords
         self.div_style = kwargs.get('style', '')
         self.drilldown_flag = kwargs.get('drilldown_flag', False)
-        self.date_flag = kwargs.get('date_flag', False)
 
         # None keywords attribute that should be modified by methods
         # We should change all these to _attr
@@ -338,7 +337,7 @@ class Highmap(object):
             self.options[option_type].update_dict(**option_dict)
 
     def set_dict_options(self, options):
-        """for dict-like inputs
+        """for dictionary-like inputs (as object in Javascript)
         options must be in python dictionary format
         """
         if isinstance(options, dict):
@@ -376,7 +375,7 @@ class Highmap(object):
         """
         self.buildcontent()
         self.buildhtmlheader()
-        self.content = self.htmlcontent.decode('utf-8') # need to ensure unicode
+        self.content = self._htmlcontent.decode('utf-8') # need to ensure unicode
         self._htmlcontent = self.template_page_highcharts.render(chart=self).encode('utf-8')
         return self._htmlcontent
 

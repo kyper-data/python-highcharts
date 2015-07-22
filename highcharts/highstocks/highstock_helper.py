@@ -25,6 +25,8 @@ def jsonp_loader(url, prefix_regex = r'^(.*\()', suffix_regex = r'(\);)$', regex
     suffix = re.search(suffix_regex, result).group()
     if result.startswith(prefix) and result.endswith(suffix):
         result = result[len(prefix):-len(suffix)]
+
+    print result
     return json.loads(result)
 
 def js_map_loader(url):
