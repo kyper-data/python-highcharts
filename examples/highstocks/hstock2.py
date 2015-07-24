@@ -17,7 +17,7 @@ from highstock_helper import jsonp_loader
 H = highstocks.Highstock()
 
 data_url = 'http://www.highcharts.com/samples/data/jsonp.php?filename=aapl-ohlcv.json&callback=?'
-data = jsonp_loader(data_url, regex = r'(\/\*.*\*\/)')
+data = jsonp_loader(data_url, re_d = r'(\/\*.*\*\/)')
 
 
 ohlc = []

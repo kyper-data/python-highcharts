@@ -218,7 +218,6 @@ class Highstock(object):
                 data_name = 'json_'+ data_name
             
             self.jsonp_data = data_name
-        
         self.add_data_set(RawJavaScriptText(self.jsonp_data), series_type, name=name, **kwargs)
 
 
@@ -296,7 +295,6 @@ class Highstock(object):
         """build HTML content only, no header or body tags"""
 
         self.buildcontainer()
-
         self.option = json.dumps(self.options, encoding='utf8', cls = HighchartsEncoder)
         self.setoption = json.dumps(self.setOptions, cls = HighchartsEncoder) 
         self.data = json.dumps(self.data_temp, encoding='utf8', cls = HighchartsEncoder)

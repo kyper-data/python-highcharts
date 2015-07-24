@@ -7,27 +7,35 @@ import urllib
 import json, os, sys
 import pandas as pd
 import numpy as np
-import datetime, re, string
+import datetime, re
 from datetime import tzinfo
 
 
-def jsonp_loader(url, prefix_regex = r'^(.*\()', suffix_regex = r'(\);)$', regex = None):
+def jsonp_loader(url, prefix_regex=r'^(.*\()', suffix_regex=r'(\);)$', re_d=None, sub_by=''):
+    """jsonp_loader is to request (JSON) data from a server in a different domain (JSONP) 
+    and covert to python readable data. 
+    
+    "prefix_regex" and "suffix_regex" arguments: regex patterns to  
+    get rid of JSONP specific prefix and suffix, such as callback header: "callback(" and end: ");", 
+    
+    "re_d" and "sub_by" arguments: also regex patterns used to replace any unwanted string by sub_by. 
+    
+    For function coverstion, such as Data.UTC to datetime.datetime, please check JSONPDecoder
+    """
 
     hdr = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/535.7 (KHTML, like Gecko) Chrome/16.0.912.77 Safari/535.7'}
     req = urllib.request.Request(url, headers=hdr)
     page = urlopen(req)
     result = page.read()
-    # replace all the redundant info with none 
-    if regex:
-        result = re.sub(regex, '', result)
+    # replace all the redundant info with sub_by 
+    if re_d:
+        result = re.sub(re_d, sub_by, result)
 
     prefix = re.search(prefix_regex, result).group()
     suffix = re.search(suffix_regex, result).group()
     if result.startswith(prefix) and result.endswith(suffix):
         result = result[len(prefix):-len(suffix)]
-
     return json.loads(result, encoding='utf8', cls=JSONPDecoder)
-
 
 def interpolateRGB(lowRGB, highRGB, fraction):
     color = []
@@ -40,37 +48,74 @@ def interpolateRGB(lowRGB, highRGB, fraction):
 
 
 class JSONPDecoder(json.JSONDecoder):
+    """Customized JSON decoder. It is used to convert everything 
+    that is python non-compatible (usually Javascript functions)
+    to one that can be read by python. It needs to coordinate with 
+    customized JSON encoder in main library, such as highcharts.py, 
+    to convert back to Javascript-compatiable functions.
+    For example: in _iterdecode, it checks if queried JSON has Data.UTC 
+    and (if yes)converts it to datetime.datetime
+    """
 
     def decode(self, json_string):
         """
         json_string is basicly string that you give to json.loads method
         """
-        JS_datetime = r'Date\.UTC\(([0-9]+,[0-9]+,[0-9]+)(,[0-9]+,[0-9]+,[0-9]+)?(,[0-9]+)?\)'
-        re_date = re.compile(JS_datetime, re.M)
-        
-        if self.js_date_utc(json_string):
-            m = self.js_date_utc(json_string)
-            for i in m:
-                json_string = json_string.replace(i.group(0), str(self.json2datetime(i.group(0)).utctimetuple()))
-        
-        print json_string
 
-        default_obj = super(JSONPDecoder,self).decode(json_string)
-        return default_obj
-
-    def js_date_utc(self, json):
+        default_obj = super(JSONPDecoder, self).decode(json_string)
         
-        JS_datetime = r'Date\.UTC\(([0-9]+,[0-9]+,[0-9]+)(,[0-9]+,[0-9]+,[0-9]+)?(,[0-9]+)?\)'
-        re_date = re.compile(JS_datetime, re.M)
+        return list(self._iterdecode(default_obj))[0]
+
+    def _iterdecode_list(self, lst):
+        new_lst = []
+        for item in lst:
+            for chunk in self._iterdecode(item):
+                new_lst.append(chunk)
+        yield new_lst
+
+    def _iterdecode_dict(self, dct):
+        new_dct = {}
+        for key, value in dct.iteritems():
+            for chunk in self._iterdecode(value):
+                new_dct[key] = chunk
+        yield new_dct
+
+    def _iterdecode(self, obj):
+        if isinstance(obj, (list, tuple)):
+            for chunk in self._iterdecode_list(obj):
+                yield chunk
+
+        elif isinstance(obj, dict):
+            for chunk in self._iterdecode_dict(obj): 
+                yield chunk
+
+        elif isinstance(obj, basestring) and JSONPDecoder.is_js_date_utc(obj):
+            m = JSONPDecoder.is_js_date_utc(obj)
+            yield JSONPDecoder.json2datetime(m)
+
+        else:
+            yield obj
+
+    @staticmethod
+    def is_js_date_utc(json):
+        """Check if the string contains Date.UTC function 
+        and return match group(s) if there is
+        """
+        
+        JS_date_utc_pattern = r'Date\.UTC\(([0-9]+,[0-9]+,[0-9]+)(,[0-9]+,[0-9]+,[0-9]+)?(,[0-9]+)?\)'
+        re_date = re.compile(JS_date_utc_pattern, re.M)
+
         if re_date.search(json):
-            return re_date.finditer(json)
+            return re_date.search(json).group(0)
         else:
             return False
 
-    def json2datetime(self, json):
+    @staticmethod
+    def json2datetime(json):
         """Convert JSON representation to date or datetime object depending on
         the argument count. Requires UTC datetime representation.
-        Raises ValueError if the string cannot be parsed."""
+        Raises ValueError if the string cannot be parsed.
+        """
         
         json_m = re.search(r'([0-9]+,[0-9]+,[0-9]+)(,[0-9]+,[0-9]+,[0-9]+)?(,[0-9]+)?', json)
         args=json_m.group(0).split(',')
@@ -81,7 +126,7 @@ class JSONPDecoder(json.JSONDecoder):
             raise ValueError('Invalid arguments: %s'%json)
 
         if len(args)==3: 
-            return datetime.date(args[0], args[1]+1, args[2])
+            return datetime.datetime(args[0], args[1]+1, args[2])
         elif len(args)==6: 
             return datetime.datetime(args[0], args[1]+1, args[2], 
                                     args[3], args[4], args[5], tzinfo=UTC())

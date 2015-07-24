@@ -17,7 +17,7 @@ from highstock_helper import jsonp_loader
 H = highstocks.Highstock()
 
 data_url = 'http://www.highcharts.com/samples/data/jsonp.php?filename=large-dataset.json&callback=?'
-data = jsonp_loader(data_url, regex = r'(\/\*.*\*\/)')
+data = jsonp_loader(data_url, re_d = r'(\/\*.*\*\/)')
 
 H.add_data_set(data['data'], 'line', 'Temperature', pointStart = data['pointStart'],
                 pointInterval = data['pointInterval'],

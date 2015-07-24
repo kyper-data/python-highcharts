@@ -19,7 +19,7 @@ H = highstocks.Highstock()
 
 
 data_url = 'http://www.highcharts.com/samples/data/jsonp.php?filename=new-intraday.json&callback=?'
-data = jsonp_loader(data_url, regex = r'(\/\*.*\*\/)')
+data = jsonp_loader(data_url, re_d = r'(\/\*.*\*\/)')
 
 H.add_data_set(data, 'area', 'AAPL', gapSize = 5,
                 tooltip = {

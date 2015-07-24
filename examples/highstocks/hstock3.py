@@ -21,7 +21,7 @@ names = ['MSFT', 'AAPL', 'GOOG']
 
 for name in names:
     data_url = 'http://www.highcharts.com/samples/data/jsonp.php?filename=' + name.lower() + '-c.json&callback=?'
-    data = jsonp_loader(data_url, regex = r'(\/\*.*\*\/)')
+    data = jsonp_loader(data_url, re_d = r'(\/\*.*\*\/)')
 
     H.add_data_set(data, 'line', name)
 
