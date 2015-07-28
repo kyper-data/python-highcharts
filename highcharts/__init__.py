@@ -6,6 +6,9 @@ Python-highcharts is a Python wrapper for highcarts graph library.
 Project location : xxxxxx
 """
 
-__version__ = '0.0.1'
+from .version import version_info, __version__
 
-from . import ipynb
+#from . import ipynb
+
+from .highcharts.highcharts import Highchart
+from .highmaps.highmaps import Highmap
