@@ -23,20 +23,21 @@ if _ip and _ip.__module__.startswith('IPython'):
 
         import html
         htmlsrcdoc = html.escape(chart.htmlcontent)
-        width = int(chart['options']['chart']['width']) if chart['options']['chart'].get('width') else 820
-        height = int(chart['options']['chart']['height']) if chart['options']['chart'].get('height') else 520
+        width = int(chart.options['chart'].__dict__['width']) if chart.options['chart'].__dict__.get('width') else 820
+        height = int(chart.options['chart'].__dict__['height']) if chart.options['chart'].__dict__.get('height') else 520
 
         return '<iframe style="border:0;outline:none;overflow:hidden" srcdoc="'+ htmlsrcdoc + '" height='+ str(height) + ' width=' + str(width) + '></iframe>'
 
     def _setup_ipython_formatter(ip):
         ''' Set up the ipython formatter to display HTML formatted output inline'''
         from IPython import __version__ as IPython_version
-        from highcharts import Highchart, Highmap#, Highstock
+        from .highcharts.highcharts import Highchart 
+        from .highmaps.highmaps import Highmap
 
         if IPython_version >= '0.11':
             html_formatter = ip.display_formatter.formatters['text/html']
             
             for chart_type in [Highchart, Highmap]:
-                html_formatter.for_type_by_name('highcharts', chart_type, _print_html)
+                html_formatter.for_type(chart_type, _print_html)
 
     _setup_ipython_formatter(_ip)

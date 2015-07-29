@@ -11,7 +11,6 @@ from __future__ import unicode_literals
 from future.standard_library import install_aliases
 install_aliases()
 
-from optparse import OptionParser
 from jinja2 import Environment, PackageLoader
 # import sys
 # reload(sys)
@@ -31,10 +30,10 @@ from highchart_types import Series, SeriesOptions
 from common import Levels, Formatter, CSSObject, SVGObject, JSfunction, RawJavaScriptText, \
     CommonObject, ArrayObject, ColorObject
 
-CONTENT_FILENAME = "./content.html"
-PAGE_FILENAME = "./page.html"
+CONTENT_FILENAME = "content.html"
+PAGE_FILENAME = "page.html"
 
-pl = PackageLoader('highcharts', 'templates')
+pl = PackageLoader('highcharts.highcharts', 'templates')
 jinja2_env = Environment(lstrip_blocks=True, trim_blocks=True, loader=pl)
 
 template_content = jinja2_env.get_template(CONTENT_FILENAME)
