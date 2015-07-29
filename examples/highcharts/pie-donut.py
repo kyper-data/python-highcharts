@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
-import json, os, sys
-import pandas as pd
-import numpy as np
-import datetime
+"""
+Highcharts Demos
+Donut chart: http://www.highcharts.com/demo/pie-donut
+"""
 
 import highcharts
-
 H = highcharts.Highchart(width = 850, height = 400)
 
 data = [{
@@ -122,5 +121,5 @@ H.add_data_set(versionsData, 'pie', 'Versions', size='80%',
                                 }"
             })
 
-
-H.save_file()
+H
+H.save_file("highcharts")

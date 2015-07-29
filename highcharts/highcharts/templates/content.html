@@ -39,6 +39,36 @@
             {{chart.jscript_end}}
         {% endif %}
 
+        {% if chart.options3d_rotation_flag %}
+            $(chart.container).bind('mousedown.hc touchstart.hc', function (e) {
+                e = chart.pointer.normalize(e);
+
+                var posX = e.pageX,
+                    posY = e.pageY,
+                    alpha = chart.options.chart.options3d.alpha,
+                    beta = chart.options.chart.options3d.beta,
+                    newAlpha,
+                    newBeta,
+                    sensitivity = 5;
+
+                $(document).bind({
+                    'mousemove.hc touchdrag.hc': function (e) {
+                        
+                        newBeta = beta + (posX - e.pageX) / sensitivity;
+                        chart.options.chart.options3d.beta = newBeta;
+
+                        newAlpha = alpha + (e.pageY - posY) / sensitivity;
+                        chart.options.chart.options3d.alpha = newAlpha;
+
+                        chart.redraw(false);
+                    },
+                    'mouseup touchend': function () {
+                        $(document).unbind('.hc');
+                    }
+                });
+            });
+        {% endif %}
+
 {% endblock body_content %}
 
 {% block body_end %}

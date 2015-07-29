@@ -1,11 +1,9 @@
 # -*- coding: utf-8 -*-
-import json, os, sys
-import pandas as pd
-import numpy as np
-import datetime
-
+"""
+Highcharts Demos
+Bubble chart: http://www.highcharts.com/demo/bubble
+"""
 import highcharts
-
 H = highcharts.Highchart(width=850, height=400)
 
 options = {
@@ -28,4 +26,5 @@ H.add_data_set(data1, 'bubble')
 H.add_data_set(data2, 'bubble')
 H.add_data_set(data3, 'bubble')
 
-H.save_file()
+H
+H.save_file("highcharts")

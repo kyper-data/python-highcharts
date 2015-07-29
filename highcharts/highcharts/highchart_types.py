@@ -389,6 +389,7 @@ PLOT_OPTION_ALLOWED_ARGS = {
   },
     "scatter": {
     "allowPointSelect": bool,
+    "colorByPoint": bool,
     "cropThreshold": int,
     "dashStyle": basestring,
     "keys": list,

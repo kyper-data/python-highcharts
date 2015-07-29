@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
-import json, os, sys
-import pandas as pd
-import numpy as np
-import datetime
-
+"""
+Highcharts Demos
+Area range and line: http://www.highcharts.com/demo/arearange-line
+"""
 import highcharts
 
 H = highcharts.Highchart(width=750, height=600)
@@ -111,5 +110,5 @@ H.add_data_set(ranges, 'arearange', 'Range', lineWidth=0,
             fillOpacity=0.3,
             zIndex=0 )
 
-
-H.save_file()
+H
+H.save_file("highcharts")

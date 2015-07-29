@@ -1,12 +1,19 @@
 # -*- coding: utf-8 -*-
-import json, os, sys
-import pandas as pd
-import numpy as np
-import datetime
+"""
+Highcharts Demos
+Column with drilldown: http://www.highcharts.com/demo/column-drilldown
+"""
 
 import highcharts
-
 H = highcharts.Highchart(width=850, height=400)
+
+"""
+Drilldown chart can be created using add_drilldown_data_set method: 
+
+add_drilldown_data_set(data, series_type, id, **kwargs):
+id is the drilldown parameter in upperlevel dataset (Ex. drilldown parameters in data)
+drilldown dataset is constructed similar to dataset for other chart
+"""
 
 data = [{
             'name': "Microsoft Internet Explorer",
@@ -89,7 +96,7 @@ data_5 = [
 ]
 
 options = {
-	'chart': {
+    'chart': {
         'type': 'column'
     },
     'title': {
@@ -126,11 +133,8 @@ options = {
     }, 
     
 }
-
-        
+   
 H.set_dict_options(options)
-
-H.add_data_set(data, 'column', 'Brands', colorByPoint=True)
 
 H.add_drilldown_data_set(data_1, 'column', 'Microsoft Internet Explorer', name='Microsoft Internet Explorer' )
 H.add_drilldown_data_set(data_2, 'column', 'Chrome', name='Chrome')
@@ -138,4 +142,5 @@ H.add_drilldown_data_set(data_3, 'column', 'Firefox', name='Firefox')
 H.add_drilldown_data_set(data_4, 'column', 'Safari', name='Safari')
 H.add_drilldown_data_set(data_5, 'column', 'Opera', name='Opera')
 
-H.save_file()
+H
+H.save_file("highcharts")

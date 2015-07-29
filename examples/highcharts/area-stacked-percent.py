@@ -1,18 +1,17 @@
 # -*- coding: utf-8 -*-
-import json, os, sys
-import pandas as pd
-import numpy as np
-import datetime
-
+"""
+Highcharts Demos
+Percentage area: http://www.highcharts.com/demo/area-stacked-percent
+"""
 import highcharts
 
 H = highcharts.Highchart(width=750, height=600)
 
-data1 = [502, 635, 809, 947, 1402, 3634, 5268]
-data2 = [106, 107, 111, 133, 221, 767, 1766]
-data3 = [163, 203, 276, 408, 547, 729, 628]
-data4 = [18, 31, 54, 156, 339, 818, 1201]
-data5 = [2, 2, 2, 6, 13, 30, 46]
+data1 = [502, 635, 809, 947, 1402, 3634, 5268] # data for Asia
+data2 = [106, 107, 111, 133, 221, 767, 1766] # data for Africa
+data3 = [163, 203, 276, 408, 547, 729, 628] # data for Europe
+data4 = [18, 31, 54, 156, 339, 818, 1201] # data for America
+data5 = [2, 2, 2, 6, 13, 30, 46] # data for Oceania
 
 
 options = {
@@ -64,5 +63,5 @@ H.add_data_set(data3, 'area', 'Europe')
 H.add_data_set(data4, 'area', 'America')
 H.add_data_set(data5, 'area', 'Oceania')
 
-
-H.save_file()
+H
+H.save_file("highcharts")

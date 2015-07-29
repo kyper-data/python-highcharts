@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
-import json, os, sys
-import pandas as pd
-import numpy as np
-import datetime
-
+"""
+Highcharts Demos
+Basic area: http://www.highcharts.com/demo/area-basic
+"""
 import highcharts
 
-H = highcharts.Highchart(width=750, height=600)
+H = highcharts.Highchart(width=750, height=600) # the size of chart can be set here
 
 options = {
     'title': {
@@ -39,7 +38,7 @@ options = {
     },
     'plotOptions': {
         'area': {
-            #'pointStart': 1940,
+            'pointStart': 1940,
             'marker': {
                 'enabled': False,
                 'symbol': 'circle',
@@ -73,10 +72,9 @@ data2 = [None, None, None, None, None, None, None, None, None, None,
                 35000, 33000, 31000, 29000, 27000, 25000, 24000, 23000, 22000,
                 21000, 20000, 19000, 18000, 18000, 17000, 16000]
 
-H.set_start(1940)
 
 H.add_data_set(data1, 'area', 'USA', )
 H.add_data_set(data2, 'area', 'USSR/Russia')
-
-H.save_file()
+H
+H.save_file("highcharts")
 

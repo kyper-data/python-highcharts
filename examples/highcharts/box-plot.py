@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
-import json, os, sys
-import pandas as pd
-import numpy as np
-import datetime
+"""
+Highcharts Demos
+Box plot: http://www.highcharts.com/demo/box-plot
+"""
 
 import highcharts
-
 H = highcharts.Highchart(width=550, height=400)
 
 options = {
@@ -68,4 +67,5 @@ H.add_data_set(data_outline, 'scatter', 'Outlier', marker = {
                 'pointFormat': 'Observation: {point.y}'
             })
 
-H.save_file()
+H
+H.save_file("highcharts")

@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
-import json, os, sys
-import pandas as pd
-import numpy as np
+"""
+Highcharts Demos
+Multiple axes: http://www.highcharts.com/demo/combo-multi-axes
+"""
 import datetime
 
 import highcharts
@@ -101,4 +102,6 @@ H.add_data_set(data2, 'spline', 'Sea-Level Pressure', yAxis=2 ,marker={
 H.add_data_set(data3, 'spline', 'Temperature', tooltip={
                 'valueSuffix': ' °C'
             })
-H.save_file()
+
+H
+H.save_file("highcharts")

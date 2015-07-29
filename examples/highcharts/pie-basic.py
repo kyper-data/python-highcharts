@@ -1,27 +1,35 @@
 # -*- coding: utf-8 -*-
-import json, os, sys
-import pandas as pd
-import numpy as np
+"""
+Highcharts Demos
+Pie chart, line and column: http://www.highcharts.com/demo/pie-basic
+"""
 import datetime
-
 import highcharts
 
 H = highcharts.Highchart(width=850, height=400)
 
-data = [
-                ['Firefox',   45.0],
-                ['IE',       26.8],
-                {
-                    'name': 'Chrome',
-                    'y': 12.8,
-                    'sliced': True,
-                    'selected': True
-                },
-                ['Safari',    8.5],
-                ['Opera',     6.2],
-                ['Others',   0.7]
-            ]
-
+data = [{
+        'name': "Microsoft Internet Explorer",
+        'y': 56.33
+    }, {
+        'name': "Chrome",
+        'y': 24.03,
+        'sliced': True,
+        'selected': True
+    }, {
+        'name': "Firefox",
+        'y': 10.38
+    }, {
+        'name': "Safari",
+        'y': 4.77
+    }, {
+        'name': "Opera",
+        'y': 0.91
+    }, {
+        'name': "Proprietary or Undetectable",
+        'y': 0.2
+    }]
+    
 options = {
 		'chart': {
             'plotBackgroundColor': None,
@@ -50,4 +58,5 @@ H.add_data_set(data, 'pie', 'Browser share', allowPointSelect=True,
                 }
             )
 
-H.save_file()
+H
+H.save_file("highcharts")

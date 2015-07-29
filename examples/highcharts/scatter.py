@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
-import json, os, sys
-import pandas as pd
-import numpy as np
-import datetime
+"""
+Highcharts Demos
+Scatter plot: http://www.highcharts.com/demo/scatter
+"""
 
 import highcharts
-
 H = highcharts.Highchart(width=850, height=400)
 
 options = {
@@ -178,4 +177,5 @@ H.set_dict_optoins(options)
 H.add_data_set(data1, 'scatter', 'Female', color='rgba(223, 83, 83, .5)')
 H.add_data_set(data2, 'scatter', 'Male', color='rgba(119, 152, 191, .5)')
 
-H.save_file()
+H
+H.save_file("highcharts")

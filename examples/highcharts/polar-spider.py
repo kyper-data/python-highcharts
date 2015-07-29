@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
-import json, os, sys
-import pandas as pd
-import numpy as np
-import datetime
+"""
+Highcharts Demos
+Spiderweb: http://www.highcharts.com/demo/polar-spider
+"""
 
 import highcharts
-
 H = highcharts.Highchart(width=550, height=400)
 
 options = {
@@ -57,4 +56,5 @@ H.set_dict_options(options)
 H.add_data_set(data1, name='Allocated Budget', pointPlacement='on')
 H.add_data_set(data2, name='Actual Spending',  pointPlacement='on')
 
-H.save_file()
+H
+H.save_file("highcharts")

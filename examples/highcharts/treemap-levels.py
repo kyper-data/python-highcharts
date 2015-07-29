@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
-import json, os, sys
-import pandas as pd
-import numpy as np
-import datetime
+"""
+Highcharts Demos
+Treemap leves: http://jsfiddle.net/gh/get/jquery/1.7.2/highslide-software/highcharts.com/tree/master/samples/highcharts/plotoptions/treemap-levels/
+"""
 
 import highcharts
-
 H = highcharts.Highchart(width=550, height=400)
 
 options = {
@@ -71,4 +70,5 @@ H.add_data_set(data, 'treemap', layoutAlgorithm='squarified',
                 'layoutAlgorithm': 'stripes'
             }])
 
-H.save_file()
+H
+H.save_file("highcharts")

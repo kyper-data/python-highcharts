@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-import json, os, sys
-import pandas as pd
-import numpy as np
-import datetime
+"""
+Highcharts Demos
+Basic bar: http://www.highcharts.com/demo/bar-basic
+"""
 
 import highcharts
 
@@ -54,10 +54,11 @@ options = {
         'enabled': False
     },
     'plotOptions': {
-        'series': {
-            'stacking': 'normal'
+        'bar': {
+            'dataLabels': {
+                'enabled': True
+            }
         }
-    }
 }
 H.set_dict_options(options)
 

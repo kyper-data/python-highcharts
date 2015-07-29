@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
-import json, os, sys
-import pandas as pd
-import numpy as np
-import datetime
-
+"""
+Highcharts Demos
+Stacked and grouped column: http://www.highcharts.com/demo/column-stacked-and-grouped
+"""
 import highcharts
 
 H = highcharts.Highchart(width=750, height=600)
@@ -50,4 +49,5 @@ H.add_data_set(data2, 'column', 'Joe', stack='male')
 H.add_data_set(data3, 'column', 'Jane', stack='female')
 H.add_data_set(data4, 'column', 'Janet', stack='female')
 
-H.save_file()
+H
+H.save_file("highcharts")

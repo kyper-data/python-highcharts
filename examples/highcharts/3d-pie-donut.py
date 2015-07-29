@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
-import json, os, sys
-import pandas as pd
-import numpy as np
-import datetime
+"""
+Highcharts Demos
+3D donut: http://www.highcharts.com/demo/3d-pie-donut
+"""
 
 import highcharts
-
 H = highcharts.Highchart(width=550, height=400)
 
 options = {
@@ -44,4 +43,6 @@ data = [
 
 H.set_dict_options(options)
 H.add_data_set(data, 'pie', 'Delivered amount')
-H.save_file()
+
+H
+H.save_file("highcharts")

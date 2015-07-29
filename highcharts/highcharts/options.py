@@ -160,16 +160,10 @@ class ColorsOptions(BaseOptions):
         self.colors = {}
 
     def set_colors(self, colors):
-        if isinstance(colors, basestring) or isinstance(colors, list):
-            if not self.colors:
-                self.colors = []
-                if isinstance(colors, list):
-                    for color in colors:
-                        self.colors.append(colors)
-                else:
-                    self.colors.append(colors)
-            else:
-                self.colors.append(colors)
+        if isinstance(colors, basestring):
+            self.colors = ColorObject(colors)
+        elif isinstance(colors, list) or isinstance(colors, dict):
+            self.colors  = colors
         else:
             OptionTypeError("Not An Accepted Input Type: %s" % type(colors))
 
@@ -531,7 +525,73 @@ class yAxisOptions(BaseOptions):
         "type": basestring,
         "units": list    
     }
-    
+
+class zAxisOptions(BaseOptions): #only for 3D plots
+    ALLOWED_OPTIONS = {
+        "allowDecimals": bool,
+        "alternateGridColor": (ColorObject, basestring, dict),
+        "breaks": (Breaks, dict),
+        "categories": list,
+        "ceiling": (int, float),
+        "dateTimeLabelFormats": (DateTimeLabelFormats, dict),
+        "endOnTick": bool,
+        "events": (Events, dict),
+        "floor": (int, float),
+        "gridLineColor": (ColorObject, basestring, dict),
+        "gridLineDashStyle": basestring,
+        "gridLineInterpolation": basestring,
+        "gridLineWidth": int,
+        "gridZIndex": int,
+        "id": basestring,
+        "labels": (Labels, dict),
+        "lineColor": (ColorObject, basestring, dict),
+        "lineWidth": int,
+        "linkedTo": int,
+        "max": [float, int],
+        "maxColor": (ColorObject, basestring, dict),
+        "maxPadding": [float, int],
+        "maxZoom": NotImplemented,
+        "min": [float, int],
+        "minColor": (ColorObject, basestring, dict),
+        "minPadding": [float, int],
+        "minRange": int,
+        "minTickInterval": int,
+        "minorGridLineColor": (ColorObject, basestring, dict),
+        "minorGridLineDashStyle": basestring,
+        "minorGridLineWidth": int,
+        "minorTickColor": (ColorObject, basestring, dict),
+        "minorTickInterval": int,
+        "minorTickLength": int,
+        "minorTickPosition": basestring,
+        "minorTickWidth": int,
+        "offset": bool,
+        "opposite": bool,
+        "plotBands": (PlotBands, list),
+        "plotLines": (PlotLines, list),
+        "reversed": bool,
+        "reversedStacks": bool,
+        "showEmpty": bool,
+        "showFirstLabel": bool,
+        "showLastLabel": bool,
+        "stackLabels": (Labels, dict),
+        "startOfWeek": int,
+        "startOnTick": bool,
+        "stops": list,
+        "tickAmount": int,
+        "tickColor": (ColorObject, basestring, dict),
+        "tickInterval": int,
+        "tickLength": int,
+        "tickPixelInterval": int,
+        "tickPosition": basestring,
+        "tickPositioner": (JSfunction, basestring),
+        "tickPositions": list,
+        "tickWidth": int,
+        "tickmarkPlacement": basestring,
+        "title": (Title, dict),
+        "type": basestring,
+        "units": list    
+    }
+
 
 class MultiAxis(object):
 

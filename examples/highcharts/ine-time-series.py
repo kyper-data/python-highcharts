@@ -1,8 +1,10 @@
-import json, os, sys
-import pandas as pd
-import numpy as np
-import datetime
+# -*- coding: utf-8 -*-
+"""
+Highcharts Demos
+Time series, zoomable: http://www.highcharts.com/demo/line-time-series
+"""
 
+import datetime
 import highcharts
 
 H = highcharts.Highchart()
@@ -14,9 +16,10 @@ H.set_options('xAxis', {'type': 'datetime',
 H.set_options('yAxis',{ 'title': { 'text': 'Exchange rate'}})
 H.set_options('title', {'text': 'USD to EUR exchange rate from 2006 through 2008'})
 H.set_options('legend', {'enabled': False})
-H.set_options('colors', {})
 
-data =  [
+
+
+data =  [ # copy dataset from http://www.highcharts.com/samples/data/jsonp.php?filename=usdeur.json&callback=?
     0.8446, 0.8445, 0.8444, 0.8451,    0.8418, 0.8264,    0.8258, 0.8232,    0.8233, 0.8258,
     0.8283, 0.8278, 0.8256, 0.8292,    0.8239, 0.8239,    0.8245, 0.8265,    0.8261, 0.8269,
     0.8273, 0.8244, 0.8244, 0.8172,    0.8139, 0.8146,    0.8164, 0.82,    0.8269, 0.8269,
@@ -151,4 +154,6 @@ H.set_options('plotOptions', {
                 'threshold': None
             }
         })
-H.save_file()
+
+H
+H.save_file("highcharts")

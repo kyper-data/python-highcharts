@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
-import json, os, sys
-import pandas as pd
-import numpy as np
-import datetime
+"""
+Highcharts Demos
+Spline with symbols: http://www.highcharts.com/demo/spline-symbols
+"""
 
 import highcharts
 
 H = highcharts.Highchart()
+
 
 options = {
 	'title': {
@@ -36,7 +37,8 @@ options = {
     }
 }
 
-H.set_dict_options(options)
+
+H.set_dict_options(options) 
 
 data1 =  [7.0, 6.9, 9.5, 14.5, 18.2, 21.5, 25.2, {
                 'y': 26.5,
@@ -57,5 +59,5 @@ H.add_data_set(data2, 'spline', 'London', marker={
                 'symbol': 'diamond'
             }) 
 
-
-H.save_file()
+H
+H.save_file("highcharts")

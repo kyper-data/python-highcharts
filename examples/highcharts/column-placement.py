@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
-import json, os, sys
-import pandas as pd
-import numpy as np
+"""
+Highcharts Demos
+Fixed placement columns: http://www.highcharts.com/demo/column-placement
+"""
 import datetime
 
 import highcharts
@@ -75,5 +76,5 @@ H.add_data_set(data4, 'column', 'Profit Optimized', color='rgba(186,60,61,.9)',
             pointPlacement=0.2,
             yAxis=1)
 
-
-H.save_file()
+H
+H.save_file("highcharts")

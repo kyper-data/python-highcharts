@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
-import json, os, sys
-import pandas as pd
-import numpy as np
-import datetime
+"""
+Highcharts Demos
+Error bar: http://www.highcharts.com/demo/error-bar
+"""
 
 import highcharts
-
 H = highcharts.Highchart(width=550, height=400)
 
 options = {
@@ -72,5 +71,6 @@ H.add_data_set(data4, 'errorbar', 'Temperature error', tooltip = {
                 'pointFormat': '(error range: {point.low}-{point.high}°C)<br/>'
             })
 
-H.save_file()
+H
+H.save_file("highcharts")
 

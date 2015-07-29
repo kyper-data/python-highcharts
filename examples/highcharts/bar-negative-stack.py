@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
-import json, os, sys
-import pandas as pd
-import numpy as np
-import datetime
+"""
+Highcharts Demos
+Bar with negative stack: http://www.highcharts.com/demo/bar-negative-stack
+"""
 
 import highcharts
-
 H = highcharts.Highchart(width=550, height=400)
 
 categories = ['0-4', '5-9', '10-14', '15-19',
@@ -77,4 +76,6 @@ data_female = [1656154, 1787564, 1981671, 2108575, 2403438, 2366003, 2301402, 25
 H.set_dict_options(options)
 H.add_data_set(data_male, 'bar', 'Male')
 H.add_data_set(data_female, 'bar', 'Female')
-H.save_file()
+
+H
+H.save_file("highcharts")

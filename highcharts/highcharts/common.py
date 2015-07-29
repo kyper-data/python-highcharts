@@ -408,6 +408,30 @@ class ContextButton(CommonObject):
     "y": int, 
     }
 
+class Back(CommonObject):
+    ALLOWED_OPTIONS = {
+    "color": (ColorObject, basestring, dict),
+    "size": [int, float]
+    }
+
+class Bottom(CommonObject):
+    ALLOWED_OPTIONS = {
+    "color": (ColorObject, basestring, dict),
+    "size": [int, float]
+    }
+
+class Side(CommonObject):
+    ALLOWED_OPTIONS = {
+    "color": (ColorObject, basestring, dict),
+    "size": [int, float]
+    }
+
+class Frame(CommonObject):
+    ALLOWED_OPTIONS = {
+    "back": (Back, dict),
+    "bottom": (Bottom, dict),
+    "side": (Side, dict),
+    }
 
 class Options3d(CommonObject): 
     ALLOWED_OPTIONS = {
@@ -415,10 +439,9 @@ class Options3d(CommonObject):
     "beta": [float, int],
     "depth": int,
     "enabled": bool,
-    "frame": NotImplemented, # FrameObject
+    "frame": (Frame, dict), 
     "viewDistance": int
     }
-
 
 class ResetZoomButton(CommonObject): 
     ALLOWED_OPTIONS = {

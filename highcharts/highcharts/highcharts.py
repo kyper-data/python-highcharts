@@ -25,7 +25,7 @@ from options import BaseOptions, ChartOptions, \
     GlobalOptions, LabelsOptions, LangOptions, \
     LegendOptions, LoadingOptions, NavigationOptions, PaneOptions, \
     PlotOptions, SeriesData, SubtitleOptions, TitleOptions, \
-    TooltipOptions, xAxisOptions, yAxisOptions, MultiAxis
+    TooltipOptions, xAxisOptions, yAxisOptions, zAxisOptions, MultiAxis
 
 from highchart_types import Series, SeriesOptions
 from common import Levels, Formatter, CSSObject, SVGObject, JSfunction, RawJavaScriptText, \
@@ -133,7 +133,7 @@ class Highchart(object):
             "title": TitleOptions(),
             "tooltip": TooltipOptions(),
             "xAxis": xAxisOptions(),
-            "yAxis": yAxisOptions(),
+            "yAxis": yAxisOptions(),   
         }
 
         self.setOptions = {
@@ -192,6 +192,8 @@ class Highchart(object):
             raise OptionTypeError("Option: %s Not Allowed For Series Type: %s" % type(new_src))
 
 
+    def add_3dRoatation(self):
+        self.options3d_rotation_flag = True
 
     def add_data_set(self, data, series_type="line", name=None, **kwargs):
         """set data for series option in highcharts"""
@@ -269,6 +271,10 @@ class Highchart(object):
                 self.options[option_type].update(**each_dict)
         elif option_type == 'colors':
             self.options["colors"].set_colors(option_dict) # option_dict should be a list
+        
+        elif option_type == 'zAxis':
+            self.options.update({'zAxis': zAxisOptions()})
+            self.options[option_type].update_dict(**option_dict)
         else:
             self.options[option_type].update_dict(**option_dict)
 
