@@ -10,15 +10,14 @@ import numpy as np
 import datetime, re
 from datetime import tzinfo
 
-def jsonp_loader(url, prefix_regex=r'^(.*\()', suffix_regex=r'(\);)$', re_d=None, sub_by=''):
-    """jsonp_loader is to request (JSON) data from a server in a different domain (JSONP) 
+def jsonp_loader(url, prefix_regex=r'^(.*\()', suffix_regex=r'(\);)$', sub_d=None, sub_by=''):
+    """Request (JSON) data from a server in a different domain (JSONP) 
     and covert to python readable data. 
-    
-    "prefix_regex" and "suffix_regex" arguments: regex patterns to  
-    get rid of JSONP specific prefix and suffix, such as callback header: "callback(" and end: ");", 
-    
-    "re_d" and "sub_by" arguments: also regex patterns used to replace any unwanted string by sub_by. 
-    
+    1. url is the url (https) where data is located
+    2. "prefix_regex" and "suffix_regex" are regex patterns used to 
+        remove JSONP specific prefix and suffix, such as callback header: "callback(" and end: ");", 
+    3. "sub_d" is regex patterns for any unwanted string in loaded json data (will be replaced by sub_by). 
+    4. "sub_by" is the string to replace any unwanted string defined by sub_d
     For function coverstion, such as Data.UTC to datetime.datetime, please check JSONPDecoder
     """
 
@@ -27,8 +26,8 @@ def jsonp_loader(url, prefix_regex=r'^(.*\()', suffix_regex=r'(\);)$', re_d=None
     page = urlopen(req)
     result = page.read()
     # replace all the redundant info with sub_by 
-    if re_d:
-        result = re.sub(re_d, sub_by, result)
+    if sub_d:
+        result = re.sub(sub_d, sub_by, result)
 
     prefix = re.search(prefix_regex, result).group()
     suffix = re.search(suffix_regex, result).group()
@@ -37,6 +36,9 @@ def jsonp_loader(url, prefix_regex=r'^(.*\()', suffix_regex=r'(\);)$', re_d=None
     return json.loads(result, encoding='utf8', cls=JSONPDecoder)
 
 def js_map_loader(url):
+    """Load map data from a .js source. It is designed for using highcharts' map collection:
+    https://code.highcharts.com/mapdata/. Map data from other sources are not guaranteed
+    """
 
     hdr = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/535.7 (KHTML, like Gecko) Chrome/16.0.912.77 Safari/535.7'}
     req = urllib.request.Request(url, headers=hdr)
@@ -47,10 +49,16 @@ def js_map_loader(url):
     return json.loads(result)
 
 def geojson_handler(geojson, hType='map'):
-    """Restructure a GeoJSON object in preparation to be added directly by the add_map or add_data_set functions. 
-    The GeoJSON will be broken down to fit a specific Highcharts type, either map, mapline or mappoint. 
-    Meta data in GeoJSON's properties object will be copied directly over to object['properties']."""
-    
+    """Restructure a GeoJSON object in preparation to be added directly by add_map_data or add_data_set methods. 
+    The geojson will be broken down to fit a specific Highcharts (highmaps) type, either map, mapline or mappoint. 
+    Meta data in GeoJSON's properties object will be copied directly over to object['properties']
+    1. geojson is the map data (GeoJSON) to be converted
+    2. hType is the type of highmap types. "map" will return GeoJSON polygons and multipolygons. 
+        "mapline" will return GeoJSON linestrings and multilinestrings. 
+        "mappoint" will return GeoJSON points and multipoints.
+        default: "map"
+    """
+
     hType_dict = {
     'map': ['polygon', 'multipolygon'],
     'mapline': ['linestring', 'multilinestring'],

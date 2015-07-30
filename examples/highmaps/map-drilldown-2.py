@@ -1,21 +1,30 @@
 # -*- coding: utf-8 -*-
-from future.standard_library import install_aliases
-install_aliases()
-from urllib.request import urlopen
-import urllib
+"""
+Highmaps Demos
+Drilldown: http://www.highcharts.com/maps/demo/map-drilldown
+"""
 
-import json, os, sys
-import pandas as pd
-import numpy as np
-import datetime
-import re
-
-sys.path.append('/Users/hankchu/Documents/python-highcharts/highcharts/highmaps')
 import highmaps
 from highmap_helper import jsonp_loader, js_map_loader, geojson_handler
-
 H = highmaps.Highmap()
 H.add_CSSsource('http://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css')
+
+"""
+This example is to show how to generate drilldown map with both state and county level data in the US 
+without using the JS functions as shown in Highmaps Demos
+
+The drilldown data can be added using add_drilldown_data_set method:
+add_drilldown_data_set(data, series_type, id, **kwargs)
+1. data is the dataset for drilldown level
+2. series_type is the type of plot presented at the drilldown level
+3. id is the identifier used for the drilldown parent point to identify its series. 
+    This needs to be consistent with the drilldown property in dataset of parent level 
+4. kwargs are for parameters in series or plotOptions 
+    (for detail please ref to highcharts API: http://api.highcharts.com/highcharts#)
+
+However, the tradeoff is that user needs to query and handle the whole dataset in python environment
+and put the whole dataset into the .html file, which could make final file very big.
+"""
 
 map_url = 'http://code.highcharts.com/mapdata/countries/us/us-all.js'
 geojson = js_map_loader(map_url)
@@ -27,7 +36,7 @@ for i, item in enumerate(data):
 
 options = {
     'chart' : {
-        'events': {
+        'events': { # Here event option is only used to change the tittle when different level data is shown
             'drilldown': "function(e){\
                             this.setTitle({ text: e.point.name }, null)\
                                     }",
@@ -41,7 +50,7 @@ options = {
         'text' : 'USA'
     },
 
-    'legend': {} if H.options['chart'].__dict__.get('width', None) < 400 else {
+    'legend': {} if H.options['chart'].__dict__.get('width', None) < 400 else { 
         'layout': 'vertical',
         'align': 'right',
         'verticalAlign': 'middle'
@@ -92,7 +101,7 @@ H.add_data_set(data,'map','USA',dataLabels = {
             }) 
 H.set_dict_options(options)
 
-for item in data:
+for item in data: # add drilldown dataset
     mapkey = item['drilldown']
     url = 'http://code.highcharts.com/mapdata/countries/us/' + mapkey + '-all.js'
     sub_geojson = js_map_loader(url)
@@ -107,4 +116,5 @@ for item in data:
                 }
             )
 
+H
 H.save_file('highmaps')

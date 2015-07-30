@@ -33,7 +33,7 @@ from common import Levels, Formatter, CSSObject, SVGObject, JSfunction, RawJavaS
 CONTENT_FILENAME = "content.html"
 PAGE_FILENAME = "page.html"
 
-pl = PackageLoader('highcharts.highcharts', 'templates')
+pl = PackageLoader('highcharts', 'templates')
 jinja2_env = Environment(lstrip_blocks=True, trim_blocks=True, loader=pl)
 
 template_content = jinja2_env.get_template(CONTENT_FILENAME)
@@ -225,7 +225,7 @@ class Highchart(object):
         self.drilldown_data_temp.append(series_data)
 
 
-    def add_data_from_jsonp(self, data_src, data_name='json_data', series_type="map", name=None, **kwargs):
+    def add_data_from_jsonp(self, data_src, data_name='json_data', series_type="line", name=None, **kwargs):
         """set map data directly from a https source
         the data_src is the https link for data
         and it must be in jsonp format

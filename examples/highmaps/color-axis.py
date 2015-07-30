@@ -1,14 +1,11 @@
 # -*- coding: utf-8 -*-
-import json, os, sys
-import pandas as pd
-import numpy as np
-import datetime
-
-sys.path.append('/Users/hankchu/Documents/python-highcharts/highmaps')
+"""
+Highmaps Demos
+Color axis and data labels: http://www.highcharts.com/maps/demo/color-axis
+"""
 
 import highmaps
-
-H = highmaps.Highmaps(width = 650, height = 550)
+H = highmaps.Highmap(width = 650, height = 550)
 
 options = {
         'chart' : {
@@ -46,8 +43,8 @@ options = {
     } 
 
 H.set_dict_optoins(options)
-data_url = 'http://www.highcharts.com/samples/data/jsonp.php?filename=us-population-density.json&callback=?'
-H.add_data_from_jsonp(data_url, 'json_data', 'map', 'Population density', joinBy = ['postal-code', 'code'], 
+data_url = 'http://www.highcharts.com/samples/data/jsonp.php?filename=us-population-density.json&callback=?' # set data_src
+H.add_data_from_jsonp(data_url, 'json_data', 'map', 'Population density', joinBy = ['postal-code', 'code'], # add dataset from data_src using jsonp
      dataLabels = {
                     'enabled': True,
                     'color': 'white',
@@ -59,7 +56,22 @@ H.add_data_from_jsonp(data_url, 'json_data', 'map', 'Population density', joinBy
                 )
 
 H.set_map_source('http://code.highcharts.com/mapdata/countries/us/us-all.js', jsonp_map = False)
+
+"""
+python-highcharts provides add_JSscript method:
+add_JSscript(js_script, js_loc):
+js_script is the javascript string 
+js_loc is location of this javascript string, can be either head (at beginning of the script) or
+end (in the end of the script)
+
+The JS string here is a function to convert (state) codes in dateset to Upper case (from lower)
+However, it is not recommended to do it this way. 
+The better practice is to load data into python environment and handle in python. 
+It can be done by writting a python script or using the functions in highmap_helper module
+"""
 H.add_JSscript("$.each(json_data, function () {\
             this.code = this.code.toUpperCase();\
         });", 'head')
-H.file()
+
+H
+H.save_file("highmaps")

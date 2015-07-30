@@ -1,23 +1,13 @@
 # -*- coding: utf-8 -*-
+"""
+Highmaps Demos
+Advanced lat/long: http://www.highcharts.com/maps/demo/latlon-advanced
+"""
 
-from __future__ import division
-from future.standard_library import install_aliases
-install_aliases()
-from urllib.request import urlopen
-import urllib
-
-import json, os, sys
-import pandas as pd
-import numpy as np
-import datetime
-import re
-
-sys.path.append('/Users/hankchu/Documents/python-highcharts/highmaps')
 import highmaps
 from highmap_helper import jsonp_loader, js_map_loader, geojson_handler, interpolateRGB
 
-
-H = highmaps.Maps(height=550)
+H = highmaps.Highmap(height=550)
 map_url = 'http://code.highcharts.com/mapdata/countries/us/us-all.js'
 data_url = 'http://www.highcharts.com/samples/data/jsonp.php?filename=us-capitals.json&callback=?'
 geojson = js_map_loader(map_url)
@@ -64,5 +54,5 @@ H.add_data_set(data,'mapbubble','Cities', dataLabels={
 
 H.set_dict_options(options)
 
-
-H.file()
+H
+H.save_file()

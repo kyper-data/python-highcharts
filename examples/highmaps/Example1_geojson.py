@@ -1,15 +1,35 @@
 # -*- coding: utf-8 -*-
-import json, os, sys
-import pandas as pd
-import numpy as np
-import datetime
+"""
+Basic example for highmaps module in python-highcharts
 
-sys.path.append('/Users/hankchu/Documents/python-highcharts/highmaps')
+As highcharts, datasets need to input using "add_data_set" method
+options can be either set by "set_options" method as showing here or
+construct a option dictionary object and input using "set_dict_options" method (recommended)
+
+In highmaps, the map data can be inputed in multiple ways:
+
+1. add_map_data method: (recommended)
+    add_map_data(geojson, **kwargs)
+    set map directly to the input (geojson) data 
+    geojson is the map data in geojson format
+
+2. set_map_source method:
+    set_map_source(map_src, jsonp_map = False)
+    map_src is the url (https) where map data is located,
+    it is recommended to get map data from highcharts' map collection: 
+    https://code.highcharts.com/mapdata/
+    jsonp_map is boolean parameter if mapdata is loaded from jsonp
+    geojson (from jsonp) or .js are accepted formats. 
+    default is javascript (.js) format (from highcharts)
+
+The following example is from Highmaps Demos
+GeoJSON areas: http://www.highcharts.com/maps/demo/geojson
+"""
 
 import highmaps
 H = highmaps.Highmaps(width = 650, height = 500)
 
-options = {
+options = { # construct option dict
                                    
     'chart' :{ 'renderTo' : 'container'
     },
@@ -29,7 +49,7 @@ options = {
     },
 } 
 
-data = [
+data = [ # input dataset 
     {
         "code": "DE.SH",
         "value": 728
@@ -95,8 +115,8 @@ data = [
         "value": 704
     }
 ]
-H.set_dict_optoins(options)
-H.add_data_set(data, 'map', 'Random data', joinBy=['code_hasc', 'code'],
+H.set_dict_optoins(options) # set options
+H.add_data_set(data, 'map', 'Random data', joinBy=['code_hasc', 'code'], # set dataset
                 states={
                     'hover': {
                         'color': '#BADA55'
@@ -107,5 +127,7 @@ H.add_data_set(data, 'map', 'Random data', joinBy=['code_hasc', 'code'],
                     'format': '{point.properties.postal}'
                 })
 
-H.set_map_source('http://www.highcharts.com/samples/data/jsonp.php?filename=germany.geo.json&callback=?', True)
-H.file()
+H.set_map_source('http://www.highcharts.com/samples/data/jsonp.php?filename=germany.geo.json&callback=?', True) # set map data from the src (jsonp)
+
+H
+H.save_file("highmaps")

@@ -1,16 +1,30 @@
 # -*- coding: utf-8 -*-
-import json, os, sys
-import pandas as pd
-import numpy as np
-import datetime
-
-sys.path.append('/Users/hankchu/Documents/python-highcharts/highcharts/highmaps')
-
+"""
+Highmaps Demos
+Detailed map, US counties: http://www.highcharts.com/maps/demo/us-counties
+"""
 import highmaps
 from common import RawJavaScriptText
-
 H = highmaps.Highmap()
 
+"""
+This example shows how to make the map of US unemployment rates at county level in April 2015
+as the highmaps demo: http://www.highcharts.com/maps/demo/us-counties
+
+However, this example requires to do many things in javascript environment:
+1. a JS function to get "mapline" data using highcharts geojson function:
+ Highcharts.geojson(Highcharts.maps['countries/us/us-all-all'], 'mapline')
+ where highcharts.maps is to get map data loaded from http://code.highcharts.com/mapdata/countries/us/us-all-all.js
+
+2. a JS function to change names of each data set using Highcharts.each
+
+3. need to add datasets for maplines. however, the datasets are not defined in python, therefore they need to add 
+using "RawJavaScriptText('[lines[0]]')" which unquote the python string '[lines[0]]' in javascript environment
+(from '[lines[0]]' to [lines[0]])
+
+This is not a good way to generate this map with python-highcharts API but still use many javascript function
+The example us-counties-2.py shows how to do this in pure python environment
+"""
 options = {
         'chart': {
             'borderWidth': 1,
@@ -98,6 +112,6 @@ H.add_JSscript("Highcharts.each(geojson, function (mapPoint) {\
             mapPoint.name = mapPoint.name + ', ' + mapPoint.properties['hc-key'].substr(3, 2);\
         });", 'head')
 
-
+H
 H.save_file()
 

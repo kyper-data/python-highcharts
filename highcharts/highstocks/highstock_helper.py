@@ -11,25 +11,24 @@ import datetime, re
 from datetime import tzinfo
 
 
-def jsonp_loader(url, prefix_regex=r'^(.*\()', suffix_regex=r'(\);)$', re_d=None, sub_by=''):
+def jsonp_loader(url, prefix_regex=r'^(.*\()', suffix_regex=r'(\);)$', sub_d=None, sub_by=''):
     """jsonp_loader is to request (JSON) data from a server in a different domain (JSONP) 
     and covert to python readable data. 
-    
-    "prefix_regex" and "suffix_regex" arguments: regex patterns to  
-    get rid of JSONP specific prefix and suffix, such as callback header: "callback(" and end: ");", 
-    
-    "re_d" and "sub_by" arguments: also regex patterns used to replace any unwanted string by sub_by. 
-    
+    1. url is the url (https) where data is located
+    2. "prefix_regex" and "suffix_regex" are regex patterns used to 
+        remove JSONP specific prefix and suffix, such as callback header: "callback(" and end: ");", 
+    3. "sub_d" is regex patterns for any unwanted string in loaded json data (will be replaced by sub_by). 
+    4. "sub_by" is the string to replace any unwanted string defined by sub_d
     For function coverstion, such as Data.UTC to datetime.datetime, please check JSONPDecoder
     """
-
+    
     hdr = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/535.7 (KHTML, like Gecko) Chrome/16.0.912.77 Safari/535.7'}
     req = urllib.request.Request(url, headers=hdr)
     page = urlopen(req)
     result = page.read()
     # replace all the redundant info with sub_by 
-    if re_d:
-        result = re.sub(re_d, sub_by, result)
+    if sub_d:
+        result = re.sub(sub_d, sub_by, result)
 
     prefix = re.search(prefix_regex, result).group()
     suffix = re.search(suffix_regex, result).group()

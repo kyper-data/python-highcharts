@@ -196,19 +196,12 @@ class ColorsOptions(BaseOptions):
         self.colors = {}
 
     def set_colors(self, colors):
-        if isinstance(colors, basestring) or isinstance(colors, list):
-            if not self.colors:
-                self.colors = []
-                if isinstance(colors, list):
-                    for color in colors:
-                        self.colors.append(colors)
-                else:
-                    self.colors.append(colors)
-            else:
-                self.colors.append(colors)
+        if isinstance(colors, basestring):
+            self.colors = ColorObject(colors)
+        elif isinstance(colors, list) or isinstance(colors, dict):
+            self.colors  = colors
         else:
             OptionTypeError("Not An Accepted Input Type: %s" % type(colors))
-
 
     def __jsonable__(self):
         return self.colors

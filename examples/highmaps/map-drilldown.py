@@ -1,19 +1,22 @@
 # -*- coding: utf-8 -*-
-from future.standard_library import install_aliases
-install_aliases()
-from urllib.request import urlopen
-import urllib
+"""
+Highmaps Demos
+Drilldown: http://www.highcharts.com/maps/demo/map-drilldown
+"""
 
-import json, os, sys
-import pandas as pd
-import numpy as np
-import datetime
-import re
-
-sys.path.append('/Users/hankchu/Documents/python-highcharts/highmaps')
 import highmaps
 from highmap_helper import jsonp_loader, js_map_loader, geojson_handler
 
+"""
+Drilldown is a techique to present data in different detail level. 
+This example is to show how to generate drilldown map with both state and county level data in the US
+
+However, the example here requires a complicated JS functions added in to chart.events options
+due to the fact that it needs to query data from cloud everytime user doom in to a state when click 
+
+Similar result can be achineved by query whole data and add into the chart using add_drilldown_data_set method
+which is shown in different example: map-drilldown-2.py
+"""
 
 Drilldown_functions_dict = {
                     'US_States': """function (e) {
@@ -60,9 +63,15 @@ Drilldown_functions_dict = {
 
 
 
-H = highmaps.Highmaps()
-H.set_JSsource('http://code.highcharts.com/maps/modules/drilldown.js')
-H.set_CSSsource('http://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css')
+H = highmaps.Highmap()
+
+"""
+Drilldown map requires an additional JS library from highcharts, which can be added using
+add_JSsource method
+Also, it needs a bootstrap CSS file, which is added using add_CSSsource method
+"""
+H.add_JSsource('http://code.highcharts.com/maps/modules/drilldown.js')
+H.add_CSSsource('http://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css')
 
 map_url = 'http://code.highcharts.com/mapdata/countries/us/us-all.js'
 geojson = js_map_loader(map_url)
@@ -96,7 +105,7 @@ options = {
             }
         },
 
-        'legend': {} if H.options['chart'].__dict__.get('width', None) < 400 else {
+        'legend': {} if H.options['chart'].__dict__.get('width', None) < 400 else { # make sure the width of chart is enough to show legend
             'layout': 'vertical',
             'align': 'right',
             'verticalAlign': 'middle'
@@ -146,4 +155,5 @@ H.add_data_set(data,'map','USA',dataLabels = {
 
 H.set_dict_optoins(options)
 
-H.file()
+H
+H.save_file()

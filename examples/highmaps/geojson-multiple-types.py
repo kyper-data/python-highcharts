@@ -1,20 +1,12 @@
 # -*- coding: utf-8 -*-
-from future.standard_library import install_aliases
-install_aliases()
-from urllib.request import urlopen
-import urllib
-
-import json, os, sys
-import pandas as pd
-import numpy as np
-import datetime
-import re
-
-sys.path.append('/Users/hankchu/Documents/python-highcharts/highmaps')
+"""
+Highmaps Demos
+GeoJSON with rivers and cities: http://www.highcharts.com/maps/demo/geojson-multiple-types
+"""
 import highmaps
 from highmap_helper import jsonp_loader, js_map_loader, geojson_handler
 
-H = highmaps.Highmaps()
+H = highmaps.Highmap()
 options = {
         'title' : {
                 'text' : 'Highmaps from geojson with multiple geometry types'
@@ -30,7 +22,6 @@ options = {
 
 H.set_dict_optoins(options)
 
-# read data and map directly from url
 map_url = 'http://www.highcharts.com/samples/data/jsonp.php?filename=australia.geo.json&callback=?'
 
 geojson = jsonp_loader(map_url)
@@ -52,6 +43,10 @@ specialCityLabels = {
                     'y': -5
                 }
             }
+
+"""
+Use map function in python to handle the dataset operation
+"""
 
 def states_label(x):
 
@@ -103,5 +98,5 @@ H.add_data_set(cities, 'mappoint', 'Cities', color = 'black',
                     'pointFormat': '{point.name}'
                 })
 
-
-H.file()
+H
+H.save_file()

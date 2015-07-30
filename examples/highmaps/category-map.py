@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
-import json, os, sys
-import pandas as pd
-import numpy as np
-import datetime
-
-sys.path.append('/Users/hankchu/Documents/python-highcharts/highmaps')
+"""
+Highmaps Demos
+Categorized areas: http://www.highcharts.com/maps/demo/category-map
+"""
 
 import highmaps
 
@@ -63,5 +61,7 @@ H.add_data_set(data2, 'map', 'UTC + 1')
 H.add_data_set(data3, 'map', 'UTC + 2')
 H.add_data_set(data4, 'map', 'UTC + 3')
 
-H.set_map_source('http://code.highcharts.com/mapdata/custom/europe.js', jsonp_map=False)
-H.file()
+H.set_map_source('http://code.highcharts.com/mapdata/custom/europe.js', jsonp_map=False) # set map data from src. data is in .js format
+
+H
+H.save_file("highmaps")

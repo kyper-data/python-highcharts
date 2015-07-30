@@ -1,21 +1,13 @@
 # -*- coding: utf-8 -*-
-from future.standard_library import install_aliases
-install_aliases()
-from urllib.request import urlopen
-import urllib
+"""
+Highmaps Demos
+Map point with lat/long: http://www.highcharts.com/maps/demo/mappoint-latlon
+"""
 
-import json, os, sys
-import pandas as pd
-import numpy as np
-import datetime
-import re
-
-sys.path.append('/Users/hankchu/Documents/python-highcharts/highmaps')
 import highmaps
 from highmap_helper import jsonp_loader, js_map_loader, geojson_handler
 
-
-H = highmaps.Highmaps(height=750)
+H = highmaps.Highmap(height=750)
 map_url = 'http://code.highcharts.com/mapdata/countries/gb/gb-all.js'
 geojson = js_map_loader(map_url)
 data = [{
@@ -85,5 +77,5 @@ H.add_data_set(geojson_handler(geojson, 'mapline'),
     'mapline','Separators',color = '#707070', showInLegend = False, enableMouseTracking = False)
 H.set_dict_optoins(options)
 
-
-H.file()
+H
+H.save_file()

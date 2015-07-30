@@ -387,7 +387,7 @@ PLOT_OPTION_ALLOWED_ARGS = {
     "slicedOffset": int,
     "startAngle": int,
   },
-    "scatter": {
+  "scatter": {
     "allowPointSelect": bool,
     "colorByPoint": bool,
     "cropThreshold": int,
