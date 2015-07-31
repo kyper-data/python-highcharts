@@ -3,6 +3,7 @@
 Highstock Demos
 OHLC: http://www.highcharts.com/stock/demo/ohlc
 """
+
 import highstocks
 from highstock_helper import jsonp_loader
 H = highstocks.Highstock()

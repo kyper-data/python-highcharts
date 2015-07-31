@@ -11,6 +11,7 @@ The json doc from the url is not in correct format (lack of quote), so the sub_d
 are used to fix the problem
 """
 
+import datetime
 import highstocks
 from highstock_helper import jsonp_loader
 H = highstocks.Highstock()

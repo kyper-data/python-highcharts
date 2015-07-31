@@ -16,24 +16,22 @@ data = range(1,20)
 data2 = range(20,1,-1) # generate some random datasets
 
 """
-Each dataset needs to input using:
+Each dataset needs to input using add_data_set and add_data_from_jsonp (not recommended) methods
 
-1. add_data_set menthod: 
-    add_data_set(data, series_type="line", name=None, **kwargs)
-    data is the dataset for chart 
-    series_type (default: "line") is the type of plot this dataset will be presented 
-    name is the variable name of dateset(default: Series X) used in python
-    kwargs are for parameters in series or plotOptions 
-    (for detail please ref to highcharts API: http://api.highcharts.com/highcharts#)
+1. add_data_set(data, series_type="line", name=None, **kwargs)
+    1. data is the dataset for chart 
+    2. series_type (default: "line") is the type of plot this dataset will be presented 
+    3. name is the variable name of dateset(default: Series X) used in python
+    4. kwargs are for parameters in series or plotOptions 
+        (for detail please ref to highcharts API: http://api.highcharts.com/highcharts#)
 
-2. add_data_from_jsonp method (not recommended):
-    add_data_from_jsonp(data_src, data_name='json_data', series_type="line", name=None, **kwargs)
+2. add_data_from_jsonp(data_src, data_name='json_data', series_type="line", name=None, **kwargs)
     add dataset from the data_src using jsonp. It is converted to jquery function "$.getJSON" in javascript environment
-    data_src is the url (https) for the dataset
-    data_name is the variable name of dataset. This name is used for javascript environment (not in python)
-    series_type( default: "line") is the type of plot this dataset will be presented
-    kwargs are for parameters in series or plotOptions 
-    (for detail please ref to highcharts API: http://api.highcharts.com/highcharts#)
+    1. data_src is the url (https) for the dataset
+    2. data_name is the variable name of dataset. This name is used for javascript environment (not in python)
+    3. series_type( default: "line") is the type of plot this dataset will be presented
+    4. kwargs are for parameters in series or plotOptions 
+        (for detail please ref to highcharts API: http://api.highcharts.com/highcharts#)
 """
 H.add_data_set(data2,'line')
 H.add_data_set(data, 'line', 
