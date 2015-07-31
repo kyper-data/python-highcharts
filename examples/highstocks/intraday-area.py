@@ -1,25 +1,15 @@
 # -*- coding: utf-8 -*-
-from future.standard_library import install_aliases
-install_aliases()
-from urllib.request import urlopen
-import urllib
-
-import json, os, sys
-import pandas as pd
-import numpy as np
-import datetime
-import re
-
-sys.path.append('/Users/hankchu/Documents/python-highcharts/highcharts/highstocks')
-
+"""
+Highstock Demos
+Intraday area: http://www.highcharts.com/stock/demo/intraday-area
+"""
 import highstocks
 from highstock_helper import jsonp_loader
 from datetime import datetime
 H = highstocks.Highstock()
 
-
 data_url = 'http://www.highcharts.com/samples/data/jsonp.php?filename=new-intraday.json&callback=?'
-data = jsonp_loader(data_url, re_d = r'(\/\*.*\*\/)')
+data = jsonp_loader(data_url, sub_d = r'(\/\*.*\*\/)')
 
 H.add_data_set(data, 'area', 'AAPL', gapSize = 5,
                 tooltip = {
@@ -82,6 +72,7 @@ options = {
 
 H.set_dict_options(options)
 
+H
 H.save_file('highstocks')
 
 

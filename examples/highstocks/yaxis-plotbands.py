@@ -1,20 +1,12 @@
 # -*- coding: utf-8 -*-
-from future.standard_library import install_aliases
-install_aliases()
-from urllib.request import urlopen
-import urllib
+"""
+Highstock Demos
+Plot bands on Y axis: http://www.highcharts.com/stock/demo/yaxis-plotbands
+"""
 
-import json, os, sys
-import pandas as pd
-import numpy as np
 import datetime
-import re
-
-sys.path.append('/Users/hankchu/Documents/python-highcharts/highcharts/highstocks')
-
 import highstocks
 H = highstocks.Highstock()
-
 
 data = [
 [datetime.datetime(2013,6,2),0.7695],
@@ -670,65 +662,52 @@ data = [
 [datetime.datetime(2015,6,30),0.8950]
 ]
 
-data2 = [{
-        'x' : datetime.datetime(2015, 6, 8),
-        'title' : 'C',
-        'text' : 'Stocks fall on Greece, rate concerns; US dollar dips'
-    }, {
-        'x' : datetime.datetime(2015, 6, 12),
-        'title' : 'D',
-        'text' : 'Zimbabwe ditches \'worthless\' currency for the US dollar '
-    }, {
-        'x' : datetime.datetime(2015, 6, 19),
-        'title' : 'E',
-        'text' : 'US Dollar Declines Over the Week on Rate Timeline'
-    }, {
-        'x' : datetime.datetime(2015, 6, 26),
-        'title' : 'F',
-        'text' : 'Greek Negotiations Take Sharp Turn for Worse, US Dollar set to Rally '
-    }, {
-        'x' : datetime.datetime(2015, 6, 29),
-        'title' : 'G',
-        'text' : 'Euro records stunning reversal against dollar'
-    }, {
-        'x' : datetime.datetime(2015, 6, 30),
-        'title' : 'H',
-        'text' : 'Surging US dollar curbs global IT spend'
-    }]
+startDate = data[len(data) - 1][0]
+minRate = 1
+maxRate = 0
+endDate = datetime.datetime(startDate.year, startDate.month - 3, startDate.day)  #a quarter of a year before last data point
 
-H.add_data_set(data, 'line', 'USD to EUR', id = 'dataseries')
-H.add_data_set(data2, 'flags', onSeries = 'dataseries',
-                shape = 'circlepin',
-                width = 16)
+for i in xrange(len(data)-1, 0, -1):
+	date = data[i][0]
+	rate = data[i][1]
+	if date < endDate:
+		break # stop measuring highs and lows
+	if rate > maxRate:
+		maxRate = rate
+	if rate < minRate:
+		minRate = rate
 
-
+H.add_data_set(data, 'line', 'USD to EUR', tooltip = {
+                    'valueDecimals': 4
+                })
 
 options = {
-    'rangeSelector' : {
-        'selected' : 0
-    },
-
-    'title' : {
-        'text' : 'USD to EUR exchange rate'
-    },
-    'tooltip': {
-                'style': {
-                    'width': '200px'
-                },
-                'valueDecimals': 4,
-                'shared' : True
+    'rangeSelector': {
+                'selected': 1
             },
 
-    'yAxis' : {
-        'title' : {
-            'text' : 'Exchange rate'
-        }
+    'title': {
+        'text': 'USD to EUR exchange rate'
     },
 
+    'yAxis': {
+        'title': {
+            'text': 'Exchange rate'
+        },
+        'plotBands': [{
+            'from': minRate,
+            'to': maxRate,
+            'color': 'rgba(68, 170, 213, 0.2)',
+            'label': {
+                'text': 'Last quarter year\'s value range'
+            }
+        }]
+    },
 }
 
 H.set_dict_options(options)
 
+H
 H.save_file('highstocks')
 
 

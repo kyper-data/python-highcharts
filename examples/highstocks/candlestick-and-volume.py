@@ -1,24 +1,14 @@
 # -*- coding: utf-8 -*-
-from future.standard_library import install_aliases
-install_aliases()
-from urllib.request import urlopen
-import urllib
-
-import json, os, sys
-import pandas as pd
-import numpy as np
-import datetime
-import re
-
-sys.path.append('/Users/hankchu/Documents/python-highcharts/highcharts/highstocks')
-
+"""
+Highstock Demos
+Two panes, candlestick and volume: http://www.highcharts.com/stock/demo/candlestick-and-volume
+"""
 import highstocks
 from highstock_helper import jsonp_loader
 H = highstocks.Highstock()
 
 data_url = 'http://www.highcharts.com/samples/data/jsonp.php?filename=aapl-ohlcv.json&callback=?'
-data = jsonp_loader(data_url, re_d = r'(\/\*.*\*\/)')
-
+data = jsonp_loader(data_url, sub_d = r'(\/\*.*\*\/)')
 
 ohlc = []
 volume = []
@@ -30,19 +20,19 @@ groupingUnits = [
 for i in xrange(len(data)):
     ohlc.append(
         [
-        data[i][0],
-        data[i][1],
-        data[i][2],
-        data[i][3],
-        data[i][4]
+        data[i][0], # the date
+        data[i][1], # open
+        data[i][2], # high
+        data[i][3], # low
+        data[i][4]  # close
         ]
         )
     volume.append(
         [
-        data[i][0],
-        data[i][5]
+        data[i][0], # the date
+        data[i][5]  # the volume 
         ]
-        )
+    )
 
 
 options = {
@@ -90,7 +80,7 @@ H.add_data_set(volume, 'column', 'Volume', yAxis = 1, dataGrouping = {
 
 H.set_dict_options(options)
 
-
+H
 H.save_file('highstocks')
 
 
