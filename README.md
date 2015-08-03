@@ -1,10 +1,10 @@
-# Project: Python-Highcharts
+# Project: python-highcharts
 
 ## License
 
 The python-highcharts wrapper is licensed under the [MIT license](http://opensource.org/licenses/MIT).
 
-However, please be aware that the Highcharts project itself, as well as Highmaps and Highstock, are only free for non-commercial use under the Creative Commons Attribution-NonCommercial license. Pop over to [Highcharts](http://shop.highsoft.com/) for more information.
+However, please be aware that the Highcharts project itself, as well as Highmaps and Highstock, are only free for non-commercial use under the Creative Commons Attribution-NonCommercial license. Commercial use requires the purchase of a separate license. Pop over to [Highcharts](http://shop.highsoft.com/) for more information.
 
 ## Overview
 
@@ -42,15 +42,14 @@ chart.add_data_set(data, series_type='line', name='Example Series')
 chart.save_file()
 ```
 
-You can add chart option using set_options. Ex.
+You can add chart options using set_options. Ex:
 ```python
 chart.set_options('chart', {'resetZoomButton': {'relativeTo': 'plot', 'position': {'x': 0,'y': -30}}})
 chart.set_options('xAxis', {'events': {'afterBreaks': 'function(e){return}'}})
 chart.set_options('tooltip', {'formatter': 'default_tooltip'})
-
 ```
 
-set_options function can update the options automatically if you input the same option_type. Ex. 
+The set_options function can update the options automatically if you input the same option_type. Ex:
 ```python
 chart.set_options('chart', {'style': {"fontSize": '22px'}})
 chart.set_options('chart', {'resetZoomButton': {'position': {'x': 10}}})
@@ -58,10 +57,9 @@ chart.set_options('chart', {'resetZoomButton': {'relativeTo': 'chart'}})
 chart.set_options('xAxis', {'plotBands': {'color': '#FCFFC5', 'from': 2, 'to': 4}})
 chart.set_options('xAxis', {'plotBands': {'color': '#FCFFC5', 'from': 6, 'to': 8}})
 chart.set_options('xAxis', {'plotBands': {'color': '#FCFFC5', 'from': 10, 'to': 12}})
-
 ```
 
-However, the better practice is to construct chart options by a dictionary (as highcharts suggests: http://www.highcharts.com/docs/getting-started/your-first-chart) and then input by set_dict_optoins function. Ex.
+However, the better practice is to construct chart options by a dictionary (as Highcharts suggests: http://www.highcharts.com/docs/getting-started/your-first-chart) and then input by the set_dict_options function. Ex:
 ```python
 options = {
     'title': {
@@ -105,10 +103,9 @@ options = {
 }
 
 chart.set_dict_options(options)
-
 ```
 
-Unlike in Javascript Highcharts, the series option can't be included in the options dictionary. It needs to input by the add_data_set (and/or add_drilldown_data_set) function, Ex.
+Unlike Javascript Highcharts, the series option can't be included in the options dictionary. It needs to input by the add_data_set (and/or add_drilldown_data_set) function, Ex:
 ```python
 chart.add_data_set(data, 'scatter', 'Outlier', 
     marker={
@@ -120,11 +117,10 @@ chart.add_data_set(data, 'scatter', 'Outlier',
 )
 
 chart.add_drilldown_data_set(data_2, 'column', 'Chrome', name='Chrome')
-
 ```
 
 
-## Example
+## Example Usage
 
 ```python
 from highcharts import Highchart

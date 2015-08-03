@@ -115,7 +115,7 @@ data = [ # input dataset
         "value": 704
     }
 ]
-H.set_dict_optoins(options) # set options
+H.set_dict_options(options) # set options
 H.add_data_set(data, 'map', 'Random data', joinBy=['code_hasc', 'code'], # set dataset
                 states={
                     'hover': {

@@ -20,7 +20,7 @@ options = {
             },
     } 
 
-H.set_dict_optoins(options)
+H.set_dict_options(options)
 
 map_url = 'http://www.highcharts.com/samples/data/jsonp.php?filename=australia.geo.json&callback=?'
 

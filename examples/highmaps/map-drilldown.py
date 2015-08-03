@@ -153,7 +153,7 @@ H.add_data_set(data,'map','USA',dataLabels = {
                 'format': '{point.properties.postal-code}'
             }) 
 
-H.set_dict_optoins(options)
+H.set_dict_options(options)
 
 H
 H.save_file()
