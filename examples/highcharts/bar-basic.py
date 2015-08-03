@@ -4,9 +4,8 @@ Highcharts Demos
 Basic bar: http://www.highcharts.com/demo/bar-basic
 """
 
-import highcharts
-
-H = highcharts.Highchart(width=750, height=600)
+from highcharts import Highchart
+H = Highchart(width=750, height=600)
 
 data1 = [107, 31, 635, 203, 2]
 data2 = [133, 156, 947, 408, 6]
@@ -59,7 +58,9 @@ options = {
                 'enabled': True
             }
         }
+    }
 }
+
 H.set_dict_options(options)
 
 H.add_data_set(data1, 'bar', 'Year 1800')

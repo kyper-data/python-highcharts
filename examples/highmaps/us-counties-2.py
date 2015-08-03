@@ -4,10 +4,10 @@ Highmaps Demos
 Detailed map, US counties: http://www.highcharts.com/maps/demo/us-counties
 """
 
-import highmaps
-from highmap_helper import jsonp_loader, js_map_loader, geojson_handler
+from highcharts import Highmap
+from highcharts.highmaps.highmap_helper import jsonp_loader, js_map_loader, geojson_handler
 
-H = highmaps.Highmap()
+H = Highmap()
 
 """
 This example generates the same map as us-counties.py, but using functions in highmap_helper module to 
@@ -148,6 +148,6 @@ H.add_data_set([lines[0]], 'mapline', 'State borders', color = 'white')
 H.add_data_set([lines[3]], 'mapline', 'Separator', color = 'gray')
 H.add_map_data(mapdata)
 
-H
+H.buildhtml()
 H.save_file('highmaps')
 
