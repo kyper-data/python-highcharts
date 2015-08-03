@@ -369,7 +369,7 @@ class Highchart(object):
         #self.buildhtml()
         return self.htmlcontent
 
-    def save_file(self, filename = 'highcharts'):
+    def save_file(self, filename = 'Chart'):
         """ save htmlcontent as .html file """
         filename = filename + '.html'
         

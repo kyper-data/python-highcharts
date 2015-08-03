@@ -4,8 +4,8 @@ Highmaps Demos
 Drilldown: http://www.highcharts.com/maps/demo/map-drilldown
 """
 
-import highmaps
-from highmap_helper import jsonp_loader, js_map_loader, geojson_handler
+from highcharts import Highmap
+from highcharts.highmaps.highmap_helper  import jsonp_loader, js_map_loader, geojson_handler
 
 """
 Drilldown is a techique to present data in different detail level. 
@@ -63,7 +63,7 @@ Drilldown_functions_dict = {
 
 
 
-H = highmaps.Highmap()
+H = Highmap()
 
 """
 Drilldown map requires an additional JS library from highcharts, which can be added using

@@ -4,8 +4,8 @@ Highcharts Demos
 Scatter plot: http://www.highcharts.com/demo/scatter
 """
 
-import highcharts
-H = highcharts.Highchart(width=850, height=400)
+from highcharts import Highchart
+H = Highchart(width=850, height=400)
 
 options = {
 	'chart': {
@@ -178,4 +178,4 @@ H.add_data_set(data1, 'scatter', 'Female', color='rgba(223, 83, 83, .5)')
 H.add_data_set(data2, 'scatter', 'Male', color='rgba(119, 152, 191, .5)')
 
 H
-H.save_file("highcharts")
+H.save_file()

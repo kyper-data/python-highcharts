@@ -429,7 +429,7 @@ class Highmap(object):
         #self.buildhtml()
         return self.htmlcontent
 
-    def save_file(self, filename = 'highcharts'):
+    def save_file(self, filename = 'Map'):
         """ save htmlcontent as .html file """
         filename = filename + '.html'
         

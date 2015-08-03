@@ -149,5 +149,5 @@ H.add_data_set([lines[3]], 'mapline', 'Separator', color = 'gray')
 H.add_map_data(mapdata)
 
 H.buildhtml()
-H.save_file('highmaps')
+H.save_file('Map')
 

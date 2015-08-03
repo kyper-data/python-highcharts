@@ -4,10 +4,9 @@ Highcharts Demos
 Fixed placement columns: http://www.highcharts.com/demo/column-placement
 """
 import datetime
+from highcharts import Highchart
 
-import highcharts
-
-H = highcharts.Highchart(width=850, height=400)
+H = Highchart(width=850, height=400)
 
 options = {
 	'chart': {
@@ -77,4 +76,4 @@ H.add_data_set(data4, 'column', 'Profit Optimized', color='rgba(186,60,61,.9)',
             yAxis=1)
 
 H
-H.save_file("highcharts")
+H.save_file()

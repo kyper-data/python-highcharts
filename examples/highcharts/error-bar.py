@@ -4,8 +4,8 @@ Highcharts Demos
 Error bar: http://www.highcharts.com/demo/error-bar
 """
 
-import highcharts
-H = highcharts.Highchart(width=550, height=400)
+from highcharts import Highchart
+H = Highchart(width=550, height=400)
 
 options = {
 	'chart': {
@@ -72,5 +72,5 @@ H.add_data_set(data4, 'errorbar', 'Temperature error', tooltip = {
             })
 
 H
-H.save_file("highcharts")
+H.save_file()
 

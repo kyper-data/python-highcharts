@@ -3,8 +3,8 @@
 Highcharts Demos
 Bubble chart: http://www.highcharts.com/demo/bubble
 """
-import highcharts
-H = highcharts.Highchart(width=850, height=400)
+from highcharts import Highchart
+H = Highchart(width=850, height=400)
 
 options = {
 	'chart': {
@@ -27,4 +27,4 @@ H.add_data_set(data2, 'bubble')
 H.add_data_set(data3, 'bubble')
 
 H
-H.save_file("highcharts")
+H.save_file()

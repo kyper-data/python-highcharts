@@ -19,10 +19,9 @@ and covert to python readable data.
 For function coverstion, such as Data.UTC to datetime.datetime, please check JSONPDecoder
 """
 
-import highstocks
-from highstock_helper import jsonp_loader
-
-H = highstocks.Highstock()
+from highcharts import Highstock
+from highcharts.highstocks.highstock_helper import jsonp_loader
+H = Highstock()
 
 data_url = 'http://www.highcharts.com/samples/data/jsonp.php?filename=aapl-c.json&callback=?'
 data = jsonp_loader(data_url, sub_d = r'(\/\*.*\*\/)') # to remove the comment in json doc from the url
@@ -45,7 +44,7 @@ H.add_data_set(data, 'line', 'AAPL', tooltip = {
 H.set_dict_options(options)
 
 H
-H.save_file('highstocks')
+H.save_file()
 
 
 

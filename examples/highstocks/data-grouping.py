@@ -4,9 +4,9 @@ Highstock Demos
 52,000 points with data grouping: http://www.highcharts.com/stock/demo/data-grouping
 """
 
-import highstocks
-from highstock_helper import jsonp_loader
-H = highstocks.Highstock()
+from highcharts import Highstock
+from highcharts.highstocks.highstock_helper import jsonp_loader
+H = Highstock()
 
 data_url = 'http://www.highcharts.com/samples/data/jsonp.php?filename=large-dataset.json&callback=?'
 data = jsonp_loader(data_url, sub_d = r'(\/\*.*\*\/)')
@@ -67,5 +67,5 @@ options = {
 H.set_dict_options(options)
 
 H
-H.save_file('highstocks')
+H.save_file()
 

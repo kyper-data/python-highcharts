@@ -4,9 +4,10 @@ Highmaps Demos
 Drilldown: http://www.highcharts.com/maps/demo/map-drilldown
 """
 
-import highmaps
-from highmap_helper import jsonp_loader, js_map_loader, geojson_handler
-H = highmaps.Highmap()
+from highcharts import Highmap
+from highcharts.highmaps.highmap_helper  import jsonp_loader, js_map_loader, geojson_handler
+
+H = Highmap()
 H.add_CSSsource('http://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css')
 
 """

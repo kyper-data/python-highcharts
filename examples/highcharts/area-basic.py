@@ -3,9 +3,8 @@
 Highcharts Demos
 Basic area: http://www.highcharts.com/demo/area-basic
 """
-import highcharts
-
-H = highcharts.Highchart(width=750, height=600) # the size of chart can be set here
+from highchart import Highchart
+H = Highchart(width=750, height=600) # the size of chart can be set here
 
 options = {
     'title': {
@@ -76,5 +75,5 @@ data2 = [None, None, None, None, None, None, None, None, None, None,
 H.add_data_set(data1, 'area', 'USA', )
 H.add_data_set(data2, 'area', 'USSR/Russia')
 H
-H.save_file("highcharts")
+H.save_file()
 

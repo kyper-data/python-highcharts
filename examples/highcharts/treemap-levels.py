@@ -4,8 +4,8 @@ Highcharts Demos
 Treemap leves: http://jsfiddle.net/gh/get/jquery/1.7.2/highslide-software/highcharts.com/tree/master/samples/highcharts/plotoptions/treemap-levels/
 """
 
-import highcharts
-H = highcharts.Highchart(width=550, height=400)
+from highcharts import Highchart
+H = Highchart(width=550, height=400)
 
 options = {
 	'title': {
@@ -71,4 +71,4 @@ H.add_data_set(data, 'treemap', layoutAlgorithm='squarified',
             }])
 
 H
-H.save_file("highcharts")
+H.save_file()

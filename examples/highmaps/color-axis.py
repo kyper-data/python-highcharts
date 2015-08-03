@@ -4,8 +4,8 @@ Highmaps Demos
 Color axis and data labels: http://www.highcharts.com/maps/demo/color-axis
 """
 
-import highmaps
-H = highmaps.Highmap(width = 650, height = 550)
+from highcharts import Highmap
+H = Highmap(width = 650, height = 550)
 
 options = {
         'chart' : {
