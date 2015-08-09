@@ -4,8 +4,8 @@ Highcharts Demos
 3D donut: http://www.highcharts.com/demo/3d-pie-donut
 """
 
-import highcharts
-H = highcharts.Highchart(width=550, height=400)
+from highchart import Highchart
+H = Highchart(width=550, height=400)
 
 options = {
     'chart': {
@@ -45,4 +45,4 @@ H.set_dict_options(options)
 H.add_data_set(data, 'pie', 'Delivered amount')
 
 H
-H.save_file("highcharts")
+H.save_file()

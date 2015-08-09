@@ -4,8 +4,8 @@ Highcharts Demos
 Bar with negative stack: http://www.highcharts.com/demo/bar-negative-stack
 """
 
-import highcharts
-H = highcharts.Highchart(width=550, height=400)
+from highcharts import Highchart
+H = Highchart(width=550, height=400)
 
 categories = ['0-4', '5-9', '10-14', '15-19',
             '20-24', '25-29', '30-34', '35-39', '40-44',
@@ -78,4 +78,4 @@ H.add_data_set(data_male, 'bar', 'Male')
 H.add_data_set(data_female, 'bar', 'Female')
 
 H
-H.save_file("highcharts")
+H.save_file()

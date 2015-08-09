@@ -4,9 +4,8 @@ Highmaps Demos
 Categorized areas: http://www.highcharts.com/maps/demo/category-map
 """
 
-import highmaps
-
-H = highmaps.Highmap(width=650, height=500)
+from highcharts import Highmap
+H = Highmap(width=650, height=500)
 
 options = {
     'chart': {

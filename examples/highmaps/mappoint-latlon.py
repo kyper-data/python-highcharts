@@ -4,10 +4,10 @@ Highmaps Demos
 Map point with lat/long: http://www.highcharts.com/maps/demo/mappoint-latlon
 """
 
-import highmaps
-from highmap_helper import jsonp_loader, js_map_loader, geojson_handler
+from highcharts import Highmap
+from highcharts.highmaps.highmap_helper import jsonp_loader, js_map_loader, geojson_handler
 
-H = highmaps.Highmap(height=750)
+H = Highmap(height=750)
 map_url = 'http://code.highcharts.com/mapdata/countries/gb/gb-all.js'
 geojson = js_map_loader(map_url)
 data = [{

@@ -30,8 +30,9 @@ The following example is from Highstock Demos
 Single line series: http://www.highcharts.com/stock/demo/basic-line
 """
 
-import highstocks
-H = highstocks.Highstock()
+from highcharts import Highstock
+from highcharts.highstocks.highstock_helper import jsonp_loader
+H = Highstock()
 
 data_url = 'http://www.highcharts.com/samples/data/jsonp.php?filename=aapl-c.json&callback=?'
 H.add_data_from_jsonp(data_url, 'json_data', 'line', 'AAPL', tooltip = {
@@ -51,4 +52,4 @@ options = {
 H.set_dict_options(options)
 
 H
-H.save_file('highstocks')
+H.save_file()

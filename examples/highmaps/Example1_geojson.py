@@ -26,8 +26,8 @@ The following example is from Highmaps Demos
 GeoJSON areas: http://www.highcharts.com/maps/demo/geojson
 """
 
-import highmaps
-H = highmaps.Highmaps(width = 650, height = 500)
+from highcharts import Highmap
+H = Highmaps(width = 650, height = 500)
 
 options = { # construct option dict
                                    

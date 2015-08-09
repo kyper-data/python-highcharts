@@ -4,8 +4,8 @@ Highcharts Demos
 Column with drilldown: http://www.highcharts.com/demo/column-drilldown
 """
 
-import highcharts
-H = highcharts.Highchart(width=850, height=400)
+from highcharts import Highchart
+H = Highchart(width=850, height=400)
 
 """
 Drilldown chart can be created using add_drilldown_data_set method: 
@@ -143,4 +143,4 @@ H.add_drilldown_data_set(data_4, 'column', 'Safari', name='Safari')
 H.add_drilldown_data_set(data_5, 'column', 'Opera', name='Opera')
 
 H
-H.save_file("highcharts")
+H.save_file()

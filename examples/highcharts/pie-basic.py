@@ -4,9 +4,9 @@ Highcharts Demos
 Pie chart, line and column: http://www.highcharts.com/demo/pie-basic
 """
 import datetime
-import highcharts
+from highcharts import Highchart
 
-H = highcharts.Highchart(width=850, height=400)
+H = Highchart(width=850, height=400)
 
 data = [{
         'name': "Microsoft Internet Explorer",
@@ -59,4 +59,4 @@ H.add_data_set(data, 'pie', 'Browser share', allowPointSelect=True,
             )
 
 H
-H.save_file("highcharts")
+H.save_file()

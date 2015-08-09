@@ -4,8 +4,8 @@ Highcharts Demos
 Box plot: http://www.highcharts.com/demo/box-plot
 """
 
-import highcharts
-H = highcharts.Highchart(width=550, height=400)
+from highcharts import Highchart
+H = Highchart(width=550, height=400)
 
 options = {
     'chart': {
@@ -68,4 +68,4 @@ H.add_data_set(data_outline, 'scatter', 'Outlier', marker = {
             })
 
 H
-H.save_file("highcharts")
+H.save_file()

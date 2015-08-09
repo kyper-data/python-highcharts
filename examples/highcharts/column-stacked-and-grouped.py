@@ -3,9 +3,9 @@
 Highcharts Demos
 Stacked and grouped column: http://www.highcharts.com/demo/column-stacked-and-grouped
 """
-import highcharts
+from highcharts import Highchart
 
-H = highcharts.Highchart(width=750, height=600)
+H = Highchart(width=750, height=600)
 
 data1 = [5, 3, 4, 7, 2]
 data2 = [3, 4, 4, 2, 5]
@@ -50,4 +50,4 @@ H.add_data_set(data3, 'column', 'Jane', stack='female')
 H.add_data_set(data4, 'column', 'Janet', stack='female')
 
 H
-H.save_file("highcharts")
+H.save_file()

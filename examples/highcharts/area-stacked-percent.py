@@ -3,9 +3,8 @@
 Highcharts Demos
 Percentage area: http://www.highcharts.com/demo/area-stacked-percent
 """
-import highcharts
-
-H = highcharts.Highchart(width=750, height=600)
+from highchart import Highchart
+H = Highchart(width=750, height=600)
 
 data1 = [502, 635, 809, 947, 1402, 3634, 5268] # data for Asia
 data2 = [106, 107, 111, 133, 221, 767, 1766] # data for Africa
@@ -64,4 +63,4 @@ H.add_data_set(data4, 'area', 'America')
 H.add_data_set(data5, 'area', 'Oceania')
 
 H
-H.save_file("highcharts")
+H.save_file()

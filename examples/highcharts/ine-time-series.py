@@ -5,9 +5,9 @@ Time series, zoomable: http://www.highcharts.com/demo/line-time-series
 """
 
 import datetime
-import highcharts
+from highcharts import Highchart
 
-H = highcharts.Highchart()
+H = Highchart()
 
 H.set_options('chart', {'zoomType': 'x'})
 H.set_options('xAxis', {'type': 'datetime',
@@ -156,4 +156,4 @@ H.set_options('plotOptions', {
         })
 
 H
-H.save_file("highcharts")
+H.save_file()

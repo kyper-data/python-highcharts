@@ -3,10 +3,10 @@
 Highmaps Demos
 GeoJSON with rivers and cities: http://www.highcharts.com/maps/demo/geojson-multiple-types
 """
-import highmaps
-from highmap_helper import jsonp_loader, js_map_loader, geojson_handler
+from highcharts import Highmap
+from highcharts.highmaps.highmap_helper import jsonp_loader, js_map_loader, geojson_handler
 
-H = highmaps.Highmap()
+H = Highmap()
 options = {
         'title' : {
                 'text' : 'Highmaps from geojson with multiple geometry types'

@@ -33,7 +33,7 @@ from common import Levels, Formatter, CSSObject, SVGObject, JSfunction, RawJavaS
 CONTENT_FILENAME = "content.html"
 PAGE_FILENAME = "page.html"
 
-pl = PackageLoader('highcharts', 'templates')
+pl = PackageLoader('highcharts.highcharts', 'templates')
 jinja2_env = Environment(lstrip_blocks=True, trim_blocks=True, loader=pl)
 
 template_content = jinja2_env.get_template(CONTENT_FILENAME)
@@ -369,7 +369,7 @@ class Highchart(object):
         #self.buildhtml()
         return self.htmlcontent
 
-    def save_file(self, filename = 'highcharts'):
+    def save_file(self, filename = 'Chart'):
         """ save htmlcontent as .html file """
         filename = filename + '.html'
         

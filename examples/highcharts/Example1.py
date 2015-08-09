@@ -8,9 +8,8 @@ Highchart options can be either set by "set_options" method as showing here or
 construct a option dictionary object and input using "set_dict_options" method
 """
 
-import highcharts # import highcharts library
-
-H = highcharts.Highchart() #setup highchart instance
+from highcharts import Highchart # import highchart library
+H = Highchart() #setup highchart instance
 
 data = range(1,20)
 data2 = range(20,1,-1) # generate some random datasets

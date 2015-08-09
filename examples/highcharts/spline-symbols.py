@@ -4,9 +4,8 @@ Highcharts Demos
 Spline with symbols: http://www.highcharts.com/demo/spline-symbols
 """
 
-import highcharts
-
-H = highcharts.Highchart()
+from highcharts import Highchart
+H = Highchart()
 
 
 options = {
@@ -60,4 +59,4 @@ H.add_data_set(data2, 'spline', 'London', marker={
             }) 
 
 H
-H.save_file("highcharts")
+H.save_file()

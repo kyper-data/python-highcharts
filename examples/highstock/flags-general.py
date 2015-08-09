@@ -5,8 +5,8 @@ Flags marking events: http://www.highcharts.com/stock/demo/flags-general
 """
 
 import datetime
-import highstocks
-H = highstocks.Highstock()
+from highcharts import Highstock
+H = Highstock()
 
 data = [
 [datetime.datetime(2013,6,2),0.7695],
@@ -720,6 +720,6 @@ options = {
 H.set_dict_options(options)
 
 H
-H.save_file('highstocks')
+H.save_file()
 
 

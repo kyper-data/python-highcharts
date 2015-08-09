@@ -3,9 +3,8 @@
 Highcharts Demos
 Area range and line: http://www.highcharts.com/demo/arearange-line
 """
-import highcharts
-
-H = highcharts.Highchart(width=750, height=600)
+from highchart import Highchart
+H = Highchar(width=750, height=600)
 
 ranges = [
     [1246406400000, 14.3, 27.7],
@@ -111,4 +110,4 @@ H.add_data_set(ranges, 'arearange', 'Range', lineWidth=0,
             zIndex=0 )
 
 H
-H.save_file("highcharts")
+H.save_file()

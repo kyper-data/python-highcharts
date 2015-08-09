@@ -3,9 +3,10 @@
 Highmaps Demos
 Detailed map, US counties: http://www.highcharts.com/maps/demo/us-counties
 """
-import highmaps
-from common import RawJavaScriptText
-H = highmaps.Highmap()
+from highcharts import Highmap
+from highcharts.highmaps.common import RawJavaScriptText
+
+H = Highmap()
 
 """
 This example shows how to make the map of US unemployment rates at county level in April 2015

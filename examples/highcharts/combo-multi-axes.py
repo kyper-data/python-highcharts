@@ -4,8 +4,8 @@ Highcharts Demos
 Multiple axes: http://www.highcharts.com/demo/combo-multi-axes
 """
 
-import highcharts
-H = highcharts.Highchart(width=850, height=400)
+from highcharts import Highchart
+H = Highchart(width=850, height=400)
 
 data1 = [49.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
 data2 = [1016, 1016, 1015.9, 1015.5, 1012.3, 1009.5, 1009.6, 1010.2, 1013.1, 1016.9, 1018.2, 1016.7]
@@ -102,4 +102,4 @@ H.add_data_set(data3, 'spline', 'Temperature', tooltip={
             })
 
 H
-H.save_file("highcharts")
+H.save_file()

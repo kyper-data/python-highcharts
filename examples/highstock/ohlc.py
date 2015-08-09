@@ -4,9 +4,9 @@ Highstock Demos
 OHLC: http://www.highcharts.com/stock/demo/ohlc
 """
 
-import highstocks
-from highstock_helper import jsonp_loader
-H = highstocks.Highstock()
+from highcharts import Highstock
+from highcharts.highstocks.highstock_helper import jsonp_loader
+H = Highstock()
 
 data_url = 'http://www.highcharts.com/samples/data/jsonp.php?filename=aapl-ohlc.json&callback=?'
 data = jsonp_loader(data_url, sub_d = r'(\/\*.*\*\/)')
@@ -35,6 +35,6 @@ options = {
 H.set_dict_options(options)
 
 H
-H.save_file('highstocks')
+H.save_file()
 
 

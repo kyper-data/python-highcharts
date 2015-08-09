@@ -3,10 +3,10 @@
 Highstock Demos
 Intraday area: http://www.highcharts.com/stock/demo/intraday-area
 """
-import highstocks
-from highstock_helper import jsonp_loader
+from highcharts import Highstock
+from highcharts.highstocks.highstock_helper import jsonp_loader
 from datetime import datetime
-H = highstocks.Highstock()
+H = Highstock()
 
 data_url = 'http://www.highcharts.com/samples/data/jsonp.php?filename=new-intraday.json&callback=?'
 data = jsonp_loader(data_url, sub_d = r'(\/\*.*\*\/)')
@@ -73,6 +73,6 @@ options = {
 H.set_dict_options(options)
 
 H
-H.save_file('highstocks')
+H.save_file()
 
 

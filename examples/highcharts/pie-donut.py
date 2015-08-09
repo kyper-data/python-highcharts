@@ -4,8 +4,8 @@ Highcharts Demos
 Donut chart: http://www.highcharts.com/demo/pie-donut
 """
 
-import highcharts
-H = highcharts.Highchart(width = 850, height = 400)
+from highcharts import Highchart
+H = Highchart(width = 850, height = 400)
 
 data = [{
             'y': 55.11,
@@ -122,4 +122,4 @@ H.add_data_set(versionsData, 'pie', 'Versions', size='80%',
             })
 
 H
-H.save_file("highcharts")
+H.save_file()

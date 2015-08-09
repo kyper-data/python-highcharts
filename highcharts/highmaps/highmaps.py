@@ -34,7 +34,7 @@ from common import Formatter, CSSObject, SVGObject, MapObject, JSfunction, RawJa
 CONTENT_FILENAME = "./content.html"
 PAGE_FILENAME = "./page.html"
 
-pl = PackageLoader('highmaps', 'templates')
+pl = PackageLoader('highcharts.highmaps', 'templates')
 jinja2_env = Environment(lstrip_blocks=True, trim_blocks=True, loader=pl)
 
 template_content = jinja2_env.get_template(CONTENT_FILENAME)
@@ -429,7 +429,7 @@ class Highmap(object):
         #self.buildhtml()
         return self.htmlcontent
 
-    def save_file(self, filename = 'highcharts'):
+    def save_file(self, filename = 'Map'):
         """ save htmlcontent as .html file """
         filename = filename + '.html'
         

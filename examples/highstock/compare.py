@@ -4,9 +4,9 @@ Highstock Demos
 Compare multiple series: http://www.highcharts.com/stock/demo/compare
 """
 
-import highstocks
-from highstock_helper import jsonp_loader
-H = highstocks.Highstock()
+from highcharts import Highstock
+from highcharts.highstocks.highstock_helper import jsonp_loader
+H = Highstock()
 
 names = ['MSFT', 'AAPL', 'GOOG']
 
@@ -49,6 +49,6 @@ options = {
 H.set_dict_options(options)
 
 H
-H.save_file('highstocks')
+H.save_file()
 
 
