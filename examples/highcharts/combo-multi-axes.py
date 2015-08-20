@@ -101,5 +101,4 @@ H.add_data_set(data3, 'spline', 'Temperature', tooltip={
                 'valueSuffix': ' °C'
             })
 
-H
-H.save_file()
+H.htmlcontent

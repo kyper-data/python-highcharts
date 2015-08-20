@@ -73,5 +73,4 @@ H.add_JSscript("$.each(json_data, function () {\
             this.code = this.code.toUpperCase();\
         });", 'head')
 
-H
-H.save_file("highmaps")
+H.htmlcontent

@@ -54,5 +54,4 @@ H.add_data_set(data,'mapbubble','Cities', dataLabels={
 
 H.set_dict_options(options)
 
-H
-H.save_file()
+H.htmlcontent

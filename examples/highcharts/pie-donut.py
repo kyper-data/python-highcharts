@@ -121,5 +121,4 @@ H.add_data_set(versionsData, 'pie', 'Versions', size='80%',
                                 }"
             })
 
-H
-H.save_file()
+H.htmlcontent

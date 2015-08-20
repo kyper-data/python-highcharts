@@ -27,7 +27,7 @@ GeoJSON areas: http://www.highcharts.com/maps/demo/geojson
 """
 
 from highcharts import Highmap
-H = Highmaps(width = 650, height = 500)
+H = Highmap(width = 650, height = 500)
 
 options = { # construct option dict
                                    
@@ -129,5 +129,4 @@ H.add_data_set(data, 'map', 'Random data', joinBy=['code_hasc', 'code'], # set d
 
 H.set_map_source('http://www.highcharts.com/samples/data/jsonp.php?filename=germany.geo.json&callback=?', True) # set map data from the src (jsonp)
 
-H
-H.save_file("highmaps")
+H.htmlcontent

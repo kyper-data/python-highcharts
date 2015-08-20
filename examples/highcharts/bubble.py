@@ -26,5 +26,4 @@ H.add_data_set(data1, 'bubble')
 H.add_data_set(data2, 'bubble')
 H.add_data_set(data3, 'bubble')
 
-H
-H.save_file()
+H.htmlcontent

@@ -77,5 +77,4 @@ H.add_data_set(geojson_handler(geojson, 'mapline'),
     'mapline','Separators',color = '#707070', showInLegend = False, enableMouseTracking = False)
 H.set_dict_options(options)
 
-H
-H.save_file()
+H.htmlcontent

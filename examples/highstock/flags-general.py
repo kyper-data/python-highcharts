@@ -719,7 +719,6 @@ options = {
 
 H.set_dict_options(options)
 
-H
-H.save_file()
+H.htmlcontent
 
 

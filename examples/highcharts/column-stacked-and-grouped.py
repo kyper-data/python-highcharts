@@ -42,12 +42,11 @@ options = {
         }
     }
 }
-H.set_dict_optoins(options)
+H.set_dict_options(options)
 
 H.add_data_set(data1, 'column', 'John', stack='male' )
 H.add_data_set(data2, 'column', 'Joe', stack='male')
 H.add_data_set(data3, 'column', 'Jane', stack='female')
 H.add_data_set(data4, 'column', 'Janet', stack='female')
 
-H
-H.save_file()
+H.htmlcontent

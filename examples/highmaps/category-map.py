@@ -62,5 +62,4 @@ H.add_data_set(data4, 'map', 'UTC + 3')
 
 H.set_map_source('http://code.highcharts.com/mapdata/custom/europe.js', jsonp_map=False) # set map data from src. data is in .js format
 
-H
-H.save_file("highmaps")
+H.htmlcontent

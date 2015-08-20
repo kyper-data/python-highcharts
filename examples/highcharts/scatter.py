@@ -173,9 +173,8 @@ data2 = [[174.0, 65.6], [175.3, 71.8], [193.5, 80.7], [186.5, 72.6], [187.2, 78.
         [170.2, 62.3], [177.8, 82.7], [179.1, 79.1], [190.5, 98.2], [177.8, 84.1],
         [180.3, 83.2], [180.3, 83.2]]
 
-H.set_dict_optoins(options)
+H.set_dict_options(options)
 H.add_data_set(data1, 'scatter', 'Female', color='rgba(223, 83, 83, .5)')
 H.add_data_set(data2, 'scatter', 'Male', color='rgba(119, 152, 191, .5)')
 
-H
-H.save_file()
+H.htmlcontent

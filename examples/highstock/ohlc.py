@@ -5,7 +5,7 @@ OHLC: http://www.highcharts.com/stock/demo/ohlc
 """
 
 from highcharts import Highstock
-from highcharts.highstocks.highstock_helper import jsonp_loader
+from highcharts.highstock.highstock_helper import jsonp_loader
 H = Highstock()
 
 data_url = 'http://www.highcharts.com/samples/data/jsonp.php?filename=aapl-ohlc.json&callback=?'
@@ -34,7 +34,6 @@ options = {
 
 H.set_dict_options(options)
 
-H
-H.save_file()
+H.htmlcontent
 
 

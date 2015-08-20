@@ -77,5 +77,4 @@ H.set_dict_options(options)
 H.add_data_set(data_male, 'bar', 'Male')
 H.add_data_set(data_female, 'bar', 'Female')
 
-H
-H.save_file()
+H.htmlcontent

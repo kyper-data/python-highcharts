@@ -29,20 +29,20 @@ states = geojson_handler(geojson, 'map')
 rivers = geojson_handler(geojson, 'mapline')
 cities = geojson_handler(geojson, 'mappoint')
 specialCityLabels = {
-                'Melbourne': {
-                    'align': 'right'
-                },
-                'Canberra': {
-                    'align': 'right',
-                    'y': -5
-                },
-                'Wollongong': {
-                    'y': 5
-                },
-                'Brisbane': {
-                    'y': -5
-                }
-            }
+    'Melbourne': {
+        'align': 'right'
+    },
+    'Canberra': {
+        'align': 'right',
+        'y': -5
+    },
+    'Wollongong': {
+        'y': 5
+    },
+    'Brisbane': {
+        'y': -5
+    }
+}
 
 """
 Use map function in python to handle the dataset operation
@@ -59,6 +59,7 @@ def states_label(x):
         x.update({'middleY':0.7})
 
 def cities_label(x):
+    global specialCityLabels
     if x['name'] in specialCityLabels.keys():
         x.update({'dataLabels': specialCityLabels[x['name']]});
 
@@ -98,5 +99,4 @@ H.add_data_set(cities, 'mappoint', 'Cities', color = 'black',
                     'pointFormat': '{point.name}'
                 })
 
-H
-H.save_file()
+H.htmlcontent

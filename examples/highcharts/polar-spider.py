@@ -56,5 +56,4 @@ H.set_dict_options(options)
 H.add_data_set(data1, name='Allocated Budget', pointPlacement='on')
 H.add_data_set(data2, name='Actual Spending',  pointPlacement='on')
 
-H
-H.save_file()
+H.htmlcontent
