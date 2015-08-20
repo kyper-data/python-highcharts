@@ -4,7 +4,7 @@ Highcharts Demos
 3D scatter chart: http://www.highcharts.com/demo/3d-scatter-draggable
 """
 
-from highchart import Highchart
+from highcharts import Highchart
 H = Highchart(width=550, height=400)
 
 """
@@ -98,5 +98,4 @@ H.set_dict_options(options)
 H.add_data_set(data, 'scatter', 'Reading', colorByPoint= True)
 H.add_3dRoatation() # add rotation function
 
-H
-H.save_file()
+H.htmlcontent

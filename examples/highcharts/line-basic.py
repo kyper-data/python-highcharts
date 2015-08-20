@@ -32,5 +32,4 @@ H.set_options('plotOptions',{'line': {
                     'enabled': True
                 }}})
 
-H
-H.save_file()
+H.htmlcontent

@@ -20,7 +20,7 @@ For function coverstion, such as Data.UTC to datetime.datetime, please check JSO
 """
 
 from highcharts import Highstock
-from highcharts.highstocks.highstock_helper import jsonp_loader
+from highcharts.highstock.highstock_helper import jsonp_loader
 H = Highstock()
 
 data_url = 'http://www.highcharts.com/samples/data/jsonp.php?filename=aapl-c.json&callback=?'
@@ -43,8 +43,7 @@ H.add_data_set(data, 'line', 'AAPL', tooltip = {
 
 H.set_dict_options(options)
 
-H
-H.save_file()
+H.htmlcontent
 
 
 

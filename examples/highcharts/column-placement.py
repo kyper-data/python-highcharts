@@ -75,5 +75,4 @@ H.add_data_set(data4, 'column', 'Profit Optimized', color='rgba(186,60,61,.9)',
             pointPlacement=0.2,
             yAxis=1)
 
-H
-H.save_file()
+H.htmlcontent

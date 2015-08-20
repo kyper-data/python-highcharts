@@ -155,5 +155,4 @@ H.set_options('plotOptions', {
             }
         })
 
-H
-H.save_file()
+H.htmlcontent

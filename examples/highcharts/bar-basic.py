@@ -68,5 +68,4 @@ H.add_data_set(data2, 'bar', 'Year 1900')
 H.add_data_set(data3, 'bar', 'Year 2008')
 H.add_data_set(data4, 'bar', 'Year 2012')
 
-H
-H.save_file()
+H.htmlcontent

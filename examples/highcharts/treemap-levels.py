@@ -70,5 +70,4 @@ H.add_data_set(data, 'treemap', layoutAlgorithm='squarified',
                 'layoutAlgorithm': 'stripes'
             }])
 
-H
-H.save_file()
+H.htmlcontent

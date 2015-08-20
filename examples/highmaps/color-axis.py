@@ -42,7 +42,7 @@ options = {
         },
     } 
 
-H.set_dict_optoins(options)
+H.set_dict_options(options)
 data_url = 'http://www.highcharts.com/samples/data/jsonp.php?filename=us-population-density.json&callback=?' # set data_src
 H.add_data_from_jsonp(data_url, 'json_data', 'map', 'Population density', joinBy = ['postal-code', 'code'], # add dataset from data_src using jsonp
      dataLabels = {
@@ -73,5 +73,4 @@ H.add_JSscript("$.each(json_data, function () {\
             this.code = this.code.toUpperCase();\
         });", 'head')
 
-H
-H.save_file("highmaps")
+H.htmlcontent

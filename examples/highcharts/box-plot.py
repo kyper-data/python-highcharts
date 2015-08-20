@@ -55,7 +55,7 @@ data_outline = [[0, 644],
                 [4, 951],
                 [4, 969]]
 
-H.set_dict_optoins(options)
+H.set_dict_options(options)
 H.add_data_set(data, 'boxplot', 'Observations', tooltip = {
                 'headerFormat': '<em>Experiment No {point.key}</em><br/>'})
 H.add_data_set(data_outline, 'scatter', 'Outlier', marker = {
@@ -67,5 +67,4 @@ H.add_data_set(data_outline, 'scatter', 'Outlier', marker = {
                 'pointFormat': 'Observation: {point.y}'
             })
 
-H
-H.save_file()
+H.htmlcontent

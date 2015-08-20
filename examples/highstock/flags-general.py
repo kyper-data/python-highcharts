@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 Highstock Demos
-Plot bands on Y axis: http://www.highcharts.com/stock/demo/yaxis-plotbands
+Flags marking events: http://www.highcharts.com/stock/demo/flags-general
 """
 
 import datetime
@@ -662,52 +662,63 @@ data = [
 [datetime.datetime(2015,6,30),0.8950]
 ]
 
-startDate = data[len(data) - 1][0]
-minRate = 1
-maxRate = 0
-endDate = datetime.datetime(startDate.year, startDate.month - 3, startDate.day)  #a quarter of a year before last data point
+data2 = [{
+        'x' : datetime.datetime(2015, 6, 8),
+        'title' : 'C',
+        'text' : 'Stocks fall on Greece, rate concerns; US dollar dips'
+    }, {
+        'x' : datetime.datetime(2015, 6, 12),
+        'title' : 'D',
+        'text' : 'Zimbabwe ditches \'worthless\' currency for the US dollar '
+    }, {
+        'x' : datetime.datetime(2015, 6, 19),
+        'title' : 'E',
+        'text' : 'US Dollar Declines Over the Week on Rate Timeline'
+    }, {
+        'x' : datetime.datetime(2015, 6, 26),
+        'title' : 'F',
+        'text' : 'Greek Negotiations Take Sharp Turn for Worse, US Dollar set to Rally '
+    }, {
+        'x' : datetime.datetime(2015, 6, 29),
+        'title' : 'G',
+        'text' : 'Euro records stunning reversal against dollar'
+    }, {
+        'x' : datetime.datetime(2015, 6, 30),
+        'title' : 'H',
+        'text' : 'Surging US dollar curbs global IT spend'
+    }]
 
-for i in xrange(len(data)-1, 0, -1):
-	date = data[i][0]
-	rate = data[i][1]
-	if date < endDate:
-		break # stop measuring highs and lows
-	if rate > maxRate:
-		maxRate = rate
-	if rate < minRate:
-		minRate = rate
-
-H.add_data_set(data, 'line', 'USD to EUR', tooltip = {
-                    'valueDecimals': 4
-                })
+H.add_data_set(data, 'line', 'USD to EUR', id = 'dataseries')
+H.add_data_set(data2, 'flags', onSeries = 'dataseries',
+                shape = 'circlepin',
+                width = 16)
 
 options = {
-    'rangeSelector': {
-                'selected': 1
+    'rangeSelector' : {
+        'selected' : 0
+    },
+
+    'title' : {
+        'text' : 'USD to EUR exchange rate'
+    },
+    'tooltip': {
+                'style': {
+                    'width': '200px'
+                },
+                'valueDecimals': 4,
+                'shared' : True
             },
 
-    'title': {
-        'text': 'USD to EUR exchange rate'
+    'yAxis' : {
+        'title' : {
+            'text' : 'Exchange rate'
+        }
     },
 
-    'yAxis': {
-        'title': {
-            'text': 'Exchange rate'
-        },
-        'plotBands': [{
-            'from': minRate,
-            'to': maxRate,
-            'color': 'rgba(68, 170, 213, 0.2)',
-            'label': {
-                'text': 'Last quarter year\'s value range'
-            }
-        }]
-    },
 }
 
 H.set_dict_options(options)
 
-H
-H.save_file()
+H.htmlcontent
 
 
