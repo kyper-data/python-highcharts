@@ -1,4 +1,4 @@
-# Project: python-highcharts
+# python-highcharts
 
 ## License
 
@@ -17,7 +17,7 @@ The original framework was inspired by [python-nvd3](https://github.com/areski/p
 -need to work on this-
 
 ---------------------------------------------------------------------------------------------------------------
-# Highcharts
+# Highcharts/Highstock
 
 ## Basic Usage
 
@@ -182,7 +182,6 @@ chart.save_file()
 
 * More charts support
 * Clean code and put more explanation
-* Unit tests
 
 Reference: [Highcharts API](http://api.highcharts.com/highcharts)
 
@@ -566,6 +565,5 @@ chart.save_file()
 
 * More examples
 * Clean code and put more explanation
-* Unittests
 
 Reference: [Highcharts API](http://api.highcharts.com/highcharts)
