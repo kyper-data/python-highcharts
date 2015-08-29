@@ -221,7 +221,7 @@ class Highstock(object):
         self.add_data_set(RawJavaScriptText(self.jsonp_data), series_type, name=name, **kwargs)
 
 
-    def add_navi_seri(self, data, series_type="line", **kwargs):
+    def add_navi_series(self, data, series_type="line", **kwargs):
         """set series for navigator option in highstocks"""
 
         self.navi_seri_flag = True
@@ -229,7 +229,7 @@ class Highstock(object):
         series_data.__options__().update(SeriesOptions(series_type=series_type, **kwargs).__options__())           
         self.navi_seri_temp = series_data
 
-    def add_navi_seri_from_jsonp(self, data_src=None, data_name='json_data', series_type="line", **kwargs):
+    def add_navi_series_from_jsonp(self, data_src=None, data_name='json_data', series_type="line", **kwargs):
         """set series for navigator option in highstocks"""
 
         if not self.jsonp_data_flag:
@@ -241,7 +241,7 @@ class Highstock(object):
             
             self.jsonp_data = data_name
         
-        self.add_navi_seri(RawJavaScriptText(self.jsonp_data), series_type, **kwargs)
+        self.add_navi_series(RawJavaScriptText(self.jsonp_data), series_type, **kwargs)
 
 
     def add_JSscript(self, js_script, js_loc):

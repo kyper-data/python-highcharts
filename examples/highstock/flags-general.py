@@ -720,5 +720,3 @@ options = {
 H.set_dict_options(options)
 
 H.htmlcontent
-
-

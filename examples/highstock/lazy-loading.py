@@ -5,10 +5,10 @@ Highstock Demos
 """
 
 """
-This example generates a candlestick chart, which updates (async loading) when different time period is selected
-by the navigation bar due to the large dataset
+This example generates a candlestick chart, which updates (async loading) when a different time period is selected
+by the navigation bar due to the large dataset.
 
-Due to the update, this chart requires JS function in the beginning and xAxis.events options
+Due to the update, this chart requires JS function in the beginning and xAxis.events options.
 """
 
 from highcharts import Highstock
@@ -20,7 +20,7 @@ H.add_data_from_jsonp(data_url, 'json_data', 'candlestick', dataGrouping = {'ena
 script = """json_data = [].concat(json_data, [[Date.UTC(2011, 9, 14, 19, 59), null, null, null, null]]);"""
 H.add_JSscript(script, 'head')
 
-H.add_navi_seri_from_jsonp() # not really useful, but it shows in highstock demo
+H.add_navi_series_from_jsonp() # not really useful, but it shows in highstock demo
 
 options = {
     'chart' : {
@@ -95,5 +95,3 @@ options = {
 H.set_dict_options(options)
 
 H.htmlcontent
-
-

@@ -81,8 +81,3 @@ H.add_data_set(volume, 'column', 'Volume', yAxis = 1, dataGrouping = {
 H.set_dict_options(options)
 
 H.htmlcontent
-
-
-
-
-

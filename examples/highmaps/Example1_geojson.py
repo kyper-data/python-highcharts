@@ -2,11 +2,11 @@
 """
 Basic example for highmaps module in python-highcharts
 
-As highcharts, datasets need to input using "add_data_set" method
-options can be either set by "set_options" method as showing here or
-construct a option dictionary object and input using "set_dict_options" method (recommended)
+As in highcharts, datasets need to input using "add_data_set" method.
+Options can be either set by the "set_options" method as shown here or
+by constructing a option dictionary object and input using "set_dict_options" method (recommended)
 
-In highmaps, the map data can be inputed in multiple ways:
+In highmaps, the map data can be input in multiple ways:
 
 1. add_map_data method: (recommended)
     add_map_data(geojson, **kwargs)

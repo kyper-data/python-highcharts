@@ -96,6 +96,6 @@ data = [[1, 6, 5], [8, 7, 9], [1, 3, 4], [4, 6, 8], [5, 7, 7], [6, 9, 6], [7, 0,
     
 H.set_dict_options(options)
 H.add_data_set(data, 'scatter', 'Reading', colorByPoint= True)
-H.add_3dRoatation() # add rotation function
+H.add_3d_rotation() # add rotation function
 
 H.htmlcontent

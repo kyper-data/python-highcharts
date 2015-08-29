@@ -44,8 +44,3 @@ H.add_data_set(data, 'line', 'AAPL', tooltip = {
 H.set_dict_options(options)
 
 H.htmlcontent
-
-
-
-
-

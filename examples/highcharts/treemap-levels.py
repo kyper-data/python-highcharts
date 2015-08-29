@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 Highcharts Demos
-Treemap leves: http://jsfiddle.net/gh/get/jquery/1.7.2/highslide-software/highcharts.com/tree/master/samples/highcharts/plotoptions/treemap-levels/
+Treemap levels: http://jsfiddle.net/gh/get/jquery/1.7.2/highslide-software/highcharts.com/tree/master/samples/highcharts/plotoptions/treemap-levels/
 """
 
 from highcharts import Highchart

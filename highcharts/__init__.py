@@ -8,7 +8,7 @@ Project location : xxxxxx
 
 from .version import version_info, __version__
 
-#from . import ipynb
+from . import ipynb
 
 from .highcharts.highcharts import Highchart
 from .highmaps.highmaps import Highmap

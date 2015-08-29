@@ -9,7 +9,7 @@ construct a option dictionary object and input using "set_dict_options" method
 """
 
 from highcharts import Highchart # import highchart library
-H = Highchart() #setup highchart instance
+H = Highchart() # setup highchart instance
 
 data = range(1,20)
 data2 = range(20,1,-1) # generate some random datasets

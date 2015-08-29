@@ -7,8 +7,8 @@ Flags marking events: http://www.highcharts.com/stock/demo/flags-general
 """
 This example generates the same chart as flags-general.py
 But instead of copying from the website, the dataset is queried direcly using jsonp_loader
-The json doc from the url is not in correct format (lack of quote), so the sub_d and sub_by parameters
-are used to fix the problem
+The json doc from the url is not in the correct format (lack of quotes), so the sub_d and sub_by parameters
+are used to fix the problem.
 """
 
 import datetime

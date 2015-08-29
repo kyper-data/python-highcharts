@@ -191,7 +191,7 @@ class Highchart(object):
             raise OptionTypeError("Option: %s Not Allowed For Series Type: %s" % type(new_src))
 
 
-    def add_3dRoatation(self):
+    def add_3d_rotation(self):
         self.options3d_rotation_flag = True
 
     def add_data_set(self, data, series_type="line", name=None, **kwargs):
