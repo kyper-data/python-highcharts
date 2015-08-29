@@ -26,6 +26,7 @@ setup(
         "future"
     ],
     classifiers         = [
+        'Framework :: IPython',
         'Intended Audience :: Developers',
         'Intended Audience :: Financial and Insurance Industry',
         'Intended Audience :: Science/Research',

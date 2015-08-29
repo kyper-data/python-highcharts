@@ -10,6 +10,8 @@ However, please be aware that the Highcharts project itself, as well as Highmaps
 
 python-highcharts is a simple translation layer between Python and Javascript for Highcharts projects (highcharts, highmaps, and highstocks).
 
+In addition, python-highcharts integrates with [Jupyter/IPython notebook](https://github.com/jupyter/notebook), which enables you to render Highcharts, Highmaps, and Highstock visualizations directly in notebooks. See examples [here](https://github.com/kyper-data/python-highcharts/tree/developer/examples/ipynb).
+
 The original framework was inspired by [python-nvd3](https://github.com/areski/python-nvd3) and [PyHighcharts](https://github.com/fidyeates/PyHighcharts).
 
 ## Installation
@@ -176,6 +178,19 @@ chart.add_data_set(data, 'spline', 'Temperature', marker={'enabled': False})
 
 chart.save_file()
 
+```
+
+## Jupyter/IPython notebook
+
+To render charts in Jupyter notebooks, simply put the chart object on the last line of a cell:
+
+```python
+chart.set_dict_options(options)
+data =  [[0, 15], [10, -50], [20, -56.5], [30, -46.5], [40, -22.1], 
+[50, -2.5], [60, -27.7], [70, -55.7], [80, -76.5]]
+chart.add_data_set(data, 'spline', 'Temperature', marker={'enabled': False}) 
+
+chart
 ```
 
 ## Todo:
