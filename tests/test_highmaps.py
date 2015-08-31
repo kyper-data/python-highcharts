@@ -5,7 +5,7 @@ import sys
 if sys.version_info >= (3, 0):
     def execfile(filepath):
         with open(filepath) as f:
-            code = compile(f.read().decode('utf-8', filepath, 'exec')
+            code = compile(f.read().decode('utf-8'), filepath, 'exec')
             exec(code)
 
 class TestHighmaps(unittest.TestCase):
