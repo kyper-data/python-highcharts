@@ -22,7 +22,7 @@ if _ip and _ip.__module__.startswith('IPython'):
         width = int(chart.options['chart'].__dict__['width']) if chart.options['chart'].__dict__.get('width') else 820
         height = int(chart.options['chart'].__dict__['height']) if chart.options['chart'].__dict__.get('height') else 520
 
-        if chart.options['chart'].__dict__['options3d']::
+        if chart.options['chart'].__dict__['options3d']:
             if len(htmlsrcdoc) < 99965000 :
                 return '<iframe style="border:0;outline:none;overflow:hidden" src="data:text/html,'+ htmlsrcdoc + ' "height= ' + str(height) +' \
                         width =' + str(width) + '></iframe>'
