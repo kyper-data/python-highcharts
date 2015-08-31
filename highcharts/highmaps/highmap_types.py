@@ -1,10 +1,8 @@
 # -*- coding: UTF-8 -*-
 import json, datetime
-from common import Formatter, Events, Position, ContextButton, Options3d, ResetZoomButton, DrillUpButton, Labels, \
+from .common import Formatter, Events, Position, ContextButton, Options3d, ResetZoomButton, DrillUpButton, Labels, \
     Marker, Point, States, Tooltip, Title, JSfunction, MapObject, ColorObject, CSSObject, SVGObject, \
     CommonObject, ArrayObject
-
-from types import NoneType
 
 PLOT_OPTION_ALLOWED_ARGS = {
   "common": {

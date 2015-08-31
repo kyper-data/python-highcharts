@@ -1,6 +1,6 @@
 # -*- coding: UTF-8 -*-
-from highmap_types import OptionTypeError, Series, SeriesOptions
-from common import Formatter, Events, Position, ContextButton, Button, Options3d, ResetZoomButton, \
+from .highmap_types import OptionTypeError, Series, SeriesOptions
+from .common import Formatter, Events, Position, ContextButton, Button, Options3d, ResetZoomButton, \
     DrillUpButton, Labels, DataClasses, Title, Items, Navigation, Background, Breaks, Marker, \
     DateTimeLabelFormats, JSfunction, ColorObject, CSSObject, SVGObject, CommonObject, ArrayObject
 

@@ -1,11 +1,9 @@
 # -*- coding: UTF-8 -*-
 import json, datetime
-from common import Formatter, Events, Position, ContextButton, Options3d, ResetZoomButton, DataGrouping, \
+from .common import Formatter, Events, Position, ContextButton, Options3d, ResetZoomButton, DataGrouping, \
     Labels, Marker, Point, PlotBands, States, Tooltip, Title, Zones, Levels, Shadow, \
     JSfunction, ColorObject, CSSObject, SVGObject, \
     CommonObject, ArrayObject
-
-from types import NoneType
 
 PLOT_OPTION_ALLOWED_ARGS = {
   "common": {
@@ -56,7 +54,7 @@ PLOT_OPTION_ALLOWED_ARGS = {
     "stack": basestring,
     "stacking": basestring,
     "step": bool,
-    "threshold": [int, NoneType],
+    "threshold": [int, type(None)],
     "trackByArea": bool,
     "turboThreshold": int,
   },
@@ -102,7 +100,7 @@ PLOT_OPTION_ALLOWED_ARGS = {
     "shadow": [bool, dict],
     "stack": basestring,
     "stacking": basestring,
-    "threshold": [int, NoneType],
+    "threshold": [int, type(None)],
     "turboThreshold": int,
     "trackByArea": bool,
   },
@@ -127,7 +125,7 @@ PLOT_OPTION_ALLOWED_ARGS = {
     "shadow": [bool, dict],
     "stack": basestring,
     "stacking": basestring,
-    "threshold": [int, NoneType],
+    "threshold": [int, type(None)],
     "turboThreshold": int,
     "trackByArea": bool, 
   },

@@ -1,11 +1,9 @@
 # -*- coding: UTF-8 -*-
 import json, datetime
-from common import Formatter, Events, Position, ContextButton, Options3d, ResetZoomButton, DrillUpButton, \
+from .common import Formatter, Events, Position, ContextButton, Options3d, ResetZoomButton, DrillUpButton, \
     Labels, Marker, Point, PlotBands, States, Tooltip, Title, Zones, Levels, \
     JSfunction, ColorObject, CSSObject, SVGObject, \
     CommonObject, ArrayObject
-
-from types import NoneType
 
 PLOT_OPTION_ALLOWED_ARGS = {
   "common": {
@@ -56,7 +54,7 @@ PLOT_OPTION_ALLOWED_ARGS = {
     "shadow": [bool, dict], #shadow object
     "stacking": basestring,
     "step": bool,
-    "threshold": [int, NoneType],
+    "threshold": [int, type(None)],
     "trackByArea": bool,
     "turboThreshold": int,
   },
@@ -107,7 +105,7 @@ PLOT_OPTION_ALLOWED_ARGS = {
     "shadow": [bool, dict],
     "stack": basestring,
     "stacking": basestring,
-    "threshold": [int, NoneType],
+    "threshold": [int, type(None)],
     "turboThreshold": int,
     "trackByArea": bool,
   },
@@ -155,7 +153,7 @@ PLOT_OPTION_ALLOWED_ARGS = {
     "pointWidth": int,
     "shadow": [bool, dict],
     "stacking": basestring,
-    "threshold": [int, NoneType],
+    "threshold": [int, type(None)],
     "turboThreshold": int,
   },
   "boxplot": {
@@ -217,7 +215,7 @@ PLOT_OPTION_ALLOWED_ARGS = {
     "pointWidth": int,
     "shadow": [bool, dict],
     "stacking": basestring,
-    "threshold": [int, NoneType],
+    "threshold": [int, type(None)],
     "turboThreshold": int,
   },
   "column": {
@@ -250,7 +248,7 @@ PLOT_OPTION_ALLOWED_ARGS = {
     "pointStart": [int,basestring,datetime.datetime],
     "shadow": [bool, dict],
     "stacking": basestring,
-    "threshold": [int, NoneType],
+    "threshold": [int, type(None)],
     "turboThreshold": int,
   },
   "columnrange": {
@@ -283,7 +281,7 @@ PLOT_OPTION_ALLOWED_ARGS = {
     "pointStart": [int,basestring,datetime.datetime],
     "shadow": [bool, dict],
     "stacking": basestring,
-    "threshold": [int, NoneType],
+    "threshold": [int, type(None)],
     "turboThreshold": int,
   },
   "errorbar": {
@@ -324,7 +322,7 @@ PLOT_OPTION_ALLOWED_ARGS = {
     "overshoot": [int, float],  
     "pivot": NotImplemented,
     "stickyTracking": bool,
-    "threshold": [int, NoneType],
+    "threshold": [int, type(None)],
     "wrap": bool,
   },
   "heatmap": {

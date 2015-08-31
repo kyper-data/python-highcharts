@@ -7,7 +7,7 @@ http://shop.highsoft.com/highcharts.html
 Project location : xxxxx
 """
 
-from __future__ import unicode_literals
+from __future__ import unicode_literals, absolute_import
 from future.standard_library import install_aliases
 install_aliases()
 
@@ -17,15 +17,15 @@ from jinja2 import Environment, PackageLoader
 import json, uuid
 import datetime, random, os, inspect
 from collections import Iterable
-from options import BaseOptions, ChartOptions, \
+from .options import BaseOptions, ChartOptions, \
     ColorsOptions, CreditsOptions, ExportingOptions, \
     GlobalOptions, LabelsOptions, LangOptions, \
     LegendOptions, LoadingOptions, NavigatorOptions, NavigationOptions, \
     PlotOptions, RangeSelectorOptions, ScrollbarOptions, SeriesData, SubtitleOptions, TitleOptions, \
     TooltipOptions, xAxisOptions, yAxisOptions, MultiAxis
 
-from highstock_types import Series, SeriesOptions
-from common import Levels, Formatter, CSSObject, SVGObject, JSfunction, RawJavaScriptText, \
+from .highstock_types import Series, SeriesOptions
+from .common import Levels, Formatter, CSSObject, SVGObject, JSfunction, RawJavaScriptText, \
     CommonObject, ArrayObject, ColorObject
 
 CONTENT_FILENAME = "./content.html"

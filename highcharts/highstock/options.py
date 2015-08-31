@@ -1,7 +1,7 @@
 # -*- coding: UTF-8 -*-
 
-from highstock_types import OptionTypeError, Series, SeriesOptions
-from common import Formatter, Events, Position, ContextButton, Options3d, ResetZoomButton, \
+from .highstock_types import OptionTypeError, Series, SeriesOptions
+from .common import Formatter, Events, Position, ContextButton, Options3d, ResetZoomButton, \
     Labels, PlotBands, PlotLines, Title, Items, Navigation, Handles, Background, Breaks, \
     DateTimeLabelFormats, Zones, Levels, Buttons, \
     JSfunction, ColorObject, CSSObject, SVGObject, CommonObject, ArrayObject

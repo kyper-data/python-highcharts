@@ -1,7 +1,7 @@
 # -*- coding: UTF-8 -*-
 
-from highchart_types import OptionTypeError, Series, SeriesOptions
-from common import Formatter, Events, Position, ContextButton, Options3d, ResetZoomButton, \
+from .highchart_types import OptionTypeError, Series, SeriesOptions
+from .common import Formatter, Events, Position, ContextButton, Options3d, ResetZoomButton, \
     DrillUpButton, Labels, PlotBands, PlotLines, Title, Items, Navigation, Background, Breaks, \
     DateTimeLabelFormats, Zones, Levels, \
     JSfunction, ColorObject, CSSObject, SVGObject, CommonObject, ArrayObject

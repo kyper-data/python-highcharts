@@ -4,7 +4,6 @@
 Common Functions For Highcharts
 """
 import datetime, re
-from types import NoneType
 
 FORMATTER_TYPE_MAPPINGS = {
     "default": "function() { return this.value }",
@@ -467,7 +466,7 @@ class Labels(CommonObject):
     "defer": bool,
     "distance": int,
     "enabled": bool,
-    "format": [basestring, NoneType],
+    "format": [basestring, type(None)],
     "formatter": (Formatter, JSfunction, basestring),
     "inside": bool,
     "overflow": basestring,
@@ -496,7 +495,7 @@ class Title(CommonObject):
     "offset": int,
     "rotation": int,
     "style": (CSSObject, dict),
-    "text": [basestring, NoneType]
+    "text": [basestring, type(None)]
     }
 
 class Navigation(CommonObject): 

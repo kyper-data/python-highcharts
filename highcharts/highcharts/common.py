@@ -3,8 +3,8 @@
 """ Python-Highcharts common.py
 Common Functions For Highcharts
 """
+from builtins import *
 import datetime, re
-from types import NoneType
 
 FORMATTER_TYPE_MAPPINGS = {
     "default": "function() { return this.value }",
@@ -501,7 +501,7 @@ class Title(CommonObject):
     "offset": int,
     "rotation": int,
     "style": (CSSObject, dict),
-    "text": [basestring, NoneType]
+    "text": [basestring, type(None)]
     }
 
 class Navigation(CommonObject): 
