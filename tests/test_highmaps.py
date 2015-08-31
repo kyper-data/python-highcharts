@@ -1,6 +1,11 @@
 import unittest
 import os
 
+def execfile(filepath):
+    with open(filepath) as f:
+        code = compile(f.read(), filepath, 'exec')
+        exec(code)
+
 class TestHighmaps(unittest.TestCase):
     """Very simple test cases that run through examples and check for exceptions."""
 
