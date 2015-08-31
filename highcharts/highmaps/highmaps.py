@@ -11,6 +11,8 @@ from __future__ import unicode_literals, absolute_import
 from future.standard_library import install_aliases
 install_aliases()
 
+from past.builtins import basestring
+
 from optparse import OptionParser
 from urllib.request import urlopen
 from jinja2 import Environment, PackageLoader
@@ -277,7 +279,7 @@ class Highmap(object):
     def add_map_data(self, geojson, **kwargs):
         self.mapdata_flag = True
         self.map = 'geojson'
-        self.mapdata = json.dumps(geojson,  encoding='utf8')
+        self.mapdata = json.dumps(geojson)
 
         if self.data_is_coordinate:
             kwargs.update({'mapData': self.map})
@@ -357,13 +359,12 @@ class Highmap(object):
         """build HTML content only, no header or body tags"""
 
         self.buildcontainer()
-        self.option = json.dumps(self.options, encoding='utf8', cls = HighchartsEncoder)
+        self.option = json.dumps(self.options, cls = HighchartsEncoder)
         self.setoption = json.dumps(self.setOptions, cls = HighchartsEncoder) 
-        self.data = json.dumps(self.data_temp, encoding='utf8', cls = HighchartsEncoder)
+        self.data = json.dumps(self.data_temp, cls = HighchartsEncoder)
         
         if self.drilldown_flag: 
-            self.drilldown_data = json.dumps(self.drilldown_data_temp, encoding='utf8', \
-                                            cls = HighchartsEncoder)
+            self.drilldown_data = json.dumps(self.drilldown_data_temp, cls = HighchartsEncoder)
         self._htmlcontent = self.template_content_highcharts.render(chart=self).encode('utf-8')
 
 
@@ -468,9 +469,9 @@ class HighchartsEncoder(json.JSONEncoder):
             return json.JSONEncoder.default(self, obj)
 
     def encode(self, obj):
-        result = json.JSONEncoder.encode(self, obj).decode('utf-8')
+        result = json.JSONEncoder.encode(self, obj)
         for k, v in self._replacement_map.items():
-            result = result.replace('"%s"' % (k,), v.decode('utf-8'))
+            result = result.replace('"%s"' % (k,), v)
         return result
 
 

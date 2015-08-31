@@ -51,7 +51,7 @@ options = {
         'text' : 'USA'
     },
 
-    'legend': {} if H.options['chart'].__dict__.get('width', None) < 400 else { 
+    'legend': {} if H.options['chart'].__dict__.get('width', 0) < 400 else { 
         'layout': 'vertical',
         'align': 'right',
         'verticalAlign': 'middle'

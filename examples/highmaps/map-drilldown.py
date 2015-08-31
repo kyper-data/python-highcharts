@@ -105,7 +105,7 @@ options = {
             }
         },
 
-        'legend': {} if H.options['chart'].__dict__.get('width', None) < 400 else { # make sure the width of chart is enough to show legend
+        'legend': {} if H.options['chart'].__dict__.get('width', 0) < 400 else { # make sure the width of chart is enough to show legend
             'layout': 'vertical',
             'align': 'right',
             'verticalAlign': 'middle'

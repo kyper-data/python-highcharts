@@ -37,7 +37,7 @@ options = {
             'text': 'Temperature'
         },
         'labels': {
-            "formatter": "function () {\
+            "formatter": u"function () {\
                                                 return this.value + '°';\
                                             }"
         },

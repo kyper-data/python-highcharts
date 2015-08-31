@@ -10,6 +10,7 @@ Project location : xxxxx
 from __future__ import unicode_literals, absolute_import
 from future.standard_library import install_aliases
 install_aliases()
+from past.builtins import basestring
 
 from jinja2 import Environment, PackageLoader
 # import sys
@@ -297,13 +298,12 @@ class Highchart(object):
         """build HTML content only, no header or body tags"""
 
         self.buildcontainer()
-        self.option = json.dumps(self.options, encoding='utf8', cls = HighchartsEncoder)
+        self.option = json.dumps(self.options, cls = HighchartsEncoder)
         self.setoption = json.dumps(self.setOptions, cls = HighchartsEncoder) 
-        self.data = json.dumps(self.data_temp, encoding='utf8', cls = HighchartsEncoder)
+        self.data = json.dumps(self.data_temp, cls = HighchartsEncoder)
         
         if self.drilldown_flag: 
-            self.drilldown_data = json.dumps(self.drilldown_data_temp, encoding='utf8', \
-                                            cls = HighchartsEncoder)
+            self.drilldown_data = json.dumps(self.drilldown_data_temp, cls = HighchartsEncoder)
         self._htmlcontent = self.template_content_highcharts.render(chart=self).encode('utf-8')
 
 
@@ -315,7 +315,7 @@ class Highchart(object):
         self.buildcontent()
         self.buildhtmlheader()
         self.content = self._htmlcontent.decode('utf-8') # need to ensure unicode
-        self._htmlcontent = self.template_page_highcharts.render(chart=self).encode('utf-8')
+        self._htmlcontent = self.template_page_highcharts.render(chart=self)
         return self._htmlcontent
         
 
@@ -407,9 +407,9 @@ class HighchartsEncoder(json.JSONEncoder):
             return json.JSONEncoder.default(self, obj)
 
     def encode(self, obj):
-        result = json.JSONEncoder.encode(self, obj).decode('utf-8')
+        result = json.JSONEncoder.encode(self, obj)
         for k, v in self._replacement_map.items():
-            result = result.replace('"%s"' % (k,), v.decode('utf-8'))
+            result = result.replace('"{}"'.format(k), v)
         return result
 
 

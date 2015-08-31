@@ -295,13 +295,12 @@ class Highstock(object):
         """build HTML content only, no header or body tags"""
 
         self.buildcontainer()
-        self.option = json.dumps(self.options, encoding='utf8', cls = HighchartsEncoder)
+        self.option = json.dumps(self.options, cls = HighchartsEncoder)
         self.setoption = json.dumps(self.setOptions, cls = HighchartsEncoder) 
-        self.data = json.dumps(self.data_temp, encoding='utf8', cls = HighchartsEncoder)
+        self.data = json.dumps(self.data_temp, cls = HighchartsEncoder)
         
         if self.navi_seri_flag:        
-            self.navi_seri = json.dumps(self.navi_seri_temp, encoding='utf8',\
-                                        cls = HighchartsEncoder)
+            self.navi_seri = json.dumps(self.navi_seri_temp, cls = HighchartsEncoder)
 
         self._htmlcontent = self.template_content_highcharts.render(chart=self).encode('utf-8')
 
@@ -403,9 +402,9 @@ class HighchartsEncoder(json.JSONEncoder):
             return json.JSONEncoder.default(self, obj)
 
     def encode(self, obj):
-        result = json.JSONEncoder.encode(self, obj).decode('utf-8')
+        result = json.JSONEncoder.encode(self, obj)
         for k, v in self._replacement_map.items():
-            result = result.replace('"%s"' % (k,), v.decode('utf-8'))
+            result = result.replace('"%s"' % (k,), v)
         return result
 
 

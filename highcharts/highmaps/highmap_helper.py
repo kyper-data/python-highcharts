@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from future.standard_library import install_aliases
 install_aliases()
+from past.builtins import basestring
+
 from urllib.request import urlopen
 import urllib
 
@@ -24,7 +26,7 @@ def jsonp_loader(url, prefix_regex=r'^(.*\()', suffix_regex=r'(\);)$', sub_d=Non
     hdr = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/535.7 (KHTML, like Gecko) Chrome/16.0.912.77 Safari/535.7'}
     req = urllib.request.Request(url, headers=hdr)
     page = urlopen(req)
-    result = page.read()
+    result = page.read().decode('utf-8')
     # replace all the redundant info with sub_by 
     if sub_d:
         result = re.sub(sub_d, sub_by, result)
@@ -43,7 +45,7 @@ def js_map_loader(url):
     hdr = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/535.7 (KHTML, like Gecko) Chrome/16.0.912.77 Safari/535.7'}
     req = urllib.request.Request(url, headers=hdr)
     page = urlopen(req)
-    result = page.read()
+    result = page.read().decode('utf-8')
     result = result[len(re.search(r'^.* = ', result).group()):]
 
     return json.loads(result)
@@ -136,7 +138,6 @@ def _coordinates_to_path(coordinates_array, hType, geojson_type):
 
 
 def _path_to_array(path):
-    print path
     path = path.replace(r'/([A-Za-z])/g', r' $1 ')
     path = path.replace(r'/^\s*/', "").replace(r'/\s*$/', "")
     path = path.split(" ");
@@ -148,7 +149,7 @@ def _path_to_array(path):
     return path
 
 if __name__ == '__main__':
-    print path_to_array("M 4687 2398 L 4679 2402 4679 2398 Z")
+    print(path_to_array("M 4687 2398 L 4679 2402 4679 2398 Z"))
 
 class JSONPDecoder(json.JSONDecoder):
     """Customized JSON decoder. It is used to convert everything 
@@ -178,7 +179,7 @@ class JSONPDecoder(json.JSONDecoder):
 
     def _iterdecode_dict(self, dct):
         new_dct = {}
-        for key, value in dct.iteritems():
+        for key, value in dct.items():
             for chunk in self._iterdecode(value):
                 new_dct[key] = chunk
         yield new_dct

@@ -1,4 +1,5 @@
 # -*- coding: UTF-8 -*-
+from past.builtins import basestring
 import json, datetime
 from .common import Formatter, Events, Position, ContextButton, Options3d, ResetZoomButton, DrillUpButton, Labels, \
     Marker, Point, States, Tooltip, Title, JSfunction, MapObject, ColorObject, CSSObject, SVGObject, \

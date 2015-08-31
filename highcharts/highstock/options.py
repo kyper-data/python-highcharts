@@ -1,4 +1,5 @@
 # -*- coding: UTF-8 -*-
+from past.builtins import basestring
 
 from .highstock_types import OptionTypeError, Series, SeriesOptions
 from .common import Formatter, Events, Position, ContextButton, Options3d, ResetZoomButton, \
@@ -7,8 +8,6 @@ from .common import Formatter, Events, Position, ContextButton, Options3d, Reset
     JSfunction, ColorObject, CSSObject, SVGObject, CommonObject, ArrayObject
 
 import json, datetime
-from types import NoneType
-
 
 # Base Option Class
 class BaseOptions(object):

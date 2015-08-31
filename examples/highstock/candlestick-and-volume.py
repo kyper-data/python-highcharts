@@ -17,7 +17,7 @@ groupingUnits = [
 ['month', [1, 2, 3, 4, 6]]
 ]
 
-for i in xrange(len(data)):
+for i in range(len(data)):
     ohlc.append(
         [
         data[i][0], # the date

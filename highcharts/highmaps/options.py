@@ -1,12 +1,12 @@
 # -*- coding: UTF-8 -*-
+from past.builtins import basestring
+
 from .highmap_types import OptionTypeError, Series, SeriesOptions
 from .common import Formatter, Events, Position, ContextButton, Button, Options3d, ResetZoomButton, \
     DrillUpButton, Labels, DataClasses, Title, Items, Navigation, Background, Breaks, Marker, \
     DateTimeLabelFormats, JSfunction, ColorObject, CSSObject, SVGObject, CommonObject, ArrayObject
 
 import json, datetime
-from types import NoneType
-
 
 # Base Option Class
 class BaseOptions(object):

@@ -3,6 +3,7 @@
 """ Python-Highcharts common.py
 Common Functions For Highcharts
 """
+from past.builtins import basestring
 import datetime, re
 
 FORMATTER_TYPE_MAPPINGS = {
@@ -278,7 +279,6 @@ class CommonObject(object):
     def update(self, kwargs):
         for k, v in kwargs.items(): 
             if k in self.ALLOWED_OPTIONS:
-                print k
                 if isinstance(self.ALLOWED_OPTIONS[k], tuple) and isinstance(self.ALLOWED_OPTIONS[k][0](), CommonObject):
                     # re-construct input dict with existing options in objects
                     if self.__getattr__(k):
@@ -324,8 +324,6 @@ class CommonObject(object):
                     self.__dict__.update({k:v})
 
             else:
-                print(self.ALLOWED_OPTIONS)
-                print(k, v)
                 raise OptionTypeError("Not An Accepted Option Type: %s" % k)
 
     def process_kwargs(self,kwargs):
@@ -346,7 +344,6 @@ class CommonObject(object):
                     else:
                         self.__dict__.update({k:v})
                 else:
-                    print(k, v) 
                     raise OptionTypeError("Option Type Mismatch: Expected: %s" % self.ALLOWED_OPTIONS[k])
             else:
                 raise OptionTypeError("Option: %s Not Allowed For CommonObject:" % k)

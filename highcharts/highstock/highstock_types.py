@@ -1,4 +1,6 @@
 # -*- coding: UTF-8 -*-
+from past.builtins import basestring
+
 import json, datetime
 from .common import Formatter, Events, Position, ContextButton, Options3d, ResetZoomButton, DataGrouping, \
     Labels, Marker, Point, PlotBands, States, Tooltip, Title, Zones, Levels, Shadow, \

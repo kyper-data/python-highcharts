@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from future.standard_library import install_aliases
 install_aliases()
+from past.builtins import basestring
+
 from urllib.request import urlopen
 import urllib
 
@@ -25,7 +27,7 @@ def jsonp_loader(url, prefix_regex=r'^(.*\()', suffix_regex=r'(\);)$', sub_d=Non
     hdr = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/535.7 (KHTML, like Gecko) Chrome/16.0.912.77 Safari/535.7'}
     req = urllib.request.Request(url, headers=hdr)
     page = urlopen(req)
-    result = page.read()
+    result = page.read().decode("utf-8")
     # replace all the redundant info with sub_by 
     if sub_d:
         result = re.sub(sub_d, sub_by, result)
@@ -74,7 +76,7 @@ class JSONPDecoder(json.JSONDecoder):
 
     def _iterdecode_dict(self, dct):
         new_dct = {}
-        for key, value in dct.iteritems():
+        for key, value in dct.items():
             for chunk in self._iterdecode(value):
                 new_dct[key] = chunk
         yield new_dct
@@ -120,7 +122,7 @@ class JSONPDecoder(json.JSONDecoder):
         args=json_m.group(0).split(',')
         
         try:
-            args=map(int, args)
+            args = list(map(int, args))
         except ValueError:
             raise ValueError('Invalid arguments: %s'%json)
 
