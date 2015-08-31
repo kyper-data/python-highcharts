@@ -1,10 +1,12 @@
 import unittest
 import os
 
-def execfile(filepath):
-    with open(filepath) as f:
-        code = compile(f.read(), filepath, 'exec')
-        exec(code)
+import sys
+if sys.version_info >= (3, 0):
+    def execfile(filepath):
+        with open(filepath) as f:
+            code = compile(f.read().decode('utf-8', filepath, 'exec')
+            exec(code)
 
 class TestHighstock(unittest.TestCase):
     """Very simple test cases that run through examples and check for exceptions."""
