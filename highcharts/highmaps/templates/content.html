@@ -29,7 +29,7 @@
             var geojson = {{chart.mapdata}}
         {% endif %}
 
-            var data = {{chart.data}}
+            var data = {{chart.data}};
     	    option.series = data;
 
         {% if chart.drilldown_flag %}

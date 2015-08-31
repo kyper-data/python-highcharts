@@ -136,6 +136,7 @@ options = {
    
 H.set_dict_options(options)
 
+H.add_data_set(data, 'column', "Brands", colorByPoint= True)
 H.add_drilldown_data_set(data_1, 'column', 'Microsoft Internet Explorer', name='Microsoft Internet Explorer' )
 H.add_drilldown_data_set(data_2, 'column', 'Chrome', name='Chrome')
 H.add_drilldown_data_set(data_3, 'column', 'Firefox', name='Firefox')
