@@ -1,13 +1,9 @@
 # -*- coding: utf-8 -*-
 
 '''
-ipython compatability module for highcharts-python
-This adds simple ipython compatibility to the highcharts-python package, without making any
-major modifications to how the main package is structured.  It utilizes the IPython
-display-formatter functionality, as described at:
-http://nbviewer.ipython.org/github/ipython/ipython/blob/master/examples/notebooks/Custom%20Display%20Logic.ipynb
-For additional examples, see:
-https://github.com/sympy/sympy/blob/master/sympy/interactive/printing.py
+IPython notebook compatability module for highcharts-python
+
+Adapted from python-nvd3: https://github.com/areski/python-nvd3/blob/develop/nvd3/ipynb.py
 '''
 
 try:
@@ -41,11 +37,12 @@ if _ip and _ip.__module__.startswith('IPython'):
         from IPython import __version__ as IPython_version
         from .highcharts.highcharts import Highchart 
         from .highmaps.highmaps import Highmap
+        from .highstock.highstock import Highstock
 
         if IPython_version >= '0.11':
             html_formatter = ip.display_formatter.formatters['text/html']
             
-            for chart_type in [Highchart, Highmap]:
+            for chart_type in [Highchart, Highmap, Highstock]:
                 html_formatter.for_type(chart_type, _print_html)
 
     _setup_ipython_formatter(_ip)

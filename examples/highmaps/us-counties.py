@@ -113,6 +113,5 @@ H.add_JSscript("Highcharts.each(geojson, function (mapPoint) {\
             mapPoint.name = mapPoint.name + ', ' + mapPoint.properties['hc-key'].substr(3, 2);\
         });", 'head')
 
-H
-H.save_file()
+H.htmlcontent
 

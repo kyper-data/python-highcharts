@@ -18,7 +18,7 @@ from jinja2 import Environment, PackageLoader
 
 import json, uuid
 import datetime, random, os, inspect
-from _abcoll import Iterable
+from collections import Iterable
 from options import BaseOptions, ChartOptions, \
     ColorsOptions, CreditsOptions, DrilldownOptions, ExportingOptions, \
     GlobalOptions, LabelsOptions, LangOptions, \
@@ -191,7 +191,7 @@ class Highchart(object):
             raise OptionTypeError("Option: %s Not Allowed For Series Type: %s" % type(new_src))
 
 
-    def add_3dRoatation(self):
+    def add_3d_rotation(self):
         self.options3d_rotation_flag = True
 
     def add_data_set(self, data, series_type="line", name=None, **kwargs):

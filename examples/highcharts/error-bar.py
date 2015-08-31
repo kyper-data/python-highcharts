@@ -71,6 +71,5 @@ H.add_data_set(data4, 'errorbar', 'Temperature error', tooltip = {
                 'pointFormat': '(error range: {point.low}-{point.high}°C)<br/>'
             })
 
-H
-H.save_file()
+H.htmlcontent
 

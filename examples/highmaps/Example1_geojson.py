@@ -2,11 +2,11 @@
 """
 Basic example for highmaps module in python-highcharts
 
-As highcharts, datasets need to input using "add_data_set" method
-options can be either set by "set_options" method as showing here or
-construct a option dictionary object and input using "set_dict_options" method (recommended)
+As in highcharts, datasets need to input using "add_data_set" method.
+Options can be either set by the "set_options" method as shown here or
+by constructing a option dictionary object and input using "set_dict_options" method (recommended)
 
-In highmaps, the map data can be inputed in multiple ways:
+In highmaps, the map data can be input in multiple ways:
 
 1. add_map_data method: (recommended)
     add_map_data(geojson, **kwargs)
@@ -27,7 +27,7 @@ GeoJSON areas: http://www.highcharts.com/maps/demo/geojson
 """
 
 from highcharts import Highmap
-H = Highmaps(width = 650, height = 500)
+H = Highmap(width = 650, height = 500)
 
 options = { # construct option dict
                                    
@@ -115,7 +115,7 @@ data = [ # input dataset
         "value": 704
     }
 ]
-H.set_dict_optoins(options) # set options
+H.set_dict_options(options) # set options
 H.add_data_set(data, 'map', 'Random data', joinBy=['code_hasc', 'code'], # set dataset
                 states={
                     'hover': {
@@ -129,5 +129,4 @@ H.add_data_set(data, 'map', 'Random data', joinBy=['code_hasc', 'code'], # set d
 
 H.set_map_source('http://www.highcharts.com/samples/data/jsonp.php?filename=germany.geo.json&callback=?', True) # set map data from the src (jsonp)
 
-H
-H.save_file("highmaps")
+H.htmlcontent

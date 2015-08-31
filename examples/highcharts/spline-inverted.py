@@ -57,5 +57,4 @@ data =  [[0, 15], [10, -50], [20, -56.5], [30, -46.5], [40, -22.1],
 		[50, -2.5], [60, -27.7], [70, -55.7], [80, -76.5]]
 H.add_data_set(data, 'spline', 'Temperature', marker={'enabled': False}) 
 
-H
-H.save_file()
+H.htmlcontent

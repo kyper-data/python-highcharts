@@ -54,7 +54,7 @@ data2 = [{'code': x} for x in ['NO', 'SE', 'DK', 'DE', 'NL', 'BE', 'LU', 'ES', '
 data3 = [{'code': x} for x in ['FI', 'EE', 'LV', 'LT', 'BY', 'UA', 'MD', 'RO', 'BG', 'GR', 'TR', 'CY']]
 data4 = [{'code': x} for x in ['RU']]
 
-H.set_dict_optoins(options)
+H.set_dict_options(options)
 H.add_data_set(data1, 'map', 'UTC')
 H.add_data_set(data2, 'map', 'UTC + 1')
 H.add_data_set(data3, 'map', 'UTC + 2')
@@ -62,5 +62,4 @@ H.add_data_set(data4, 'map', 'UTC + 3')
 
 H.set_map_source('http://code.highcharts.com/mapdata/custom/europe.js', jsonp_map=False) # set map data from src. data is in .js format
 
-H
-H.save_file("highmaps")
+H.htmlcontent

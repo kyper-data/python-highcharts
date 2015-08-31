@@ -17,7 +17,7 @@ from jinja2 import Environment, PackageLoader
 
 import json, uuid
 import datetime, random, os, inspect
-from _abcoll import Iterable
+from collections import Iterable
 from options import BaseOptions, ChartOptions, \
     ColorsOptions, ColorAxisOptions, CreditsOptions, DrilldownOptions, ExportingOptions, \
     GlobalOptions, LabelsOptions, LangOptions, \

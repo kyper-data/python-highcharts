@@ -75,7 +75,6 @@ H.add_map_data(geojson, name = 'Basemap' ,borderColor = '#A0A0A0',
 H.add_data_set(data,'mappoint','Cities',color = 'Highcharts.getOptions().colors[1]', is_coordinate = True)
 H.add_data_set(geojson_handler(geojson, 'mapline'),
     'mapline','Separators',color = '#707070', showInLegend = False, enableMouseTracking = False)
-H.set_dict_optoins(options)
+H.set_dict_options(options)
 
-H
-H.save_file()
+H.htmlcontent

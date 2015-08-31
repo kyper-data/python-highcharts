@@ -44,7 +44,7 @@ options = {
         },
     }
 
-H.set_dict_optoins(options)
+H.set_dict_options(options)
 
 H.add_data_set(data, 'pie', 'Browser share', allowPointSelect=True,
                 cursor='pointer',
@@ -58,5 +58,4 @@ H.add_data_set(data, 'pie', 'Browser share', allowPointSelect=True,
                 }
             )
 
-H
-H.save_file()
+H.htmlcontent

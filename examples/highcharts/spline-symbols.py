@@ -58,5 +58,4 @@ H.add_data_set(data2, 'spline', 'London', marker={
                 'symbol': 'diamond'
             }) 
 
-H
-H.save_file()
+H.htmlcontent

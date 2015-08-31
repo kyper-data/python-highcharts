@@ -143,5 +143,4 @@ H.add_drilldown_data_set(data_3, 'column', 'Firefox', name='Firefox')
 H.add_drilldown_data_set(data_4, 'column', 'Safari', name='Safari')
 H.add_drilldown_data_set(data_5, 'column', 'Opera', name='Opera')
 
-H
-H.save_file()
+H.htmlcontent

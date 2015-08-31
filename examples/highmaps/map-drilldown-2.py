@@ -117,5 +117,4 @@ for item in data: # add drilldown dataset
                 }
             )
 
-H
-H.save_file('highmaps')
+H.htmlcontent
