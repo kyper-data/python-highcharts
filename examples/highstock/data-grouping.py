@@ -15,7 +15,7 @@ H.add_data_set(data['data'], 'line', 'Temperature', pointStart = data['pointStar
                 pointInterval = data['pointInterval'],
                 tooltip = {
                     'valueDecimals': 1,
-                    'valueSuffix': '°C'
+                    'valueSuffix': u'°C'
                 })
 
 options = {
@@ -54,7 +54,7 @@ options = {
 
     'yAxis': {
         'title': {
-            'text': 'Temperature (°C)'
+            'text': u'Temperature (°C)'
         }
     },
 
