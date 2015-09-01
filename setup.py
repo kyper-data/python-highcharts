@@ -12,19 +12,20 @@ setup(
     version=ns['__version__'],
     author='Kyper Developers',
     author_email='developers@kyperdata.com',
-
     packages=find_packages(),
     package_data={
         'highcharts.highcharts': ['templates/*.html'],
         'highcharts.highmaps': ['templates/*.html'],
         'highcharts.highstock': ['templates/*.html']
     },
-    url='https://git.kyper.co/kyper/kyper-data',
+    url='https://github.com/kyper-data/python-highcharts',
+    download_url='https://github.com/kyper-data/python-highcharts/tarball/' + ns['__version__'],
     description='Python Highcharts wrapper',
     install_requires=[
         "Jinja2",
         "future"
     ],
+    keywords = ['python', 'ipython', 'highcharts', 'chart', 'visualization', 'graph', 'javascript', 'html'],
     classifiers         = [
         'Framework :: IPython',
         'Intended Audience :: Developers',
