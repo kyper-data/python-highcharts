@@ -7,8 +7,6 @@ from urllib.request import urlopen
 import urllib
 
 import json, os, sys
-import pandas as pd
-import numpy as np
 import datetime, re
 from datetime import tzinfo
 
