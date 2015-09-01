@@ -1,0 +1,1 @@
+from .highmaps import Highmap
