@@ -1,7 +1,6 @@
-#!/usr/bin/python
 # -*- coding: UTF-8 -*-
-""" Python-Highcharts common.py
-Common Functions For Highcharts
+""" Python-Highmaps common.py
+Common Functions For Highmaps
 """
 from past.builtins import basestring
 import datetime, re

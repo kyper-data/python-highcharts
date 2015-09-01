@@ -1,10 +1,4 @@
-#!/usr/bin/python
 # -*- coding: utf-8 -*-
-"""
-Python-highcharts is a Python wrapper for highcarts graph library.
-
-Project location : xxxxxx
-"""
 
 from .version import version_info, __version__
 

@@ -1,11 +1,4 @@
-#!/usr/bin/python
 # -*- coding: utf-8 -*-
-"""
-Python-Highcharts is a Python wrapper for Highcharts graph library.
-For Highcharts Licencing Visit:
-http://shop.highsoft.com/highcharts.html
-Project location : xxxxx
-"""
 
 from __future__ import unicode_literals, absolute_import
 from future.standard_library import install_aliases
