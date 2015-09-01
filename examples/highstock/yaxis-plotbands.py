@@ -668,14 +668,14 @@ maxRate = 0
 endDate = datetime.datetime(startDate.year, startDate.month - 3, startDate.day)  #a quarter of a year before last data point
 
 for i in range(len(data)-1, 0, -1):
-	date = data[i][0]
-	rate = data[i][1]
-	if date < endDate:
-		break # stop measuring highs and lows
-	if rate > maxRate:
-		maxRate = rate
-	if rate < minRate:
-		minRate = rate
+    date = data[i][0]
+    rate = data[i][1]
+    if date < endDate:
+        break # stop measuring highs and lows
+    if rate > maxRate:
+        maxRate = rate
+    if rate < minRate:
+        minRate = rate
 
 H.add_data_set(data, 'line', 'USD to EUR', tooltip = {
                     'valueDecimals': 4

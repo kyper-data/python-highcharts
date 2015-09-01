@@ -12,7 +12,7 @@ H.set_options('chart', {'inverted': True})
 # highchart option can be also set as a dict object
 # first construct the dict object for all the options:
 options = {
-	'title': {
+    'title': {
         'text': 'Atmosphere Temperature by Altitude'
     },
     'subtitle': {

@@ -9,9 +9,9 @@ H = Highchart()
 
 
 options = {
-	'title': {
-	            'text': 'Monthly Average Temperature'
-	        },
+    'title': {
+                'text': 'Monthly Average Temperature'
+            },
     'subtitle': {
         'text': 'Source: WorldClimate.com'
     },
