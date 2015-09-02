@@ -16,7 +16,10 @@ The original framework was inspired by [python-nvd3](https://github.com/areski/p
 
 ## Installation
 
--need to work on this-
+python-highcharts supports Python 2.7/3.4 and is available on PyPI. To install:
+```
+pip install python-highcharts
+```
 
 ---------------------------------------------------------------------------------------------------------------
 # Highcharts/Highstock
