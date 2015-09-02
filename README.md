@@ -196,7 +196,7 @@ chart.add_data_set(data, 'spline', 'Temperature', marker={'enabled': False})
 chart
 ```
 
-# Example notebooks:
+### Example notebooks:
 
 * [Highcharts](http://nbviewer.ipython.org/github/kyper-data/python-highcharts/blob/master/examples/ipynb/highcharts/Example1.ipynb)
 * [Highmaps](http://nbviewer.ipython.org/github/kyper-data/python-highcharts/blob/master/examples/ipynb/highmaps/Example1.ipynb)
