@@ -10,7 +10,7 @@ try:
     _ip = get_ipython()
 except:
     _ip = None
-if _ip and _ip.__module__.startswith('IPython'):
+if _ip and (_ip.__module__.startswith('IPython') or _ip.__module__.startswith('ipykernel')):
 
     def _print_html(chart):
         '''Function to return the HTML code for the div container plus the javascript
