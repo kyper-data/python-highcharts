@@ -306,7 +306,7 @@ class Highstock(object):
         self.buildcontent()
         self.buildhtmlheader()
         self.content = self._htmlcontent.decode('utf-8') # need to ensure unicode
-        self._htmlcontent = self.template_page_highcharts.render(chart=self).encode('utf-8')
+        self._htmlcontent = self.template_page_highcharts.render(chart=self)
         return self._htmlcontent
         
 
