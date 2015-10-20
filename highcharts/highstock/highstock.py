@@ -7,6 +7,7 @@ install_aliases()
 from jinja2 import Environment, PackageLoader
 
 import json, uuid
+import re
 import datetime
 import html
 from collections import Iterable
@@ -355,17 +356,19 @@ class Highstock(object):
     @property
     def iframe(self):
         htmlsrcdoc = html.escape(self.htmlcontent)
+        htmlsrcdoc = re.sub('\\n', ' ', htmlsrcdoc)
+        htmlsrcdoc = re.sub(' +', ' ', htmlsrcdoc)
         width = int(self.options['chart'].__dict__['width']) if self.options['chart'].__dict__.get('width') else 820
         height = int(self.options['chart'].__dict__['height']) if self.options['chart'].__dict__.get('height') else 520
         
         if self.options['chart'].__dict__.get('options3d'):
             if len(htmlsrcdoc) < 99965000 :
-                return '<iframe style="border:0;outline:none;overflow:hidden" src="data:text/html,'+ htmlsrcdoc + ' "height= ' + str(height) +' \
-                        width =' + str(width) + '></iframe>'
+                return '<iframe style="border:0;outline:none;overflow:hidden" src="data:text/html,'+ htmlsrcdoc + '" height=' + str(height) + \
+                        ' width=' + str(width) + '></iframe>'
             else:
-                return '<iframe style="border:0;outline:none;overflow:hidden" srcdoc="'+ htmlsrcdoc + ' "height= '+ str(height) + ' width = ' + str(width) + '></iframe>'
+                return '<iframe style="border:0;outline:none;overflow:hidden" srcdoc="'+ htmlsrcdoc + '" height='+ str(height) + ' width=' + str(width) + '></iframe>'
         else:
-            return '<iframe style="border:0;outline:none;overflow:hidden" srcdoc="'+ htmlsrcdoc + ' "height= '+ str(height) + ' width = ' + str(width) + '></iframe>'
+            return '<iframe style="border:0;outline:none;overflow:hidden" srcdoc="'+ htmlsrcdoc + '" height='+ str(height) + ' width=' + str(width) + '></iframe>'
 
     def __str__(self):
         """return htmlcontent"""
