@@ -4,11 +4,11 @@ from __future__ import unicode_literals, absolute_import
 from future.standard_library import install_aliases
 install_aliases()
 
-from optparse import OptionParser
 from jinja2 import Environment, PackageLoader
 
 import json, uuid
-import datetime, random, os, inspect
+import datetime
+import html
 from collections import Iterable
 from .options import BaseOptions, ChartOptions, \
     ColorsOptions, CreditsOptions, ExportingOptions, \
@@ -351,6 +351,21 @@ class Highstock(object):
     @property
     def htmlcontent(self):
         return self.buildhtml()
+
+    @property
+    def iframe(self):
+        htmlsrcdoc = html.escape(self.htmlcontent)
+        width = int(self.options['chart'].__dict__['width']) if self.options['chart'].__dict__.get('width') else 820
+        height = int(self.options['chart'].__dict__['height']) if self.options['chart'].__dict__.get('height') else 520
+        
+        if self.options['chart'].__dict__.get('options3d'):
+            if len(htmlsrcdoc) < 99965000 :
+                return '<iframe style="border:0;outline:none;overflow:hidden" src="data:text/html,'+ htmlsrcdoc + ' "height= ' + str(height) +' \
+                        width =' + str(width) + '></iframe>'
+            else:
+                return '<iframe style="border:0;outline:none;overflow:hidden" srcdoc="'+ htmlsrcdoc + ' "height= '+ str(height) + ' width = ' + str(width) + '></iframe>'
+        else:
+            return '<iframe style="border:0;outline:none;overflow:hidden" srcdoc="'+ htmlsrcdoc + ' "height= '+ str(height) + ' width = ' + str(width) + '></iframe>'
 
     def __str__(self):
         """return htmlcontent"""

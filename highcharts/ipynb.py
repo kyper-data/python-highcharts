@@ -17,20 +17,7 @@ if _ip and (_ip.__module__.startswith('IPython') or _ip.__module__.startswith('i
         to generate the chart.  This function is bound to the ipython formatter so that
         charts are displayed inline.'''
 
-        import html
-        htmlsrcdoc = html.escape(chart.htmlcontent)
-        width = int(chart.options['chart'].__dict__['width']) if chart.options['chart'].__dict__.get('width') else 820
-        height = int(chart.options['chart'].__dict__['height']) if chart.options['chart'].__dict__.get('height') else 520
-
-        if chart.options['chart'].__dict__.get('options3d'):
-            if len(htmlsrcdoc) < 99965000 :
-                return '<iframe style="border:0;outline:none;overflow:hidden" src="data:text/html,'+ htmlsrcdoc + ' "height= ' + str(height) +' \
-                        width =' + str(width) + '></iframe>'
-            else:
-                return '<iframe style="border:0;outline:none;overflow:hidden" srcdoc="'+ htmlsrcdoc + ' "height= '+ str(height) + ' width = ' + str(width) + '></iframe>'
-        else:
-            return '<iframe style="border:0;outline:none;overflow:hidden" srcdoc="'+ htmlsrcdoc + ' "height= '+ str(height) + ' width = ' + str(width) + '></iframe>'
-
+        return chart.iframe
 
     def _setup_ipython_formatter(ip):
         ''' Set up the ipython formatter to display HTML formatted output inline'''
