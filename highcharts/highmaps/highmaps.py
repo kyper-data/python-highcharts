@@ -328,6 +328,8 @@ class Highmap(object):
         elif option_type == 'colorAxis':
             self.options.update({'colorAxis': self.options.get('colorAxis', ColorAxisOptions())})
             self.options[option_type].update_dict(**option_dict)
+        elif option_type in ["global" , "lang"]:
+            self.setOptions[option_type].update_dict(**option_dict)
         else:
             self.options[option_type].update_dict(**option_dict)
 

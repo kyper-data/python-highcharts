@@ -270,6 +270,8 @@ class Highstock(object):
                 self.options[option_type].update(**each_dict)
         elif option_type == 'colors':
             self.options["colors"].set_colors(option_dict) # option_dict should be a list
+        elif option_type in ["global" , "lang"]: #Highcharts.setOptions: 
+            self.setOptions[option_type].update_dict(**option_dict)
         else:
             self.options[option_type].update_dict(**option_dict)
 
