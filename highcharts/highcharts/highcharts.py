@@ -267,6 +267,10 @@ class Highchart(object):
         elif option_type == 'zAxis':
             self.options.update({'zAxis': zAxisOptions()})
             self.options[option_type].update_dict(**option_dict)
+
+        elif option_type in ["global" , "lang"]:
+            self.setOptions[option_type].update_dict(**option_dict)
+
         else:
             self.options[option_type].update_dict(**option_dict)
 

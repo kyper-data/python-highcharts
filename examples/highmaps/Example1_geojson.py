@@ -130,3 +130,4 @@ H.add_data_set(data, 'map', 'Random data', joinBy=['code_hasc', 'code'], # set d
 H.set_map_source('http://www.highcharts.com/samples/data/jsonp.php?filename=germany.geo.json&callback=?', True) # set map data from the src (jsonp)
 
 H.htmlcontent
+H.save_file()
