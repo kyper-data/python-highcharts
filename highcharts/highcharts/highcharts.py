@@ -12,7 +12,7 @@ import re
 import datetime
 import html
 from collections import Iterable
-from .options import BaseOptions, ChartOptions, \
+from .options import BaseOptions, ChartOptions, ColorAxisOptions, \
     ColorsOptions, CreditsOptions, DrilldownOptions, ExportingOptions, \
     GlobalOptions, LabelsOptions, LangOptions, \
     LegendOptions, LoadingOptions, NavigationOptions, PaneOptions, \
@@ -62,9 +62,10 @@ class Highchart(object):
         
         # set Javascript src, Highcharts lib needs to make sure it's up to date
         self.JSsource = [
-                'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js',
+                'https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js',
                 'https://code.highcharts.com/highcharts.js',
                 'https://code.highcharts.com/highcharts-more.js',
+                'https://code.highcharts.com/modules/heatmap.js',
                 'https://code.highcharts.com/modules/exporting.js'
             ]
 
@@ -109,6 +110,7 @@ class Highchart(object):
         # Bind Base Classes to self
         self.options = {
             "chart": ChartOptions(),
+            "colorAxis" : ColorAxisOptions(),
             "colors": ColorsOptions(),
             "credits": CreditsOptions(),
             #"data": #NotImplemented

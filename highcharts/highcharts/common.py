@@ -695,6 +695,14 @@ class Breaks(ArrayObject):
     "to": [int, float],
     }
 
+class DataClasses(ArrayObject):
+    ALLOWED_OPTIONS = {
+    "color": (ColorObject, basestring, dict),
+    "from": [int, float],
+    "name": basestring,
+    "to": [int, float],
+    }
+
 class Zones(ArrayObject):
     ALLOWED_OPTIONS = {
     "color": (ColorObject, basestring, dict),

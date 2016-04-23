@@ -65,7 +65,7 @@ class Highmap(object):
         
         # Set Javascript src
         self.JSsource = [
-                'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js',
+                'https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js',
                 'https://code.highcharts.com/maps/highmaps.js',
                 'https://code.highcharts.com/highcharts.js',  
                 'https://code.highcharts.com/maps/modules/map.js',

@@ -4,7 +4,7 @@ from past.builtins import basestring
 from .highchart_types import OptionTypeError, Series, SeriesOptions
 from .common import Formatter, Events, Position, ContextButton, Options3d, ResetZoomButton, \
     DrillUpButton, Labels, PlotBands, PlotLines, Title, Items, Navigation, Background, Breaks, \
-    DateTimeLabelFormats, Zones, Levels, \
+    DataClasses, DateTimeLabelFormats, Zones, Levels, Marker, \
     JSfunction, ColorObject, CSSObject, SVGObject, CommonObject, ArrayObject
 
 import json, datetime
@@ -151,6 +151,52 @@ class ChartOptions(BaseOptions):
         "width": [int,basestring],
         "zoomType": basestring,
     }
+
+
+class ColorAxisOptions(BaseOptions):
+    ALLOWED_OPTIONS = {
+        "dataClassColor": basestring,
+        "dataClasses": (DataClasses, dict),
+        "endOnTick": bool,
+        "events": (Events, dict),
+        "gridLineColor": (ColorObject, basestring, dict),
+        "gridLineDashStyle": basestring,
+        "gridLineWidth": [float, int],
+        "id": basestring,
+        "labels": (Labels, dict),
+        "lineColor": (ColorObject, basestring, dict),
+        "lineWidth": [float, int],
+        "marker": (Marker, dict),
+        "max": [float, int],
+        "maxColor": (ColorObject, basestring, dict),
+        "maxPadding": [float, int],
+        "min": [float, int],
+        "minColor": (ColorObject, basestring, dict),
+        "minPadding": [float, int],
+        "minorGridLineColor": (ColorObject, basestring, dict),
+        "minorGridLineDashStyle": basestring,
+        "minorGridLineWidth": int,
+        "minorTickColor": (ColorObject, basestring, dict),
+        "minorTickInterval": int,
+        "minorTickLength": int,
+        "minorTickPosition": basestring,
+        "minorTickWidth": int,
+        "reversed": bool,
+        "showFirstLabel": bool,
+        "showLastLabel": bool,
+        "startOfWeek": int,
+        "startOnTick": bool,
+        "stops": list,
+        "tickColor": (ColorObject, basestring, dict),
+        "tickInterval": int,
+        "tickLength": int,
+        "tickPixelInterval": int,
+        "tickPosition": basestring,
+        "tickPositioner": JSfunction,
+        "tickPositions": list,
+        "tickWidth": int,
+        "type": basestring,
+}
 
 
 class ColorsOptions(BaseOptions):
