@@ -110,7 +110,7 @@ class Highchart(object):
         # Bind Base Classes to self
         self.options = {
             "chart": ChartOptions(),
-            "colorAxis" : ColorAxisOptions(),
+            #"colorAxis" : ColorAxisOptions(),
             "colors": ColorsOptions(),
             "credits": CreditsOptions(),
             #"data": #NotImplemented
@@ -270,6 +270,9 @@ class Highchart(object):
             self.options[option_type].update_dict(**option_dict)
         elif option_type in ["global" , "lang"]: #Highcharts.setOptions: 
             self.setOptions[option_type].update_dict(**option_dict)
+        elif option_type == 'colorAxis':
+            self.options.update({'colorAxis': ColorAxisOptions()})
+            self.options[option_type].update_dict(**option_dict)
         else:
             self.options[option_type].update_dict(**option_dict)
 
