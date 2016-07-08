@@ -568,6 +568,7 @@ class Hover(CommonObject):
     "marker": (Marker, dict),
     "radius": int,
     "radiusPlus": int,
+    "color": (ColorObject, basestring, dict),
     }
 
 class States(CommonObject):
