@@ -301,6 +301,7 @@ class PlotOptions(BaseOptions):
         "arearange": (SeriesOptions, dict),
         "areaspline": (SeriesOptions, dict),
         "areasplinerange": (SeriesOptions, dict),
+        "candlestick": (SeriesOptions, dict),
         "column": (SeriesOptions, dict),
         "columnrange": (SeriesOptions, dict),
         "flags": (SeriesOptions, dict),
