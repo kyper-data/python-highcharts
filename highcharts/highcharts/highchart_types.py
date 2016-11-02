@@ -479,6 +479,7 @@ DATA_SERIES_ALLOWED_OPTIONS = {
     "selected": bool,
     "sliced": bool,
     "showInLegend": bool,
+    "stack": basestring,
     "type": basestring,
     "visible": bool,
     "x": [int, float],
@@ -617,7 +618,7 @@ class SeriesOptions(object):
 class Series(object):
     """Series class for input data """
 
-    def __init__(self,data,series_type="line",supress_errors=False,**kwargs):
+    def __init__(self, data, series_type="line", supress_errors=False, **kwargs):
 
         # List of dictionaries. Each dict contains data and properties, 
         # which need to handle before construct the object for series 
