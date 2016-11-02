@@ -56,6 +56,9 @@ class TestHighcharts(unittest.TestCase):
         execfile(os.path.join(self.PATH_ROOT, 'Example1.py'))
         os.remove("highcharts.html")
 
+    def test_error_bar(self):
+        execfile(os.path.join(self.PATH_ROOT, 'heatmap.py'))
+
     def test_line_time_series(self):
         execfile(os.path.join(self.PATH_ROOT, 'line-time-series.py'))
 
