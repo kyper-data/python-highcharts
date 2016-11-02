@@ -80,6 +80,9 @@ class TestHighcharts(unittest.TestCase):
     def test_spline_inverted(self):
         execfile(os.path.join(self.PATH_ROOT, 'spline-inverted.py'))
 
+    def test_spline_irregular_time(self):
+        execfile(os.path.join(self.PATH_ROOT, 'spline-irregular-time.py'))
+
     def test_spline_symbols(self):
         execfile(os.path.join(self.PATH_ROOT, 'spline-symbols.py'))
 
