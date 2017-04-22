@@ -542,6 +542,7 @@ class yAxisOptions(BaseOptions):
         "tickmarkPlacement": basestring,
         "title": (Title, dict),
         "top": [int, float, basestring],
+        "type": bastestring,
         "units": list    
     }
 
