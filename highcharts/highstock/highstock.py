@@ -83,6 +83,7 @@ class Highstock(object):
 
         # Data from jsonp
         self.jsonp_data_flag = False
+        self.jsonp_data_url_list = []
         
         # javascript
         self.jscript_head_flag = False
@@ -206,13 +207,13 @@ class Highstock(object):
         """
         if not self.jsonp_data_flag:
             self.jsonp_data_flag = True
-            self.jsonp_data_url = json.dumps(data_src) 
             
             if data_name == 'data':
                 data_name = 'json_'+ data_name
             
             self.jsonp_data = data_name
         self.add_data_set(RawJavaScriptText(self.jsonp_data), series_type, name=name, **kwargs)
+        self.jsonp_data_url_list.append(json.dumps(data_src))
 
 
     def add_navi_series(self, data, series_type="line", **kwargs):
