@@ -623,22 +623,23 @@ class Series(object):
 
         # List of dictionaries. Each dict contains data and properties, 
         # which need to handle before construct the object for series 
-        for item in data:
-            if isinstance(item, dict):
-                for k, v in item.items():
-                    if k in DATA_SERIES_ALLOWED_OPTIONS:
-                        if SeriesOptions.__validate_options__(k,v,DATA_SERIES_ALLOWED_OPTIONS[k]):
-                            if isinstance(DATA_SERIES_ALLOWED_OPTIONS[k], tuple):
-                                if isinstance(v, dict):
-                                    item.update({k:DATA_SERIES_ALLOWED_OPTIONS[k][0](**v)})
-                                elif isinstance(v, CommonObject) or isinstance(v, ArrayObject) or \
-                                    isinstance(v, CSSObject) or isinstance(v, SVGObject) or isinstance(v, ColorObject) or \
-                                    isinstance(v, JSfunction) or isinstance(v, Formatter) or isinstance(v, datetime.datetime):
-                                    item.update({k:v})                           
+        if isinstance(data, list):
+            for item in data:
+                if isinstance(item, dict):
+                    for k, v in item.items():
+                        if k in DATA_SERIES_ALLOWED_OPTIONS:
+                            if SeriesOptions.__validate_options__(k,v,DATA_SERIES_ALLOWED_OPTIONS[k]):
+                                if isinstance(DATA_SERIES_ALLOWED_OPTIONS[k], tuple):
+                                    if isinstance(v, dict):
+                                        item.update({k:DATA_SERIES_ALLOWED_OPTIONS[k][0](**v)})
+                                    elif isinstance(v, CommonObject) or isinstance(v, ArrayObject) or \
+                                        isinstance(v, CSSObject) or isinstance(v, SVGObject) or isinstance(v, ColorObject) or \
+                                        isinstance(v, JSfunction) or isinstance(v, Formatter) or isinstance(v, datetime.datetime):
+                                        item.update({k:v})                           
+                                    else:
+                                        item.update({k:DATA_SERIES_ALLOWED_OPTIONS[k][0](v)})
                                 else:
-                                    item.update({k:DATA_SERIES_ALLOWED_OPTIONS[k][0](v)})
-                            else:
-                                item.update({k:v})
+                                    item.update({k:v})
                         
         self.__dict__.update({
           "data": data,
