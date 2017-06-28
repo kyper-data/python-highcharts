@@ -435,6 +435,7 @@ class TooltipOptions(BaseOptions):
         "formatter": (Formatter, JSfunction),
         "headerFormat": basestring,
         "pointFormat": basestring,
+        "pointFormatter": (Formatter, JSfunction),
         "positioner": (JSfunction, basestring),
         "shadow": bool,
         "shared": bool,
