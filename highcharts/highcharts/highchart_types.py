@@ -429,6 +429,7 @@ PLOT_OPTION_ALLOWED_ARGS = {
     "cropThreshold": int,
     "dashStyle": basestring,
     "lineWidth": int,
+    "linkedTo": basestring,
     "marker": (Marker, dict),
     "pointInterval": int,
     "pointPlacement": [basestring, int, float],
