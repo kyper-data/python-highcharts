@@ -10,6 +10,7 @@ from jinja2 import Environment, PackageLoader
 import json, uuid
 import re
 import datetime
+import urllib2
 import html
 from collections import Iterable
 from .options import BaseOptions, ChartOptions, ColorAxisOptions, \
@@ -51,6 +52,9 @@ class Highchart(object):
         This is the base class for all the charts. The following keywords are
         accepted:
         :keyword: **display_container** - default: ``True``
+                  **offline - default: ``False``
+                            If True, download all .js and .css file and put them
+                            into the generated .html so it can be viewed offline.
         """
         # set the model
         self.model = self.__class__.__name__  #: The chart model,
@@ -59,6 +63,7 @@ class Highchart(object):
         # an Instance of Jinja2 template
         self.template_page_highcharts = template_page
         self.template_content_highcharts = template_content
+
         
         # set Javascript src, Highcharts lib needs to make sure it's up to date
         self.JSsource = [
@@ -74,6 +79,9 @@ class Highchart(object):
                 'https://www.highcharts.com/highslide/highslide.css',
 
             ]
+
+        self.offline = kwargs.get("offline", False)
+
         # set data
         self.data = []
         self.data_temp = []
@@ -323,13 +331,27 @@ class Highchart(object):
         if self.drilldown_flag:
             self.add_JSsource('http://code.highcharts.com/modules/drilldown.js')
 
-        self.header_css = [
-            '<link href="%s" rel="stylesheet" />' % h for h in self.CSSsource
-        ]
 
-        self.header_js = [
-            '<script type="text/javascript" src="%s"></script>' % h for h in self.JSsource
-        ]
+
+        if self.offline:
+            opener = urllib2.build_opener()
+            opener.addheaders = [('User-Agent', 'Mozilla/5.0')]
+
+            self.header_css = [
+                '<style>%s</style>' % opener.open(h).read() for h in self.CSSsource
+            ]
+
+            self.header_js = [
+                '<script type="text/javascript">%s</script>' % opener.open(h).read() for h in self.JSsource
+            ]
+        else:
+            self.header_css = [
+                '<link href="%s" rel="stylesheet" />' % h for h in self.CSSsource
+            ]
+
+            self.header_js = [
+                '<script type="text/javascript" src="%s"></script>' % h for h in self.JSsource
+            ]
 
         self.htmlheader = ''
         for css in self.header_css:
