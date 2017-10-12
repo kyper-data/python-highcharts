@@ -371,7 +371,7 @@ class Events(CommonObject):
 
 class Point(CommonObject):
     ALLOWED_OPTIONS = {
-    "events": Events
+    "events": (Events, dict)
     }
 
 class Position(CommonObject):
