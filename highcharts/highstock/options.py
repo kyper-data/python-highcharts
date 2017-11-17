@@ -546,7 +546,7 @@ class yAxisOptions(BaseOptions):
         # undocumented yet appears to be supported, likely because of underlying
         # shared code.  This permits logarithmic Y-Axis scale which is
         # frequently useful in stock charts.
-        "type": bastestring,
+        "type": basestring,
         "units": list    
     }
 
