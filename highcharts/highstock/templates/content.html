@@ -24,7 +24,8 @@
             var chart = new Highcharts.StockChart(option);
 
 
-        {# This is buggy and limited!  Improve this to be more generic! #}
+        {# DEM 2017/04/25: Use a list of JSONP data sources
+        {# DEM 2017/04/25: This is buggy and limited!  Improve this to be more generic! #}
         {% if chart.jsonp_data_flag %}
           {% for data_url in chart.jsonp_data_url_list %}
 

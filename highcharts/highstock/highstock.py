@@ -83,7 +83,7 @@ class Highstock(object):
 
         # Data from jsonp
         self.jsonp_data_flag = False
-        self.jsonp_data_url_list = []
+        self.jsonp_data_url_list = [] # DEM 2017/04/25: List of JSON data sources
         
         # javascript
         self.jscript_head_flag = False
@@ -213,6 +213,8 @@ class Highstock(object):
             
             self.jsonp_data = data_name
         self.add_data_set(RawJavaScriptText(self.jsonp_data), series_type, name=name, **kwargs)
+        # DEM 2017/04/25: Append new JSON data source to a list instead of
+        #                 replacing whatever already exists
         self.jsonp_data_url_list.append(json.dumps(data_src))
 
 

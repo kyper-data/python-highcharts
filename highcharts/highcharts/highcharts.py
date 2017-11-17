@@ -87,11 +87,12 @@ class Highchart(object):
         self.data_temp = []
         # Data from jsonp
         self.jsonp_data_flag = False
+        self.jsonp_data_url_list = [] # DEM 2017/07/27: List of JSON data sources
 
         # set drilldown data
         self.drilldown_data = []
         self.drilldown_data_temp = []
-        
+
         # javascript
         self.jscript_head_flag = False
         self.jscript_head = kwargs.get('jscript_head', None)
@@ -220,10 +221,10 @@ class Highchart(object):
         self.drilldown_data_set_count += 1
         if self.drilldown_flag == False:
             self.drilldown_flag = True
-        
+
         kwargs.update({'id':id})
         series_data = Series(data, series_type=series_type, **kwargs)
-       
+
         series_data.__options__().update(SeriesOptions(series_type=series_type, **kwargs).__options__())
         self.drilldown_data_temp.append(series_data)
 
@@ -233,12 +234,17 @@ class Highchart(object):
         the data_src is the https link for data
         and it must be in jsonp format
         """
-        self.jsonp_data_flag = True
-        self.jsonp_data_url = json.dumps(data_src)
-        if data_name == 'data':
-            data_name = 'json_'+ data_name
-        self.jsonp_data = data_name
+        if not self.jsonp_data_flag:
+            self.jsonp_data_flag = True
+
+            if data_name == 'data':
+                data_name = 'json_'+ data_name
+
+            self.jsonp_data = data_name
         self.add_data_set(RawJavaScriptText(data_name), series_type, name=name, **kwargs)
+        # DEM 2017/07/27: Append new JSON data source to a list instead of
+        #                 replacing whatever already exists
+        self.jsonp_data_url_list.append(json.dumps(data_src))
 
 
     def add_JSscript(self, js_script, js_loc):
@@ -305,9 +311,14 @@ class Highchart(object):
 
         self.buildcontainer()
         self.option = json.dumps(self.options, cls = HighchartsEncoder)
-        self.setoption = json.dumps(self.setOptions, cls = HighchartsEncoder) 
+        self.setoption = json.dumps(self.setOptions, cls = HighchartsEncoder)
         self.data = json.dumps(self.data_temp, cls = HighchartsEncoder)
-        
+
+        # DEM 2017/04/25: Make 'data' available as an array
+        # ... this permits jinja2 array access to each data definition
+        # ... which is useful for looping over multiple data sources
+        self.dataArr = [json.dumps(x, cls = HighchartsEncoder) for x in self.data_temp]
+
         if self.drilldown_flag: 
             self.drilldown_data = json.dumps(self.drilldown_data_temp, cls = HighchartsEncoder)
         self._htmlcontent = self.template_content_highcharts.render(chart=self).encode('utf-8')
