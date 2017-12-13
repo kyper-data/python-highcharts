@@ -10,7 +10,7 @@ from jinja2 import Environment, PackageLoader
 import json, uuid
 import re
 import datetime
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 import html
 from collections import Iterable
 from .options import BaseOptions, ChartOptions, ColorAxisOptions, \
@@ -334,7 +334,7 @@ class Highchart(object):
 
 
         if self.offline:
-            opener = urllib2.build_opener()
+            opener = urllib.request.build_opener()
             opener.addheaders = [('User-Agent', 'Mozilla/5.0')]
 
             self.header_css = [
