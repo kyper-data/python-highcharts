@@ -542,6 +542,11 @@ class yAxisOptions(BaseOptions):
         "tickmarkPlacement": basestring,
         "title": (Title, dict),
         "top": [int, float, basestring],
+        # DEM 2017/11/16: Note that the 'type' keyword for highstock is
+        # undocumented yet appears to be supported, likely because of underlying
+        # shared code.  This permits logarithmic Y-Axis scale which is
+        # frequently useful in stock charts.
+        "type": basestring,
         "units": list    
     }
 
