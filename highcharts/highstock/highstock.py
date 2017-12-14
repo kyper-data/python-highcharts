@@ -301,7 +301,7 @@ class Highstock(object):
         # DEM 2017/04/25: Make 'data' available as an array
         # ... this permits jinja2 array access to each data definition
         # ... which is useful for looping over multiple data sources
-        self.dataArr = [json.dumps(x, cls = HighchartsEncoder) for x in self.data_temp]
+        self.data_list = [json.dumps(x, cls = HighchartsEncoder) for x in self.data_temp]
         
         if self.navi_seri_flag:        
             self.navi_seri = json.dumps(self.navi_seri_temp, cls = HighchartsEncoder)

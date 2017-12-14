@@ -34,7 +34,7 @@
 
             $.getJSON({{data_url}}, function ({{chart.jsonp_data}})
             {
-                chart.addSeries({{chart.dataArr[loop.index0]}});
+                chart.addSeries({{chart.data_list[loop.index0]}});
             });
 
           {% endfor %}
