@@ -83,6 +83,7 @@ class Highstock(object):
 
         # Data from jsonp
         self.jsonp_data_flag = False
+        self.jsonp_data_url_list = [] # DEM 2017/04/25: List of JSON data sources
         
         # javascript
         self.jscript_head_flag = False
@@ -206,13 +207,15 @@ class Highstock(object):
         """
         if not self.jsonp_data_flag:
             self.jsonp_data_flag = True
-            self.jsonp_data_url = json.dumps(data_src) 
             
             if data_name == 'data':
                 data_name = 'json_'+ data_name
             
             self.jsonp_data = data_name
         self.add_data_set(RawJavaScriptText(self.jsonp_data), series_type, name=name, **kwargs)
+        # DEM 2017/04/25: Append new JSON data source to a list instead of
+        #                 replacing whatever already exists
+        self.jsonp_data_url_list.append(json.dumps(data_src))
 
 
     def add_navi_series(self, data, series_type="line", **kwargs):
@@ -294,6 +297,11 @@ class Highstock(object):
         self.option = json.dumps(self.options, cls = HighchartsEncoder)
         self.setoption = json.dumps(self.setOptions, cls = HighchartsEncoder) 
         self.data = json.dumps(self.data_temp, cls = HighchartsEncoder)
+
+        # DEM 2017/04/25: Make 'data' available as an array
+        # ... this permits jinja2 array access to each data definition
+        # ... which is useful for looping over multiple data sources
+        self.data_list = [json.dumps(x, cls = HighchartsEncoder) for x in self.data_temp]
         
         if self.navi_seri_flag:        
             self.navi_seri = json.dumps(self.navi_seri_temp, cls = HighchartsEncoder)
