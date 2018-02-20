@@ -12,7 +12,7 @@ import re
 import datetime
 import html
 from collections import Iterable
-from .options import BaseOptions, ChartOptions, \
+from .options import BaseOptions, BoostOptions, ChartOptions, \
     ColorsOptions, CreditsOptions, ExportingOptions, \
     GlobalOptions, LabelsOptions, LangOptions, \
     LegendOptions, LoadingOptions, NavigatorOptions, NavigationOptions, \
@@ -111,6 +111,7 @@ class Highstock(object):
 
         # Bind Base Classes to self
         self.options = {
+            "boost": BoostOptions(),
             "chart": ChartOptions(),
             "colors": ColorsOptions(),
             "credits": CreditsOptions(),
