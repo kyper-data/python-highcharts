@@ -3,6 +3,7 @@
 from __future__ import unicode_literals, absolute_import
 from future.standard_library import install_aliases
 install_aliases()
+from past.builtins import basestring
 
 from jinja2 import Environment, PackageLoader
 
