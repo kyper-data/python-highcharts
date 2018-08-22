@@ -460,6 +460,8 @@ PLOT_OPTION_ALLOWED_ARGS = {
     "stickyTracking": bool,
     "turboThreshold": int,
   },
+  "wordcloud": {
+  },
 }
 
 DATA_SERIES_ALLOWED_OPTIONS = {
