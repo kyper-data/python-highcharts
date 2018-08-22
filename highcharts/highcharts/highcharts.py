@@ -64,13 +64,14 @@ class Highchart(object):
         self.template_page_highcharts = template_page
         self.template_content_highcharts = template_content
 
-        
+
         # set Javascript src, Highcharts lib needs to make sure it's up to date
         self.JSsource = [
                 'https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js',
                 'https://code.highcharts.com/highcharts.js',
                 'https://code.highcharts.com/highcharts-more.js',
                 'https://code.highcharts.com/modules/heatmap.js',
+                'https://code.highcharts.com/modules/wordcloud.js',
                 'https://code.highcharts.com/modules/exporting.js'
             ]
 
