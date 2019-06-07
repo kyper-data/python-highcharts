@@ -3,6 +3,7 @@
 from __future__ import unicode_literals, absolute_import
 from future.standard_library import install_aliases
 install_aliases()
+from past.builtins import basestring
 
 from jinja2 import Environment, PackageLoader
 
@@ -11,7 +12,7 @@ import re
 import datetime
 import html
 from collections import Iterable
-from .options import BaseOptions, ChartOptions, \
+from .options import BaseOptions, BoostOptions, ChartOptions, \
     ColorsOptions, CreditsOptions, ExportingOptions, \
     GlobalOptions, LabelsOptions, LangOptions, \
     LegendOptions, LoadingOptions, NavigatorOptions, NavigationOptions, \
@@ -110,6 +111,7 @@ class Highstock(object):
 
         # Bind Base Classes to self
         self.options = {
+            "boost": BoostOptions(),
             "chart": ChartOptions(),
             "colors": ColorsOptions(),
             "credits": CreditsOptions(),

@@ -110,6 +110,16 @@ class BaseOptions(object):
             return True
 
 
+
+class BoostOptions(BaseOptions):
+    ALLOWED_OPTIONS = {
+        "allowForce": bool,
+        "debug": dict,
+        "enabled": bool,
+        "seriesThreshold": int,
+        "useGPUTranslations": bool,
+    }
+
 class ChartOptions(BaseOptions):
     ALLOWED_OPTIONS = {
         "alignTicks": bool,
@@ -320,6 +330,7 @@ class RangeSelectorOptions(BaseOptions):
         "buttonTheme": (SVGObject, dict),
         "buttons": (Buttons, list),
         "enabled": bool,
+        "floating": bool,
         "inputBoxBorderColor": (ColorObject, basestring, dict),
         "inputBoxHeight": [int, float],
         "inputBoxWidth": [int, float],
@@ -331,6 +342,8 @@ class RangeSelectorOptions(BaseOptions):
         "inputStyle": (CSSObject, dict),
         "labelStyle": (CSSObject, dict),
         "selected": [int, float],
+        "x": int,
+        "y": int,
     }
 
 class ScrollbarOptions(BaseOptions):
@@ -409,6 +422,7 @@ class TooltipOptions(BaseOptions):
         "shadow": bool,
         "shared": bool,
         "snap": int,
+        "split": bool,
         "style": (CSSObject, dict),
         "useHTML": bool,
         "valueDecimals": int,
