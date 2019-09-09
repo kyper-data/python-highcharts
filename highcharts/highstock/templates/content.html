@@ -29,9 +29,11 @@
         {% if chart.jsonp_data_flag %}
           {% for data_url in chart.jsonp_data_url_list %}
 
-            $.getJSON({{data_url}}, function ({{chart.jsonp_data}})
+            $.getJSON({{data_url}}, function (json)
             {
-                chart.addSeries({{chart.data_list[loop.index0]}});
+                var data = {{chart.data}}[{{loop.index0}}];
+                data.data = json;
+                chart.addSeries(data);
             });
 
           {% endfor %}
