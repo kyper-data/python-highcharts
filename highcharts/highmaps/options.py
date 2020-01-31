@@ -119,6 +119,7 @@ class ChartOptions(BaseOptions):
         "className": basestring,
         "events": (Events, dict),
         "height": [int,basestring],
+        "map": basestring,
         "margin": list,
         "marginBottom": int,
         "marginLeft": int,
