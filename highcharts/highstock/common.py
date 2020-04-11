@@ -655,7 +655,7 @@ class PlotBands(ArrayObject):
 class PlotLines(ArrayObject):
     ALLOWED_OPTIONS = {
     "color": (ColorObject, basestring, dict),
-    "dashStyle": int,
+    "dashStyle": basestring,
     "events": (Events, dict),
     "id": basestring,
     "label": (Labels, dict),
