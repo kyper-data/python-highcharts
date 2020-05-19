@@ -267,7 +267,7 @@ class LangOptions(BaseOptions):
         "downloadJPEG": basestring,
         "downloadPDF": basestring,
         "downloadPNG": basestring,
-        "donwloadSVG": basestring,
+        "downloadSVG": basestring,
         "exportButtonTitle": basestring,
         "loading": basestring,
         "months": list,
