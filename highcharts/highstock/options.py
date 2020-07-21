@@ -320,6 +320,7 @@ class RangeSelectorOptions(BaseOptions):
         "buttonTheme": (SVGObject, dict),
         "buttons": (Buttons, list),
         "enabled": bool,
+        "floating": bool,
         "inputBoxBorderColor": (ColorObject, basestring, dict),
         "inputBoxHeight": [int, float],
         "inputBoxWidth": [int, float],
@@ -331,6 +332,8 @@ class RangeSelectorOptions(BaseOptions):
         "inputStyle": (CSSObject, dict),
         "labelStyle": (CSSObject, dict),
         "selected": [int, float],
+        "x": int,
+        "y": int,
     }
 
 class ScrollbarOptions(BaseOptions):
