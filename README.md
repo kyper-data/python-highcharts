@@ -1,4 +1,4 @@
-# python-highcharts [![CircleCI](https://circleci.com/gh/kyper-data/python-highcharts.svg?style=svg)](https://circleci.com/gh/kyper-data/python-highcharts)
+# python-highcharts [![CircleCI](https://circleci.com/gh/sambrightman/python-highcharts.svg?style=svg)](https://circleci.com/gh/sambrightman/python-highcharts)
 
 ## License
 
@@ -10,7 +10,7 @@ However, please be aware that the Highcharts project itself, as well as Highmaps
 
 python-highcharts is a simple translation layer between Python and Javascript for Highcharts projects (highcharts, highmaps, and highstocks).
 
-In addition, python-highcharts integrates with [Jupyter notebook](https://github.com/jupyter/notebook), which enables you to render Highcharts, Highmaps, and Highstock visualizations directly in notebooks. See examples [here](https://github.com/kyper-data/python-highcharts/tree/developer/examples/ipynb).
+In addition, python-highcharts integrates with [Jupyter notebook](https://github.com/jupyter/notebook), which enables you to render Highcharts, Highmaps, and Highstock visualizations directly in notebooks. See examples [here](examples/ipynb).
 
 The original framework was inspired by [python-nvd3](https://github.com/areski/python-nvd3) and [PyHighcharts](https://github.com/fidyeates/PyHighcharts).
 
@@ -198,9 +198,9 @@ chart
 
 ### Example notebooks:
 
-* [Highcharts](http://nbviewer.ipython.org/github/kyper-data/python-highcharts/blob/master/examples/ipynb/highcharts/Example1.ipynb)
-* [Highmaps](http://nbviewer.ipython.org/github/kyper-data/python-highcharts/blob/master/examples/ipynb/highmaps/Example1.ipynb)
-* [Highstock](http://nbviewer.ipython.org/github/kyper-data/python-highcharts/blob/master/examples/ipynb/highstock/Example1-basic-line.ipynb)
+* [Highcharts](http://nbviewer.ipython.org/github/sambrightman/python-highcharts/blob/master/examples/ipynb/highcharts/Example1.ipynb)
+* [Highmaps](http://nbviewer.ipython.org/github/sambrightman/python-highcharts/blob/master/examples/ipynb/highmaps/Example1.ipynb)
+* [Highstock](http://nbviewer.ipython.org/github/sambrightman/python-highcharts/blob/master/examples/ipynb/highstock/Example1-basic-line.ipynb)
 
 ## Todo:
 
