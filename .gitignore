@@ -3,3 +3,4 @@
 *egg-info/
 .ipynb_checkpoints
 dist/
+venv*/
