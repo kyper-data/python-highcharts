@@ -4,7 +4,7 @@ Highmaps Demos
 GeoJSON with rivers and cities: http://www.highcharts.com/maps/demo/geojson-multiple-types
 """
 from highcharts import Highmap
-from highcharts.highmaps.highmap_helper import jsonp_loader, js_map_loader, geojson_handler
+from highcharts.highmaps.highmap_helper import json_loader, js_map_loader, geojson_handler
 
 H = Highmap()
 options = {
@@ -22,9 +22,9 @@ options = {
 
 H.set_dict_options(options)
 
-map_url = 'http://www.highcharts.com/samples/data/jsonp.php?filename=australia.geo.json&callback=?'
+map_url = 'http://www.highcharts.com/samples/data/australia.geo.json'
 
-geojson = jsonp_loader(map_url)
+geojson = json_loader(map_url)
 states = geojson_handler(geojson, 'map')
 rivers = geojson_handler(geojson, 'mapline')
 cities = geojson_handler(geojson, 'mappoint')

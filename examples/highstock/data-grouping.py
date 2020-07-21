@@ -5,11 +5,11 @@ Highstock Demos
 """
 
 from highcharts import Highstock
-from highcharts.highstock.highstock_helper import jsonp_loader
+from highcharts.highstock.highstock_helper import json_loader
 H = Highstock()
 
-data_url = 'http://www.highcharts.com/samples/data/jsonp.php?filename=large-dataset.json&callback=?'
-data = jsonp_loader(data_url, sub_d = r'(\/\*.*\*\/)')
+data_url = 'http://www.highcharts.com/samples/data/large-dataset.json'
+data = json_loader(data_url)
 
 H.add_data_set(data['data'], 'line', 'Temperature', pointStart = data['pointStart'],
                 pointInterval = data['pointInterval'],

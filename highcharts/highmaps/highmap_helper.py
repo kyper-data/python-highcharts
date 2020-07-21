@@ -10,6 +10,19 @@ import json, os, sys
 import datetime, re
 from datetime import tzinfo
 
+def json_loader(url):
+    """json_loader is to request (JSON) data from a server
+    and covert to python readable data.
+    url is the url (https) where data is located
+    For function coverstion, such as Data.UTC to datetime.datetime, please check JSONPDecoder
+    """
+    
+    hdr = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/535.7 (KHTML, like Gecko) Chrome/16.0.912.77 Safari/535.7'}
+    req = urllib.request.Request(url, headers=hdr)
+    page = urlopen(req)
+    result = page.read().decode("utf-8")
+    return json.loads(result, encoding='utf8', cls=JSONPDecoder)
+
 def jsonp_loader(url, prefix_regex=r'^(.*\()', suffix_regex=r'(\);)$', sub_d=None, sub_by=''):
     """Request (JSON) data from a server in a different domain (JSONP) 
     and covert to python readable data. 

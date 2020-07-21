@@ -5,11 +5,11 @@ OHLC: http://www.highcharts.com/stock/demo/ohlc
 """
 
 from highcharts import Highstock
-from highcharts.highstock.highstock_helper import jsonp_loader
+from highcharts.highstock.highstock_helper import json_loader
 H = Highstock()
 
-data_url = 'http://www.highcharts.com/samples/data/jsonp.php?filename=aapl-ohlc.json&callback=?'
-data = jsonp_loader(data_url, sub_d = r'(\/\*.*\*\/)')
+data_url = 'http://www.highcharts.com/samples/data/aapl-ohlc.json'
+data = json_loader(data_url)
 
 H.add_data_set(data, 'ohlc', 'AAPL Stock Price', dataGrouping = {
                     'units' : [[

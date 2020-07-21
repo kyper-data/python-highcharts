@@ -4,11 +4,11 @@ Highstock Demos
 Two panes, candlestick and volume: http://www.highcharts.com/stock/demo/candlestick-and-volume
 """
 from highcharts import Highstock
-from highcharts.highstock.highstock_helper import jsonp_loader
+from highcharts.highstock.highstock_helper import json_loader
 H = Highstock()
 
-data_url = 'http://www.highcharts.com/samples/data/jsonp.php?filename=aapl-ohlcv.json&callback=?'
-data = jsonp_loader(data_url, sub_d = r'(\/\*.*\*\/)')
+data_url = 'http://www.highcharts.com/samples/data/aapl-ohlcv.json'
+data = json_loader(data_url)
 
 ohlc = []
 volume = []

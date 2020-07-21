@@ -5,14 +5,14 @@ Compare multiple series: http://www.highcharts.com/stock/demo/compare
 """
 
 from highcharts import Highstock
-from highcharts.highstock.highstock_helper import jsonp_loader
+from highcharts.highstock.highstock_helper import json_loader
 H = Highstock()
 
 names = ['MSFT', 'AAPL', 'GOOG']
 
 for name in names:
-    data_url = 'http://www.highcharts.com/samples/data/jsonp.php?filename=' + name.lower() + '-c.json&callback=?'
-    data = jsonp_loader(data_url, sub_d = r'(\/\*.*\*\/)')
+    data_url = 'http://www.highcharts.com/samples/data/' + name.lower() + '-c.json'
+    data = json_loader(data_url)
 
     H.add_data_set(data, 'line', name)
 

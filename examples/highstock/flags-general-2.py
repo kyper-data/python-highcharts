@@ -6,20 +6,18 @@ Flags marking events: http://www.highcharts.com/stock/demo/flags-general
 
 """
 This example generates the same chart as flags-general.py
-But instead of copying from the website, the dataset is queried direcly using jsonp_loader
+But instead of copying from the website, the dataset is queried direcly using json_loader
 The json doc from the url is not in the correct format (lack of quotes), so the sub_d and sub_by parameters
 are used to fix the problem.
 """
 
 import datetime
 from highcharts import Highstock
-from highcharts.highstock.highstock_helper import jsonp_loader
+from highcharts.highstock.highstock_helper import json_loader
 H = Highstock()
 
-data_url = 'http://www.highcharts.com/samples/data/jsonp.php?filename=usdeur.json&callback=?'
-data = jsonp_loader(data_url, 
-    sub_d = r'(Date\.UTC\(([0-9]+,[0-9]+,[0-9]+)(,[0-9]+,[0-9]+,[0-9]+)?(,[0-9]+)?\))', 
-    sub_by = r'"\1"') # data from url is not in right json format
+data_url = 'http://www.highcharts.com/samples/data/usdeur.json'
+data = json_loader(data_url) 
 
 data2 = [{
         'x' : datetime.datetime(2015, 6, 8),

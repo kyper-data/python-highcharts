@@ -4,12 +4,12 @@ Highstock Demos
 Intraday area: http://www.highcharts.com/stock/demo/intraday-area
 """
 from highcharts import Highstock
-from highcharts.highstock.highstock_helper import jsonp_loader
+from highcharts.highstock.highstock_helper import json_loader
 from datetime import datetime
 H = Highstock()
 
-data_url = 'http://www.highcharts.com/samples/data/jsonp.php?filename=new-intraday.json&callback=?'
-data = jsonp_loader(data_url, sub_d = r'(\/\*.*\*\/)')
+data_url = 'http://www.highcharts.com/samples/data/new-intraday.json'
+data = json_loader(data_url)
 
 H.add_data_set(data, 'area', 'AAPL', gapSize = 5,
                 tooltip = {

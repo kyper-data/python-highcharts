@@ -5,13 +5,13 @@ Advanced lat/long: http://www.highcharts.com/maps/demo/latlon-advanced
 """
 
 from highcharts import Highmap
-from highcharts.highmaps.highmap_helper import jsonp_loader, js_map_loader, geojson_handler, interpolateRGB
+from highcharts.highmaps.highmap_helper import json_loader, js_map_loader, geojson_handler, interpolateRGB
 
 H = Highmap(height=550)
 map_url = 'http://code.highcharts.com/mapdata/countries/us/us-all.js'
-data_url = 'http://www.highcharts.com/samples/data/jsonp.php?filename=us-capitals.json&callback=?'
+data_url = 'http://www.highcharts.com/samples/data/us-capitals.json'
 geojson = js_map_loader(map_url)
-data = jsonp_loader(data_url)
+data = json_loader(data_url)
 
 options = {
     'title': {

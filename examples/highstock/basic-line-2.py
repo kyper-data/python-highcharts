@@ -20,11 +20,11 @@ For function coverstion, such as Data.UTC to datetime.datetime, please check JSO
 """
 
 from highcharts import Highstock
-from highcharts.highstock.highstock_helper import jsonp_loader
+from highcharts.highstock.highstock_helper import json_loader
 H = Highstock()
 
-data_url = 'http://www.highcharts.com/samples/data/jsonp.php?filename=aapl-c.json&callback=?'
-data = jsonp_loader(data_url, sub_d = r'(\/\*.*\*\/)') # to remove the comment in json doc from the url
+data_url = 'http://www.highcharts.com/samples/data/aapl-c.json'
+data = json_loader(data_url)
 
 options = {
     'rangeSelector' : {

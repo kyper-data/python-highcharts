@@ -5,7 +5,7 @@ Detailed map, US counties: http://www.highcharts.com/maps/demo/us-counties
 """
 
 from highcharts import Highmap
-from highcharts.highmaps.highmap_helper import jsonp_loader, js_map_loader, geojson_handler
+from highcharts.highmaps.highmap_helper import json_loader, js_map_loader, geojson_handler
 
 H = Highmap()
 
@@ -102,9 +102,9 @@ Load data and map data directly from url using jsonp_loader and js_map_loader
     js_map_loader is to load map data from a .js source. It is designed for using highcharts' map collection:
     https://code.highcharts.com/mapdata/. Map data from other sources are not guaranteed 
 """
-data_url = 'http://www.highcharts.com/samples/data/jsonp.php?filename=us-counties-unemployment.json&callback=?'
+data_url = 'http://www.highcharts.com/samples/data/us-counties-unemployment.json'
 map_url = 'http://code.highcharts.com/mapdata/countries/us/us-all-all.js'
-data = jsonp_loader(data_url)
+data = json_loader(data_url)
 geojson = js_map_loader(map_url)
 
 """
