@@ -666,7 +666,7 @@ class PlotLines(ArrayObject):
     "events": (Events, dict),
     "id": basestring,
     "label": (Labels, dict),
-    "value": [int, float],
+    "value": [int, float, datetime.datetime],
     "width": int,
     "zIndex": int
     }
