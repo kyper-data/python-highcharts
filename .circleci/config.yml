@@ -1,0 +1,39 @@
+version: 2.1
+
+orbs:
+  python: circleci/python@0.3.2
+
+commands:
+  run-tests:
+    steps:
+      - checkout
+      - python/load-cache
+      - python/install-deps
+      - python/save-cache
+      - run:
+          command: nosetests -v
+          name: Test
+
+jobs:
+  python-27:
+    docker:
+      - image: circleci/python:2.7
+    steps:
+      - run-tests
+  python-38:
+    docker:
+      - image: circleci/python:3.8
+    steps:
+      - run-tests
+  python-latest:
+    docker:
+      - image: circleci/python:latest
+    steps:
+      - run-tests
+
+workflows:
+  main:
+    jobs:
+      - python-27
+      - python-38
+      - python-latest
