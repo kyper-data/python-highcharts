@@ -34,7 +34,7 @@ from highcharts import Highstock
 from highcharts.highstock.highstock_helper import jsonp_loader
 H = Highstock()
 
-data_url = 'http://www.highcharts.com/samples/data/jsonp.php?filename=aapl-c.json&callback=?'
+data_url = 'https://demo-live-data.highcharts.com/aapl-ohlcv.json'
 H.add_data_from_jsonp(data_url, 'json_data', 'line', 'AAPL', tooltip = {
     'valueDecimals': 2
     }
