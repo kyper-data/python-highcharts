@@ -486,14 +486,14 @@ class Handles(CommonObject):
 
 class DateTimeLabelFormats(CommonObject):
     ALLOWED_OPTIONS = {
-    "millisecond": basestring,
-    "second": basestring,
-    "minute": basestring,
-    "hour": basestring,
-    "day": basestring,
-    "week": basestring,
-    "month": basestring,
-    "year": basestring,
+    "millisecond": (basestring, list),
+    "second": (basestring, list),
+    "minute": (basestring, list),
+    "hour": (basestring, list),
+    "day": (basestring, list),
+    "week": (basestring, list),
+    "month": (basestring, list),
+    "year": (basestring, list),
     }
 
 class DataGrouping(CommonObject):
