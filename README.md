@@ -1,14 +1,14 @@
-# python-highcharts [![CircleCI](https://circleci.com/gh/kyper-data/python-highcharts.svg?style=svg)](https://circleci.com/gh/kyper-data/python-highcharts)
+# Python-highcharts [![CircleCI](https://circleci.com/gh/kyper-data/python-highcharts.svg?style=svg)](https://circleci.com/gh/kyper-data/python-highcharts)
 
 ## License
 
-The python-highcharts wrapper is licensed under the [MIT license](http://opensource.org/licenses/MIT).
+The Python-highcharts wrapper is licensed under the [MIT license](http://opensource.org/licenses/MIT).
 
 However, please be aware that the Highcharts project itself, as well as Highmaps and Highstock, are only free for non-commercial use under the Creative Commons Attribution-NonCommercial license. Commercial use requires the purchase of a separate license. Pop over to [Highcharts](http://shop.highsoft.com/) for more information.
 
 ## Overview
 
-python-highcharts is a simple translation layer between Python and Javascript for Highcharts projects (highcharts, highmaps, and highstocks).
+Python-highcharts is a simple translation layer between Python and Javascript for Highcharts projects (highcharts, highmaps, and highstocks).
 
 In addition, python-highcharts integrates with [Jupyter notebook](https://github.com/jupyter/notebook), which enables you to render Highcharts, Highmaps, and Highstock visualizations directly in notebooks. See examples [here](https://github.com/kyper-data/python-highcharts/tree/developer/examples/ipynb).
 
