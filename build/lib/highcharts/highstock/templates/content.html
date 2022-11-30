@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block container %}
+        {{ chart.container }}
+{%  endblock  container %}
+
+{% block body_head %}
+
+        {% if chart.jscript_head_flag %}
+            {{chart.jscript_head}}
+        {% endif %}
+
+{% endblock body_head %}
+
+{% block body_content %}
+
+            Highcharts.setOptions({{chart.setoption}});
+            var option = {{chart.option}};
+
+        {% if chart.navi_seri_flag %}
+            var navi_data = {{chart.navi_seri}}
+            option.navigator.series = navi_data;
+        {% endif %}
+
+            var chart = new Highcharts.StockChart(option);
+
+
+        {# DEM 2017/04/25: Use a list of JSONP data sources
+        {# DEM 2017/07/27: This implementation is limited and could easily be improved! #}
+        {% if chart.jsonp_data_flag %}
+          {% for data_url in chart.jsonp_data_url_list %}
+
+            $.getJSON({{data_url}}, function ({{chart.jsonp_data}})
+            {
+                chart.addSeries({{chart.data_list[loop.index0]}});
+            });
+
+          {% endfor %}
+        {% else %}
+
+            var data = {{chart.data}};
+            var dataLen = data.length;
+            for (var ix = 0; ix < dataLen; ix++) {
+                chart.addSeries(data[ix]);
+            }
+
+        {% endif %} 
+
+{% endblock body_content %}
+
+{% block body_end %}
+
+        {% if chart.jscript_end_flag %}
+            {{chart.jscript_end}}
+        {% endif %}
+
+{% endblock body_end %}

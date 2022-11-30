@@ -1,0 +1,21 @@
+{% block container %}
+{% endblock %}
+
+{% block start_script %}
+    <script>
+        $(function(){
+{% endblock start_script %}
+
+        {% block body_head %}    
+        {% endblock body_head%}
+
+        {% block body_content %}    
+        {% endblock body_content%}
+
+        {% block body_end %}    
+        {% endblock body_end%}
+
+{% block endscript %}        
+	});
+        </script>
+{% endblock endscript %}

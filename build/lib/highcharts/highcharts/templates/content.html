@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% block container %}
+        {{ chart.container }}
+{%  endblock  container %}
+
+{% block body_head %}
+
+        {% if chart.jscript_head_flag %}
+            {{chart.jscript_head}}
+        {% endif %}
+
+{% endblock body_head %}
+
+{% block body_content %}
+
+            Highcharts.setOptions({{chart.setoption}});
+            var option = {{chart.option}};
+
+        {% if chart.mapdata_flag %}
+            var geojson = {{chart.mapdata}}
+        {% endif %}
+
+        {% if chart.drilldown_flag %}
+            var drilldowndata = {{chart.drilldown_data}};
+            option.drilldown.series = drilldowndata;
+        {% endif %} 
+
+            var chart = new Highcharts.Chart(option);
+
+        {# DEM 2017/07/27: Use a list of JSONP data sources
+        {# DEM 2017/07/27: This implementation is limited and could easily be improved! #}
+        {% if chart.jsonp_data_flag %}
+          {% for data_url in chart.jsonp_data_url_list %}
+
+            $.getJSON({{data_url}}, function ({{chart.jsonp_data}})
+            {
+                chart.addSeries({{chart.data_list[loop.index0]}});
+            });
+
+          {% endfor %}
+        {% else %}
+            var data = {{chart.data}};
+            var dataLen = data.length;
+            for (var ix = 0; ix < dataLen; ix++) {
+                chart.addSeries(data[ix]);
+            }
+        {% endif %} 
+
+
+        {% if chart.jscript_end_flag %}
+            {{chart.jscript_end}}
+        {% endif %}
+
+        {% if chart.options3d_rotation_flag %}
+            $(chart.container).bind('mousedown.hc touchstart.hc', function (e) {
+                e = chart.pointer.normalize(e);
+
+                var posX = e.pageX,
+                    posY = e.pageY,
+                    alpha = chart.options.chart.options3d.alpha,
+                    beta = chart.options.chart.options3d.beta,
+                    newAlpha,
+                    newBeta,
+                    sensitivity = 5;
+
+                $(document).bind({
+                    'mousemove.hc touchdrag.hc': function (e) {
+                        
+                        newBeta = beta + (posX - e.pageX) / sensitivity;
+                        chart.options.chart.options3d.beta = newBeta;
+
+                        newAlpha = alpha + (e.pageY - posY) / sensitivity;
+                        chart.options.chart.options3d.alpha = newAlpha;
+
+                        chart.redraw(false);
+                    },
+                    'mouseup touchend': function () {
+                        $(document).unbind('.hc');
+                    }
+                });
+            });
+        {% endif %}
+
+{% endblock body_content %}
+
+{% block body_end %}
+
+{% endblock body_end %}
