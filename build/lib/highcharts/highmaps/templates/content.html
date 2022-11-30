@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block container %}
+	    {{ chart.container }}
+{%  endblock  container %}
+
+{% block body_head %}
+
+        {% if chart.jsonp_map_flag %}
+            $.getJSON({{chart.jsonp_map_url}}, function ({{chart.map}})
+                {
+        {% endif %}
+        {% if chart.jsonp_data_flag %}
+            $.getJSON({{chart.jsonp_data_url}}, function ({{chart.jsonp_data}})
+                {
+        {% endif %} 
+
+{% endblock body_head %}
+
+{% block body_content %}
+
+        {% if chart.jscript_head_flag %}
+            {{chart.jscript_head}}
+        {% endif %}
+
+        	Highcharts.setOptions({{chart.setoption}});
+            var option = {{chart.option}};
+
+        {% if chart.mapdata_flag %}
+            var geojson = {{chart.mapdata}}
+        {% endif %}
+
+            var data = {{chart.data}};
+    	    option.series = data;
+
+        {% if chart.drilldown_flag %}
+        	var drilldowndata = {{chart.drilldown_data}};
+        	option.drilldown.series = drilldowndata;
+        {% endif %} 
+
+            var chart = new Highcharts.Map(option);
+
+        {% if chart.jscript_end_flag %}
+            {{chart.jscript_end}}
+        {% endif %}
+
+{% endblock body_content %}
+
+{% block body_end %}
+
+        {% if chart.jsonp_map_flag %}
+            });
+        {% endif %} 
+        {% if chart.jsonp_data_flag %}
+            });
+        {% endif %} 
+
+{% endblock body_end %}
