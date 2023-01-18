@@ -75,10 +75,7 @@ class Highchart(object):
             ]
 
         # set CSS src
-        self.CSSsource = [
-                'https://www.highcharts.com/highslide/highslide.css',
-
-            ]
+        self.CSSsource = []
 
         self.offline = kwargs.get("offline", False)
 
