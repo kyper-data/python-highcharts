@@ -66,17 +66,15 @@ class Highmap(object):
         # Set Javascript src
         self.JSsource = [
                 'https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js',
-                'https://code.highcharts.com/maps/6/highmaps.js',
-                'https://code.highcharts.com/6/highcharts.js',
-                'https://code.highcharts.com/maps/6/modules/map.js',
-                'https://code.highcharts.com/maps/6/modules/data.js',
-                'https://code.highcharts.com/maps/6/modules/exporting.js'
+                'https://code.highcharts.com/maps/9/highmaps.js',
+                'https://code.highcharts.com/9/highcharts.js',
+                'https://code.highcharts.com/maps/9/modules/map.js',
+                'https://code.highcharts.com/maps/9/modules/data.js',
+                'https://code.highcharts.com/maps/9/modules/exporting.js'
             ]
 
         # set CSS src
-        self.CSSsource = [
-                'https://www.highcharts.com/highslide/highslide.css',
-            ]
+        self.CSSsource = []
         # Set data
         self.data = []
         self.data_temp = []
