@@ -26,7 +26,7 @@
             var option = {{chart.option}};
 
         {% if chart.mapdata_flag %}
-            var geojson = {{chart.mapdata}}
+            var geojson = $.parseJSON({{chart.mapdata}});
         {% endif %}
 
             var data = {{chart.data}};
