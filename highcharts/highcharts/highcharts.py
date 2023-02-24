@@ -337,7 +337,7 @@ class Highchart(object):
         """generate HTML header content"""
         
         if self.drilldown_flag:
-            self.add_JSsource('http://code.highcharts.com/modules/drilldown.js')
+            self.add_JSsource('http://code.highcharts.com/modules/9/drilldown.js')
 
 
 
