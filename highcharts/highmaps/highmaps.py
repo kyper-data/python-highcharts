@@ -378,7 +378,7 @@ class Highmap(object):
         #Highcharts lib/ needs to make sure it's up to date
         
         if self.drilldown_flag:
-            self.add_JSsource('https://code.highcharts.com/maps/modules/drilldown.js')
+            self.add_JSsource('https://code.highcharts.com/maps/modules/9/drilldown.js')
 
         self.header_css = [
             '<link href="%s" rel="stylesheet" />' % h for h in self.CSSsource
