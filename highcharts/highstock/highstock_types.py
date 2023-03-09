@@ -131,6 +131,10 @@ PLOT_OPTION_ALLOWED_ARGS = {
     "turboThreshold": int,
     "trackByArea": bool, 
   },
+  "stochastic": {
+    "linkedTo": basestring,
+    "params": dict,
+  },
   "candlestick": {
     "colors": list,
     "cropThreshold": int,

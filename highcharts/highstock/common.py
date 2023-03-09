@@ -694,6 +694,7 @@ class Buttons(ArrayObject):
     "type": basestring,
     "count": [int, float],
     "text": basestring,
+    "dataGrouping": (DataGrouping, dict)
     }
 
 class Zones(ArrayObject):
