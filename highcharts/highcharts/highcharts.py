@@ -75,10 +75,7 @@ class Highchart(object):
             ]
 
         # set CSS src
-        self.CSSsource = [
-                'https://www.highcharts.com/highslide/highslide.css',
-
-            ]
+        self.CSSsource = []
 
         self.offline = kwargs.get("offline", False)
 
@@ -340,7 +337,7 @@ class Highchart(object):
         """generate HTML header content"""
         
         if self.drilldown_flag:
-            self.add_JSsource('http://code.highcharts.com/modules/drilldown.js')
+            self.add_JSsource('https://code.highcharts.com/9/modules/drilldown.js')
 
 
 
